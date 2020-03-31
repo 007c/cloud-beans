@@ -1,14 +1,14 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
+import VueRouter, { RouteConfig } from 'vue-router';
 
 Vue.use(VueRouter);
 
-const routes = [
+
+export const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    // component: Layout,
   },
   {
     path: '/about',
@@ -19,6 +19,26 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
 ];
+
+
+interface Menu {
+  icon?: string;
+  name: string;
+  path: string;
+}
+
+export const menus: Menu[] = [
+  {
+    icon: "search",
+    name: "查询",
+    path: "/about"
+  },
+  {
+    icon: "more_horiz",
+    name: "详情",
+    path: "/detail"
+  },
+]
 
 const router = new VueRouter({
   routes,

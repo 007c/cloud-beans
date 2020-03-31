@@ -1,29 +1,48 @@
+<style lang="less">
+body,
+html,
+div,
+button,
+span {
+    padding: 0;
+    margin: 0;
+}
+</style>
+
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+  <v-app>
+    <v-bottom-navigation absolute horizontal color="primary">
+      <v-btn
+        :x-small="true"
+        v-for="menu in menus"
+        :value="menu.name"
+        :to="menu.path"
+        :key="menu.path"
+      >
+        <span>{{menu.name}}</span>
+        <v-icon v-if="menu.icon">{{menu.icon}}</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
+    <v-content fluid class="fill-height"></v-content>
+  </v-app>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+import Vue from "vue";
+import HelloWorld from "./components/HelloWorld.vue";
+import navBar from "./components/nav.vue";
+import { menus } from "./router";
 
-@Component({
-  components: {
-    HelloWorld,
-  },
-})
-export default class App extends Vue {}
+export default Vue.extend({
+    name: "App",
+
+    components: {
+        HelloWorld,
+        navBar
+    },
+
+    data: () => ({
+        menus
+    })
+});
 </script>
-
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

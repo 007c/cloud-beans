@@ -6,17 +6,14 @@ Vue.use(VueRouter);
 
 export const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
-    // component: Layout,
+    component: () => import("../views/Home.vue"),
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue")
   },
 ];
 
@@ -29,15 +26,20 @@ interface Menu {
 
 export const menus: Menu[] = [
   {
-    icon: "search",
-    name: "查询",
-    path: "/about"
+    icon: "home",
+    name: "首页",
+    path: "/home"
   },
   {
-    icon: "more_horiz",
-    name: "详情",
-    path: "/detail"
+    icon: "class",
+    name: "课堂",
+    path: "/class"
   },
+  {
+    icon: "person",
+    name: "我的",
+    path: "/person"
+  }
 ]
 
 const router = new VueRouter({

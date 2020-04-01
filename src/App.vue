@@ -7,42 +7,49 @@ span {
     padding: 0;
     margin: 0;
 }
+.custom-v-dialog.loader-content {
+  background: transparent;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  top: 0;
+  left: 0;
+  align-items: center;
+}
 </style>
 
 <template>
   <v-app>
-    <v-bottom-navigation absolute horizontal color="primary">
-      <v-btn
-        :x-small="true"
-        v-for="menu in menus"
-        :value="menu.name"
-        :to="menu.path"
-        :key="menu.path"
-      >
-        <span>{{menu.name}}</span>
-        <v-icon v-if="menu.icon">{{menu.icon}}</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
-    <v-content fluid class="fill-height"></v-content>
+    <v-content>
+      <router-view></router-view>
+    </v-content>
+    <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
+      <v-progress-circular indeterminate color="primary" class="mb-0"></v-progress-circular>
+    </div>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
-import navBar from "./components/nav.vue";
-import { menus } from "./router";
-
+import { AppState } from "@/store/app-state";
 export default Vue.extend({
     name: "App",
 
     components: {
-        HelloWorld,
-        navBar
+        // HelloWorld,
+        //navBar
     },
-
-    data: () => ({
-        menus
-    })
+    computed: {
+        appState(): AppState {
+            return this.$store.state.appState;
+        },
+        shoudShowLoading() {
+            return this.$store.getters.isPendingRequestExist;
+        }
+    },
+    mounted() {
+        console.log(this.shoudShowLoading);
+    }
 });
 </script>

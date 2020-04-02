@@ -6,7 +6,12 @@
     text-decoration: none;
 }
 </style>
+<style lang="less">
 
+.v-messages__wrapper > .v-messages__message {
+  line-height: 1.2em;
+}
+</style>
 <template>
   <v-container class="pa-6">
     <v-row class="md-5">

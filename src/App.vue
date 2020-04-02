@@ -3,7 +3,8 @@ body,
 html,
 div,
 button,
-span {
+span,
+p {
     padding: 0;
     margin: 0;
 }
@@ -17,6 +18,10 @@ span {
   left: 0;
   align-items: center;
 }
+
+// html, body, #app {
+//   height: 100%;
+// }
 </style>
 
 <template>

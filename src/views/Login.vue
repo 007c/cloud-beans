@@ -7,9 +7,8 @@
 }
 </style>
 <style lang="less">
-
 .v-messages__wrapper > .v-messages__message {
-  line-height: 1.2em;
+    line-height: 1.2em;
 }
 </style>
 <template>
@@ -79,18 +78,18 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
-let remainTimeTimer: number | undefined = undefined;
+let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
 })
 export default class extends Vue {
-    phoneNumber: string = "";
-    validateCode: string = "";
-    remainTime: number = 0;
+    private phoneNumber: string = "";
+    private validateCode: string = "";
+    private remainTime: number = 0;
     @withLoading()
-    async login() {
+    private async login() {
         const loginForm: any = this.$refs.loginForm;
-        const validateRet = loginForm.validate()
+        const validateRet = loginForm.validate();
         if (!validateRet) {
             return;
         }
@@ -101,14 +100,14 @@ export default class extends Vue {
         // });
 
         await new Promise((reslove, reject) => {
-          setTimeout(() => {
-            reslove();
-          }, 2000);
-        })
+            setTimeout(() => {
+                reslove();
+            }, 2000);
+        });
 
         this.$router.push("/home");
     }
-    async getValidateCode() {
+    private async getValidateCode() {
         clearInterval(remainTimeTimer);
         // await this.$http.get('/validateCode');
         this.remainTime = 60;
@@ -120,7 +119,7 @@ export default class extends Vue {
             }
         }, 1000);
     }
-    validatePhoneNumber(phoneNumber: string) {
+    private validatePhoneNumber(phoneNumber: string) {
         return /^1[3456789]\d{9}$/.test(phoneNumber) || "请输入正确的手机号码";
     }
 }

@@ -100,10 +100,21 @@
         </v-list-item>
         <v-divider :key="index"></v-divider>
       </template>
-    </v-list>
-
-    <v-bottom-navigation :input-value="!shoudHideNav" horizontal fixed color="primary text--lighten-1 d-flex align-center">
-      <v-btn class="body-1" large v-for="menu in menus" :value="menu.name" :to="menu.path" :key="menu.path">
+    </v-list>   
+    <v-bottom-navigation
+      :input-value="!shoudHideNav"
+      horizontal
+      fixed
+      color="primary text--lighten-1 d-flex align-center"
+    >
+      <v-btn
+        class="body-1"
+        large
+        v-for="menu in menus"
+        :value="menu.name"
+        :to="menu.path"
+        :key="menu.path"
+      >
         <span>{{menu.name}}</span>
         <v-icon class="mr-2" style="font-size: 1.5rem" v-if="menu.icon">{{menu.icon}}</v-icon>
       </v-btn>
@@ -180,19 +191,9 @@ export default class extends Vue {
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
-    created() {
-        this.getSliders();
-    }
-
-    onMove(hide: boolean) {
-        this.shoudHideNav = hide;
-    }
-
-    async getSliders() {}
-
-    mounted() {
+    private mounted() {
         this.scrollY = window.scrollY;
-
+        this.updateShare();
         const scrollHandler = () => {
             if (window.scrollY - this.scrollY <= 0) {
                 this.shoudHideNav = false;
@@ -203,6 +204,24 @@ export default class extends Vue {
         };
 
         window.addEventListener("scroll", scrollHandler);
+    }
+
+    private updateShare() {
+        wx.ready(function() {
+            const title = "哈哈哈啊哈哈";
+            const desc = "分享描述";
+            const imgUrl = "https://img95.699pic.com/photo/40006/9851.jpg_wh860.jpg";
+            const url = location.href;
+            wx.updateAppMessageShareData({
+                title, // 分享标题
+                desc, // 分享描述
+                link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl, // 分享图标
+                success() {
+                    // 设置成功
+                }
+            });
+        });
     }
 }
 </script>

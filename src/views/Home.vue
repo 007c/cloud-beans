@@ -12,7 +12,10 @@
 <template>
   <v-container class="pa-0">
     <v-row no-gutters class="mt-2 mb-4" col="12">
-      <v-col class="pl-6 pr-6">
+      <v-col class="align-center d-flex justify-center" cols="2">
+        <h2 class="justify-center d-flex align-center subtitle-1 grey--text">首页</h2>
+      </v-col>
+      <v-col class="pl-3 pr-6">
         <v-text-field
           height="15px"
           hide-details
@@ -82,11 +85,11 @@
     </v-row>
     <v-divider></v-divider>
 
-    <v-list class="pb-8">
+    <v-list class="pb-8" >
       <v-subheader>高考课堂</v-subheader>
 
       <template v-for="(item, index) in classess">
-        <v-list-item :key="index">
+        <v-list-item :key="index" @click="goClassess(index)">
           <v-img class="mr-2" height="100%" max-width="60px" :src="item.imgUrl"></v-img>
           <v-list-item-content>
             <v-list-item-title class="subtitle-1">{{item.title}}</v-list-item-title>
@@ -129,55 +132,11 @@ interface Slider {
     imgUrl: string;
 }
 
-interface Menu {
-    icon?: string;
-    name: string;
-    path: string;
-}
 
 import { Prompt, prompts } from "./prompts";
 import { ClassItem, classess } from "./classess";
 import { createDebounce } from "@/util";
-const menus: Menu[] = [
-    {
-        icon: "home",
-        name: "首页",
-        path: "/home"
-    },
-    {
-        icon: "class",
-        name: "课堂",
-        path: "/class"
-    },
-    {
-        icon: "person",
-        name: "我的",
-        path: "/person"
-    }
-];
-
-const mainMenus: Menu[] = [
-    {
-        icon: "school",
-        name: "院校查询",
-        path: "/university/query"
-    },
-    {
-        icon: "search",
-        name: "专业查询",
-        path: "/major/query"
-    },
-    {
-        icon: "touch_app",
-        name: "职业测评",
-        path: "/evaluation"
-    },
-    {
-        icon: "flight_takeoff",
-        name: "智能择校",
-        path: "/choice"
-    }
-];
+import {mainMenus, bottomMenus, } from "@/router"
 
 let scrollHandler: () => void;
 
@@ -185,7 +144,7 @@ let scrollHandler: () => void;
     name: "Home"
 })
 export default class extends Vue {
-    private menus = menus;
+    private menus = bottomMenus;
     private mainMenus = mainMenus;
     private slides: Slider[] = [];
     private prompts: Prompt[] = prompts;
@@ -193,7 +152,14 @@ export default class extends Vue {
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
-    private mounted() {
+    created() {
+    }
+
+    private goClassess(id: number) {
+      this.$router.push(`/class/${id}`);
+    }
+
+    mounted() {
         this.scrollY = window.scrollY;
         this.updateShare();
         scrollHandler = () => {

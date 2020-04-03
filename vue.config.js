@@ -8,6 +8,7 @@ module.exports = {
         target: "https://api.weixin.qq.com",
         pathRewrite: {"^/wx": ""}
       }
-    }
+    },
+    host: "0.0.0.0"
   }
 }

@@ -100,7 +100,7 @@
         </v-list-item>
         <v-divider :key="index"></v-divider>
       </template>
-    </v-list>   
+    </v-list>
     <v-bottom-navigation
       :input-value="!shoudHideNav"
       horizontal
@@ -179,6 +179,8 @@ const mainMenus: Menu[] = [
     }
 ];
 
+let scrollHandler: () => void;
+
 @Component({
     name: "Home"
 })
@@ -194,7 +196,7 @@ export default class extends Vue {
     private mounted() {
         this.scrollY = window.scrollY;
         this.updateShare();
-        const scrollHandler = () => {
+        scrollHandler = () => {
             if (window.scrollY - this.scrollY <= 0) {
                 this.shoudHideNav = false;
             } else {
@@ -206,11 +208,16 @@ export default class extends Vue {
         window.addEventListener("scroll", scrollHandler);
     }
 
+    private beforeDestroy() {
+        window.removeEventListener("scroll", scrollHandler);
+    }
+
     private updateShare() {
         wx.ready(function() {
             const title = "哈哈哈啊哈哈";
             const desc = "分享描述";
-            const imgUrl = "https://img95.699pic.com/photo/40006/9851.jpg_wh860.jpg";
+            const imgUrl =
+                "https://img95.699pic.com/photo/40006/9851.jpg_wh860.jpg";
             const url = location.href;
             wx.updateAppMessageShareData({
                 title, // 分享标题

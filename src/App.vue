@@ -19,6 +19,11 @@ p {
     align-items: center;
 }
 
+.v-text-field--box .v-input__slot,
+.v-text-field--outline .v-input__slot {
+    min-height: auto !important;
+}
+
 // html, body, #app {
 //   height: 100%;
 // }
@@ -108,9 +113,7 @@ export default Vue.extend({
                 timestamp: wxConfig.timestamp, // 必填，生成签名的时间戳，与生成签名的timestamp要一致
                 nonceStr: wxConfig.nonceStr, // 必填，生成签名的随机串，与生成签名的nonceStr要一致
                 signature: wxConfig.signature, // 必填，签名
-                jsApiList: [
-                  "updateAppMessageShareData"
-                ] // 必填，需要使用的JS接口列表
+                jsApiList: ["updateAppMessageShareData"] // 必填，需要使用的JS接口列表
             });
         }
     },

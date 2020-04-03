@@ -15,6 +15,11 @@ export const routes = [
     name: "Login",
     component: () => import("../views/Login.vue")
   },
+  {
+    path: "/university/detail/:id",
+    name: "universityDetail",
+    component: () => import("../views/UniversityDetail.vue")
+  }
 ];
 
 

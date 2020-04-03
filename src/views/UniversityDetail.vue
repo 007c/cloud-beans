@@ -1,23 +1,25 @@
 <template>
-  <v-container>
-    <v-row no-gutters>
-      <v-col cols="2">
-        <v-btn icon color="primary">
-          <v-icon>arrow_back</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col class="d-flex align-center justify-center">
-        <h1
-          class="grey--text text--darken-2 subtitle-1 text-center font-weight-bold"
-        >{{universityName}}</h1>
-      </v-col>
-      <v-col cols="2">
-        <v-btn @click="followUniversity" icon color="primary">
-          <v-icon>{{!follwed ? 'favorite_border' : 'favorite'}}</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-divider></v-divider>
+  <v-container class="pt-0">
+    <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
+      <v-row no-gutters>
+        <v-col cols="2">
+          <v-btn icon color="primary">
+            <v-icon>arrow_back</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col class="d-flex align-center justify-center">
+          <h1
+            class="grey--text text--darken-2 subtitle-1 text-center font-weight-bold"
+          >{{universityName}}</h1>
+        </v-col>
+        <v-col cols="2">
+          <v-btn @click="followUniversity" icon color="primary">
+            <v-icon>{{!follwed ? 'favorite_border' : 'favorite'}}</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-divider></v-divider>
+    </div>
     <v-row>
       <v-col>
         <v-card flat>

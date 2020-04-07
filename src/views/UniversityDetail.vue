@@ -9,7 +9,7 @@
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <h1
-            class="grey--text text--darken-2 subtitle-1 text-center font-weight-bold"
+            class="primary--text subtitle-1 text-center font-weight-bold"
           >{{universityName}}</h1>
         </v-col>
         <v-col cols="2">
@@ -55,6 +55,9 @@
           </v-card>
         </v-tab-item>
         <v-tab-item value="1">
+          <matriculate-data></matriculate-data>
+        </v-tab-item>
+        <v-tab-item value="2">
           <recruit-info></recruit-info>
         </v-tab-item>
       </v-tabs>
@@ -65,11 +68,13 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
+import MatriculateData from "./MatriculateData.vue";
 import RecruitInfo from "./RecruitInfo.vue";
 
 @Component({
     name: "UniversityDetail",
     components: {
+        MatriculateData,
         RecruitInfo
     }
 })
@@ -85,7 +90,7 @@ export default class extends Vue {
 
     private created() {
         const route = this.$route;
-        this.universityId = parseInt(route.params.id);
+        this.universityId = parseInt(route.params.id, 10);
     }
 
     @withLoading()

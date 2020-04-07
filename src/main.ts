@@ -5,10 +5,14 @@ import store from './store';
 import vuetify from './plugins/vuetify';
 import VueAxios from "vue-axios";
 import axios from "axios";
+const VuePickerMobile = require('vue-picker-mobile')
+
 
 Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
+Vue.use(VuePickerMobile.default)
+
 
 new Vue({
   router,

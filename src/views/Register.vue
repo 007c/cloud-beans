@@ -15,10 +15,10 @@
   <v-container>
     <v-row class="md-5">
       <v-col>
-        <h1 class="headline blue--text text-lighten-5 font-weight-regular text-center">手机登录</h1>
+        <h1 class="headline blue--text text-lighten-5 font-weight-regular text-center">注册</h1>
       </v-col>
     </v-row>
-    <v-form ref="loginForm">
+    <v-form ref="registerForm">
       <v-row>
         <v-col col="12">
           <v-text-field
@@ -26,6 +26,28 @@
             v-model="phoneNumber"
             :rules="[validatePhoneNumber]"
             label="手机号"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col col="12">
+          <v-text-field
+            validate-on-blur
+            v-model="password"
+            :rules="[validatePassword]"
+            type="password"
+            label="密码"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col col="12">
+          <v-text-field
+            validate-on-blur
+            v-model="repeatPassword"
+            type="password"
+            :rules="[validateRepeatPassword]"
+            label="确认密码"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -50,19 +72,14 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn @click="login" block color="primary">登录</v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-btn @click="$router.push('/register')" block outlined color="secondary">注册</v-btn>
+          <v-btn @click="register" block color="primary">注册</v-btn>
         </v-col>
       </v-row>
     </v-form>
     <v-row>
       <v-col class="pa-0">
         <p class="text-center caption">
-          注：登录即表示同意
+          注：注册即表示同意
           <a
             class="link ml-1"
             href="https://www.baidu.com"
@@ -91,9 +108,11 @@ export default class extends Vue {
     private phoneNumber: string = "";
     private validateCode: string = "";
     private remainTime: number = 0;
+    private password: string = "";
+    private repeatPassword: string = "";
     @withLoading()
-    private async login() {
-        const loginForm: any = this.$refs.loginForm;
+    private async register() {
+        const loginForm: any = this.$refs.registerForm;
         const validateRet = loginForm.validate();
         if (!validateRet) {
             return;
@@ -109,8 +128,7 @@ export default class extends Vue {
                 reslove();
             }, 2000);
         });
-
-        this.$router.push("/home");
+        this.$router.push("/login");
     }
     private async getValidateCode() {
         clearInterval(remainTimeTimer);
@@ -126,6 +144,14 @@ export default class extends Vue {
     }
     private validatePhoneNumber(phoneNumber: string) {
         return /^1[3456789]\d{9}$/.test(phoneNumber) || "请输入正确的手机号码";
+    }
+
+    private validatePassword(password: string) {
+        return password.trim().length >= 6 || "请输入至少6位密码";
+    }
+
+    private validateRepeatPassword(repeatPassword: string) {
+        return repeatPassword === this.password || "确认密码与密码不一致";
     }
 }
 </script>

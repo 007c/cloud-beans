@@ -11,3 +11,8 @@ declare module 'vuetify/es5/locale/zh-Hans' {
 }
 
 declare const wx: any;
+
+interface SelectOption<T> {
+  text: string;
+  value: T;
+}

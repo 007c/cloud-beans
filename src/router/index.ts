@@ -69,6 +69,16 @@ export const routes = [
     path: "/university/detail/:id",
     name: "universityDetail",
     component: () => import("../views/UniversityDetail.vue")
+  },
+  {
+    path: "/major/detail/:id",
+    name: "majorDetail",
+    component: () => import("../views/MajorDetail.vue")
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("../views/Register.vue")
   }
 ];
 

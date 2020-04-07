@@ -131,12 +131,6 @@ interface ListItem {
     }>;
 }
 
-interface AreaTree {
-    label: string;
-    value: number;
-    children?: AreaTree[];
-}
-
 @Component({
     name: "MajorDetail"
 })

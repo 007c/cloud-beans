@@ -16,3 +16,9 @@ interface SelectOption<T> {
   text: string;
   value: T;
 }
+
+interface AreaTree {
+  label: string;
+  value: number;
+  children?: AreaTree[];
+}

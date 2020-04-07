@@ -19,10 +19,10 @@
     <v-divider></v-divider>
     <v-row>
         <v-col>
-            <v-select height="30px" dense label="院校地区(省)" outlined></v-select>
+            <v-select v-model="province" height="30px" dense label="院校地区(省)" outlined></v-select>
         </v-col>
         <v-col>
-            <v-select dense label="院校地区(市)" outlined></v-select>
+            <v-select v-model="area" dense label="院校地区(市)" outlined></v-select>
         </v-col>
     </v-row>
   </v-container>
@@ -33,6 +33,8 @@ import { Vue, Component, Prop } from "vue-property-decorator";
     name: "universitySearch"
 })
 export default class extends Vue {
-    private universityName: string = ""
+    private universityName: string = "";
+    private province: string = "";
+    private area: string = ""
 }
 </script>

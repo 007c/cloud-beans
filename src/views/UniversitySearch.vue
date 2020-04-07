@@ -76,6 +76,7 @@
           hide-details
           label="院校标签"
           dense
+          multiple
           :items="universityTags"
           item-text="text"
           v-model="universityTag"

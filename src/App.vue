@@ -47,6 +47,7 @@ import { AppState, WxShareConfig } from "@/store/app-state";
 import crypto from "crypto-js";
 import { AxiosResponse } from "axios";
 import eventBus from "./event-bus";
+import { SET_WX_SHARE_CONFIG } from "@/store/mutation-types";
 export default Vue.extend({
     name: "App",
 
@@ -110,7 +111,7 @@ export default Vue.extend({
             const string1 = `jsapi_ticket=${ticket}&noncestr=${nonceStr}&timestamp=${timestamp}&url=${url}`;
             const hash = crypto.SHA1(string1);
             const signature = hash.toString(crypto.enc.Hex);
-            this.$store.commit("SET_WX_SHARE_CONFIG", {
+            this.$store.commit(SET_WX_SHARE_CONFIG, {
                 timestamp,
                 nonceStr,
                 signature

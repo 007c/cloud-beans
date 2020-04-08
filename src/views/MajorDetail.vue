@@ -62,7 +62,15 @@
           <v-row>
             <v-col>
               <v-text-field readonly @click="showAreaPicker = true" label="地区"></v-text-field>
-              <Picker :defaultValue="defaultValue" @onChange="onAreaChange" @update:show="showAreaPicker=false" :list="areaList" :isRelate="true" :isMulti="true" :show="showAreaPicker"></Picker>
+              <Picker
+                :defaultValue="defaultValue"
+                @onChange="onAreaChange"
+                @update:show="showAreaPicker=false"
+                :list="areaList"
+                :isRelate="true"
+                :isMulti="true"
+                :show="showAreaPicker"
+              ></Picker>
             </v-col>
             <v-col></v-col>
             <v-col></v-col>

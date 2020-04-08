@@ -1,4 +1,4 @@
-export const createDebounce = function(fn: () => () => void, tick: number, delay: number) {
+export const createDebounce = function(fn: () => any, tick: number, delay: number): () => void {
     let now = + new Date();
     let timerId: number | undefined;
 

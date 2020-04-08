@@ -39,7 +39,7 @@ export const universityLevels: Array<SelectOption<number>> = [
     }
 ]
 
-export const universityTags: Array < SelectOption < number >>  =[
+export const universityTags: Array<SelectOption<number>> = [
     {
         text: "全部",
         value: 0,
@@ -57,7 +57,7 @@ export const universityTags: Array < SelectOption < number >>  =[
 type GenerateFn = (count: number, since?: Date) => Array<SelectOption<number>>
 
 
-const generateLatestYearItems: GenerateFn = function (count, since = new Date()) {
+const generateLatestYearItems: GenerateFn = function(count, since = new Date()) {
     const sinceYear = since.getFullYear();
     const items = [];
     for (let i = 1; i <= count; i++) {

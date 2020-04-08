@@ -41,21 +41,27 @@
     </v-row>
     <v-row no-gutters class="justify-center mt-2 mr-4 ml-4">
       <v-col cols="3">
-        <v-btn color="grey" width="100%" text>
+        <v-btn color="secondary" width="100%" text>
           <v-icon>location_on</v-icon>
           <span>四川</span>
         </v-btn>
       </v-col>
       <v-col cols="3">
-        <v-btn color="grey" width="100%" text>
+        <v-btn color="secondary" width="100%" text>
           <v-icon>subject</v-icon>
           <span>理科</span>
         </v-btn>
       </v-col>
-      <v-col cols="4">
-        <v-btn color="grey" width="100%" text>
+      <v-col cols="3">
+        <v-btn color="secondary" width="100%" text>
           <v-icon>book</v-icon>502
         </v-btn>
+      </v-col>
+      <v-col>
+          <v-btn color="secondary" width="100%" text>
+              <v-icon>people</v-icon>
+              <span>502</span>
+          </v-btn>
       </v-col>
     </v-row>
     <v-row no-gutters class="mt-4">
@@ -85,7 +91,7 @@
     </v-row>
     <v-divider></v-divider>
 
-    <v-list class="pb-8" >
+    <v-list class="pb-8">
       <v-subheader>高考课堂</v-subheader>
 
       <template v-for="(item, index) in classess">
@@ -101,7 +107,7 @@
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-divider :key="index"></v-divider>
+        <v-divider :key="item.path"></v-divider>
       </template>
     </v-list>
     <v-bottom-navigation
@@ -132,11 +138,10 @@ interface Slider {
     imgUrl: string;
 }
 
-
 import { Prompt, prompts } from "./prompts";
 import { ClassItem, classess } from "./classess";
 import { createDebounce } from "@/util";
-import {mainMenus, bottomMenus, } from "@/router"
+import { mainMenus, bottomMenus } from "@/router";
 
 let scrollHandler: () => void;
 
@@ -152,16 +157,14 @@ export default class extends Vue {
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
-    created() {
-    }
 
     private goClassess(id: number) {
-      this.$router.push(`/class/${id}`);
+        this.$router.push(`/class/${id}`);
     }
 
-    mounted() {
+    private mounted() {
         this.scrollY = window.scrollY;
-        this.updateShare();
+        // this.updateShare();
         scrollHandler = () => {
             if (window.scrollY - this.scrollY <= 0) {
                 this.shoudHideNav = false;

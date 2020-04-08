@@ -2,7 +2,7 @@
   <v-container>
     <v-row no-gutters>
       <v-col cols="2">
-        <v-btn icon color="primary">
+        <v-btn @click="$router.go(-1)" icon color="primary">
           <v-icon>arrow_back</v-icon>
         </v-btn>
       </v-col>
@@ -86,20 +86,20 @@
     </v-row>
     <v-list>
       <v-list-item class="pa-0 mb-2" v-for="(item, index) in listData" :key="index">
-        <v-card width="100%" class="d-flex pl-2 pr-2">
-          <div class="d-flex align-center">
-            <v-list-item-avatar color="secondary" class="mr-2" size="60">
+        <v-card :to="'/university/detail/' + item.id" width="100%" class="d-flex pl-2 pr-2">
+          <div class="d-flex align-center mr-3">
+            <v-list-item-avatar color="secondary" size="60">
               <v-img :src="item.logo" v-if="item.logo"></v-img>
               <span v-else class="white--text">{{item.university.substring(0,1)}}</span>
             </v-list-item-avatar>
           </div>
           <v-list-item-content>
             <v-list-item-title>{{item.university}}</v-list-item-title>
-            <v-list-item-content class="pt-1">
+            <v-list-item-content class="pa-0">
               <v-row no-gutters class="caption">
-                <v-col class="pa-0" cols="2">综合类</v-col>
-                <v-col class="pa-0 pl-2" cols="5">211 985 双一流</v-col>
-                <v-col class="pa-0 pl-2">2019年分数线：665</v-col>
+                <v-col class="" cols="4" sm="3">综合类</v-col>
+                <v-col class="" cols="8" sm="4">211 985 双一流</v-col>
+                <v-col class="" cols="12" sm="5">2019年分数线：665</v-col>
               </v-row>
             </v-list-item-content>
           </v-list-item-content>
@@ -115,10 +115,12 @@ import {
   universityLevels,
   universityTags
 } from "./selectOptions";
+import eventBus from '../event-bus';
 
 interface ListItem {
   logo: string;
   university: string;
+  id: number;
 }
 
 @Component({
@@ -165,7 +167,18 @@ export default class extends Vue {
 
   private created() {
     this.getListData();
+    eventBus.$on('bottomTouchUp', this.onBottomTouchUp);
   }
+
+  private beforeDestroy() {
+    eventBus.$off("bottomTouchUp", this.onBottomTouchUp);
+  }
+
+  private onBottomTouchUp() {
+    // console.log("bottom touch up")
+  }
+
+
 
   private onAreaChange(res: AreaTree[], isEnsure: boolean) {
     if (!isEnsure) {
@@ -179,11 +192,13 @@ export default class extends Vue {
     this.listData = [
       {
         logo: "",
-        university: "西南大学"
+        university: "西南大学",
+        id: 0,
       },
       {
         logo: "",
-        university: "北京大学"
+        university: "北京大学",
+        id: 1
       }
     ];
   }

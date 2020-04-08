@@ -8,6 +8,7 @@ p {
     padding: 0;
     margin: 0;
 }
+
 .custom-v-dialog.loader-content {
     background: transparent;
     position: absolute;
@@ -30,7 +31,7 @@ p {
 </style>
 
 <template>
-  <v-app>
+  <v-app v-touch="{up: onTouchUp}">
     <v-content>
       <router-view></router-view>
     </v-content>
@@ -45,6 +46,7 @@ import Vue from "vue";
 import { AppState, WxShareConfig } from "@/store/app-state";
 import crypto from "crypto-js";
 import { AxiosResponse } from "axios";
+import eventBus from "./event-bus";
 export default Vue.extend({
     name: "App",
 
@@ -90,6 +92,15 @@ export default Vue.extend({
             });
 
             return rsp.data;
+        },
+
+        onTouchUp() {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            const scrollY = window.scrollY;
+            if (scrollHeight - clientHeight <= scrollY) {
+                eventBus.$emit("bottomTouchUp");
+            }
         },
 
         generateSignature(ticket: string) {

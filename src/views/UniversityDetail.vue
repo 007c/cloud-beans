@@ -3,7 +3,7 @@
     <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
       <v-row no-gutters>
         <v-col cols="2">
-          <v-btn icon color="primary">
+          <v-btn @click="$router.go(-1)" icon color="primary">
             <v-icon>arrow_back</v-icon>
           </v-btn>
         </v-col>

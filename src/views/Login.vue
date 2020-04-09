@@ -121,7 +121,8 @@ export default class extends Vue {
         this.$store.commit(UPDATE_USER_INFO, userInfo);
         localStorage.setItem("user_info", JSON.stringify(userInfo));
         localStorage.setItem("expired_at", (+new Date() + 60 * 1000 * 10).toString());
-        this.$router.push("/home");
+        const toPath = this.$route.query.redirect as string || "/home";
+        this.$router.push(toPath);
     }
     private async getValidateCode() {
         clearInterval(remainTimeTimer);

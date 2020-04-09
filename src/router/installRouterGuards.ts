@@ -14,8 +14,8 @@ export default function(router: VueRouter) {
             if (!isLogin) {
                 next({
                     path: "/login",
-                    params: {
-                        redirect: to.path
+                    query: {
+                        redirect: to.fullPath
                     }
                 });
                 return;

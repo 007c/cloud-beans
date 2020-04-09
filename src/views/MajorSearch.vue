@@ -9,6 +9,7 @@
     <v-tabs grow class="pl-4 pr-4" v-model="tabIndex">
       <v-tab v-for="name in tabs" :key="name">{{name}}</v-tab>
     </v-tabs>
+    <v-divider></v-divider>
     <v-tabs-items v-model="tabIndex" class="fill-height">
       <v-tab-item class="fill-height">
         <v-row class="fill-height">
@@ -81,8 +82,8 @@ export default class extends Vue {
     ];
     private tabIndex = 0;
 
-    private onTreeActive(params: TreeView) {
-        // console.log(params);
+    private onTreeActive([params]: TreeView[]) {
+        this.$router.push(`/major/detail/${params.id}`)
     }
 }
 </script>

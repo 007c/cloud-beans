@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import VueRouter, { RouteConfig } from 'vue-router';
+import VueRouter, { RouteConfig, Route } from 'vue-router';
+import installRouterGuards from './installRouterGuards';
 
 Vue.use(VueRouter);
 
@@ -15,47 +16,47 @@ export const bottomMenus: Menu[] = [
     component: () => import("../views/Home.vue"),
   },
   {
-      icon: "class",
-      name: "课堂",
-      path: "/class/:id?",
-      component: () => import("../views/ClassView.vue")
+    icon: "class",
+    name: "课堂",
+    path: "/class/:id?",
+    component: () => import("../views/ClassView.vue")
   },
   {
-      icon: "person",
-      name: "我的",
-      path: "/person",
-      component: () => import("../views/Person.vue")
+    icon: "person",
+    name: "我的",
+    path: "/person",
+    component: () => import("../views/Person.vue")
   }
 ];
 
 export const mainMenus: Menu[] = [
   {
-      icon: "school",
-      name: "院校查询",
-      path: "/university/query",
-      component: () => import("../views/UniversitySearch.vue")
+    icon: "school",
+    name: "院校查询",
+    path: "/university/query",
+    component: () => import("../views/UniversitySearch.vue")
   },
   {
-      icon: "search",
-      name: "专业查询",
-      path: "/major/query",
-      component: () => import("../views/MajorSearch.vue")
+    icon: "search",
+    name: "专业查询",
+    path: "/major/query",
+    component: () => import("../views/MajorSearch.vue")
   },
   {
-      icon: "touch_app",
-      name: "职业测评",
-      path: "/evaluation",
-      component: () => import("../views/Evaluation.vue")
+    icon: "touch_app",
+    name: "职业测评",
+    path: "/evaluation",
+    component: () => import("../views/Evaluation.vue")
   },
   {
-      icon: "flight_takeoff",
-      name: "智能择校",
-      path: "/choice",
-      component: () => import("../views/IntelgenceChoice.vue")
+    icon: "flight_takeoff",
+    name: "智能择校",
+    path: "/choice",
+    component: () => import("../views/IntelgenceChoice.vue")
   }
 ];
 
-export const routes = [
+export const routes: RouteConfig[] = [
   {
     path: "/",
     redirect: "/home"
@@ -84,6 +85,14 @@ export const routes = [
     path: "/search",
     name: "Search",
     component: () => import("../views/Search.vue")
+  },
+  {
+    path: "/grade/edit",
+    name: "GradeEdit",
+    component: () => import("../views/GradeEdit.vue"),
+    meta: {
+      requireLogin: true
+    }
   }
 ];
 
@@ -91,5 +100,7 @@ export const routes = [
 const router = new VueRouter({
   routes: [...routes, ...bottomMenus, ...mainMenus],
 });
+
+installRouterGuards(router);
 
 export default router;

@@ -32,8 +32,8 @@
       <v-col class="pa-4 pt-0">
         <v-btn
           color="secondary"
-          x-small
-          class="mr-2"
+          small
+          class="mr-2 mt-2"
           depressed
           outlined
           v-for="item in hotSearch"
@@ -46,7 +46,7 @@
       <v-col class="pa-4 pt-0">
         <v-btn
           color="secondary"
-          x-small
+          small
           class="mr-2"
           depressed
           outlined

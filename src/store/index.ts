@@ -1,16 +1,22 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import appState from "./app-state";
+import appState, { AppState } from "./app-state";
+import userState, { UserState } from "./use-state";
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
-  },
+interface RootState {
+  appState: AppState,
+  userState: UserState,
+}
+
+
+export default new Vuex.Store<RootState>({
   mutations: {
   },
   actions: {
   },
   modules: {
-    appState
+    appState,
+    userState
   },
 });

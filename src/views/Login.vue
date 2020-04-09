@@ -83,6 +83,8 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
+import { SET_USER_LOGIN_STATE, UPDATE_USER_INFO } from "@/store/mutation-types";
+import { UserInfo } from "@/store/use-state";
 let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
@@ -110,6 +112,15 @@ export default class extends Vue {
             }, 2000);
         });
 
+        const userInfo: UserInfo = {
+            userName: "zhaozhipeng",
+            nickName: "zzp",
+            phoneNumber: "183****4021"
+        };
+        this.$store.commit(SET_USER_LOGIN_STATE, true);
+        this.$store.commit(UPDATE_USER_INFO, userInfo);
+        localStorage.setItem("user_info", JSON.stringify(userInfo));
+        localStorage.setItem("expired_at", (+new Date() + 60 * 1000 * 10).toString());
         this.$router.push("/home");
     }
     private async getValidateCode() {

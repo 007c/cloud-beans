@@ -39,31 +39,7 @@
         </v-carousel-item>
       </v-carousel>
     </v-row>
-    <v-row no-gutters class="justify-center mt-2 mr-4 ml-4">
-      <v-col cols="3">
-        <v-btn color="secondary" width="100%" text>
-          <v-icon>location_on</v-icon>
-          <span>四川</span>
-        </v-btn>
-      </v-col>
-      <v-col cols="3">
-        <v-btn color="secondary" width="100%" text>
-          <v-icon>subject</v-icon>
-          <span>理科</span>
-        </v-btn>
-      </v-col>
-      <v-col cols="3">
-        <v-btn color="secondary" width="100%" text>
-          <v-icon>book</v-icon>502
-        </v-btn>
-      </v-col>
-      <v-col>
-          <v-btn color="secondary" width="100%" text>
-              <v-icon>people</v-icon>
-              <span>502</span>
-          </v-btn>
-      </v-col>
-    </v-row>
+    <student-info-bar></student-info-bar>
     <v-row no-gutters class="mt-4">
       <v-col v-for="menu in mainMenus" :key="menu.path">
         <v-card flat class="justify-center d-flex flex-column align-center">
@@ -142,11 +118,15 @@ import { Prompt, prompts } from "./prompts";
 import { ClassItem, classess } from "./classess";
 import { createDebounce } from "@/util";
 import { mainMenus, bottomMenus } from "@/router";
+import StudentInfoBar from "@/components/StudentInfoBar.vue";
 
 let scrollHandler: () => void;
 
 @Component({
-    name: "Home"
+    name: "Home",
+    components: {
+        StudentInfoBar
+    }
 })
 export default class extends Vue {
     private menus = bottomMenus;
@@ -157,11 +137,6 @@ export default class extends Vue {
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
-
-    private goClassess(id: number) {
-        this.$router.push(`/class/${id}`);
-    }
-
     private mounted() {
         this.scrollY = window.scrollY;
         // this.updateShare();
@@ -175,6 +150,11 @@ export default class extends Vue {
         };
 
         window.addEventListener("scroll", scrollHandler);
+    }
+
+
+    private goClassess(id: number) {
+        this.$router.push(`/class/${id}`);
     }
 
     private beforeDestroy() {

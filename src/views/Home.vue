@@ -10,12 +10,12 @@
 }
 </style>
 <template>
-  <v-container class="pa-0">
+  <v-container>
     <v-row no-gutters class="mt-2 mb-4" col="12">
       <v-col class="align-center d-flex justify-center" cols="2">
         <h2 class="justify-center d-flex align-center subtitle-1 grey--text">首页</h2>
       </v-col>
-      <v-col class="pl-3 pr-6">
+      <v-col class="pl-3">
         <v-text-field
           height="15px"
           hide-details
@@ -53,7 +53,7 @@
     <v-divider class="mt-4"></v-divider>
     <v-row class="mt-1" no-gutters>
       <v-col class="pl-2" cols="1">
-        <v-icon>volume_up</v-icon>
+        <v-icon color="secondary">volume_up</v-icon>
       </v-col>
       <v-col class="pl-3">
         <v-carousel height="30px" hide-delimiters cycle vertical :show-arrows="false">
@@ -68,10 +68,13 @@
     <v-divider></v-divider>
 
     <v-list class="pb-8">
-      <v-subheader>高考课堂</v-subheader>
+      <v-subheader class="justify-space-between">
+        高考课堂
+        <router-link class="float-right" to="/classes">>></router-link>
+      </v-subheader>
 
-      <template v-for="(item, index) in classess">
-        <v-list-item :key="index" @click="goClassess(index)">
+      <template v-for="(item, index) in classes">
+        <v-list-item :key="index" @click="goClasses(index)">
           <v-img class="mr-2" height="100%" max-width="60px" :src="item.imgUrl"></v-img>
           <v-list-item-content>
             <v-list-item-title class="subtitle-1">{{item.title}}</v-list-item-title>
@@ -86,24 +89,6 @@
         <v-divider :key="item.path"></v-divider>
       </template>
     </v-list>
-    <v-bottom-navigation
-      :input-value="!shoudHideNav"
-      horizontal
-      fixed
-      color="primary text--lighten-1 d-flex align-center"
-    >
-      <v-btn
-        class="body-1"
-        large
-        v-for="menu in menus"
-        :value="menu.name"
-        :to="menu.path"
-        :key="menu.path"
-      >
-        <span>{{menu.name}}</span>
-        <v-icon class="mr-2" style="font-size: 1.5rem" v-if="menu.icon">{{menu.icon}}</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
   </v-container>
 </template>
 
@@ -115,9 +100,9 @@ interface Slider {
 }
 
 import { Prompt, prompts } from "./prompts";
-import { ClassItem, classess } from "./classess";
+import { ClassItem, classes } from "./classes";
 import { createDebounce } from "@/util";
-import { mainMenus, bottomMenus } from "@/router";
+import { mainMenus } from "@/router";
 import StudentInfoBar from "@/components/StudentInfoBar.vue";
 
 let scrollHandler: () => void;
@@ -129,11 +114,10 @@ let scrollHandler: () => void;
     }
 })
 export default class extends Vue {
-    private menus = bottomMenus;
     private mainMenus = mainMenus;
     private slides: Slider[] = [];
     private prompts: Prompt[] = prompts;
-    private classess: ClassItem[] = classess;
+    private classes: ClassItem[] = classes;
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
@@ -150,10 +134,16 @@ export default class extends Vue {
         };
 
         window.addEventListener("scroll", scrollHandler);
+        if (process.env.NODE_ENV !== "producation") {
+            this.listUsers();
+        }
     }
 
+    private async listUsers() {
+        const rsp = await this.$http.get("/api/Users/GetUsers");
+    }
 
-    private goClassess(id: number) {
+    private goClasses(id: number) {
         this.$router.push(`/class/${id}`);
     }
 

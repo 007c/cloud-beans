@@ -38,6 +38,12 @@ p {
     <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
       <v-progress-circular indeterminate color="primary" class="mb-0"></v-progress-circular>
     </div>
+    <v-snackbar :value="shouldShowAppErrorMsg">
+      {{ appErrorMsg }}
+      <v-btn color="pink" text @click="closeErrorMsg" icon>
+          <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -47,7 +53,7 @@ import { AppState, WxShareConfig } from "@/store/app-state";
 import crypto from "crypto-js";
 import { AxiosResponse } from "axios";
 import eventBus from "./event-bus";
-import { SET_WX_SHARE_CONFIG } from "@/store/mutation-types";
+import { SET_WX_SHARE_CONFIG, APP_ERROR_MESSAGE_STATUS } from "@/store/mutation-types";
 export default Vue.extend({
     name: "App",
 
@@ -64,9 +70,18 @@ export default Vue.extend({
         },
         wxConfig(): WxShareConfig {
             return this.$store.state.appState.wxShareConfig;
+        },
+        shouldShowAppErrorMsg() {
+            return this.$store.state.appState.shouldShowErrorMsg;
+        },
+        appErrorMsg() {
+            return this.$store.state.appState.appErrorMsg;
         }
     },
     methods: {
+        closeErrorMsg() {
+            this.$store.commit(APP_ERROR_MESSAGE_STATUS, false)
+        },
         async getWxAccessToken() {
             const rsp: AxiosResponse<{
                 access_token: string;
@@ -130,13 +145,13 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        const { access_token } = await this.getWxAccessToken();
-        const { ticket } = await this.getJsApiTicket(access_token);
-        this.generateSignature(ticket);
-        this.initWxConfig();
-        wx.error(function(res: any) {
-            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-        });
+        // const { access_token } = await this.getWxAccessToken();
+        // const { ticket } = await this.getJsApiTicket(access_token);
+        // this.generateSignature(ticket);
+        // this.initWxConfig();
+        // wx.error(function(res: any) {
+        //     // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+        // });
         // this.goShare();
     }
 });

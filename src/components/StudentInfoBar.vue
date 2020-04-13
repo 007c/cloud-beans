@@ -6,7 +6,7 @@
     class="text-center justify-center mt-2 mr-2 ml-2 caption"
   >
     <v-col v-for="(item, index) in barItems" :key="index">
-      <v-icon>{{item.icon}}</v-icon>
+      <v-icon color="primary">{{item.icon}}</v-icon>
       <span class="text-truncate ml-1">{{item.label || "--"}}</span>
     </v-col>
     <v-col cols="2">
@@ -52,7 +52,7 @@ export default class extends Vue {
             },
             {
                 icon: "people",
-                label: studentInfo.rank + " 名"
+                label: studentInfo.rank || "-- " + " 名"
             }
         ];
     }

@@ -29,7 +29,18 @@
           ></v-text-field>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-show="loginType === 1">
+        <v-col col="12">
+          <v-text-field
+            validate-on-blur
+            v-model="password"
+            type="password"
+            :rules="[validatePassword]"
+            label="密码"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row v-show="loginType === 2">
         <v-col col="12" style="position:relative">
           <v-text-field v-model="validateCode" type="phone" label="验证码"></v-text-field>
           <v-btn
@@ -83,8 +94,9 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { SET_USER_LOGIN_STATE, UPDATE_USER_INFO } from "@/store/mutation-types";
+import { SET_USER_TOKEN, UPDATE_USER_INFO } from "@/store/mutation-types";
 import { UserInfo } from "@/store/use-state";
+import { AxiosResponse } from "axios";
 let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
@@ -93,6 +105,8 @@ export default class extends Vue {
     private phoneNumber: string = "";
     private validateCode: string = "";
     private remainTime: number = 0;
+    private password: string = "";
+    private loginType: 1 | 2 = 1;
     @withLoading()
     private async login() {
         const loginForm: any = this.$refs.loginForm;
@@ -101,28 +115,34 @@ export default class extends Vue {
             return;
         }
 
-        // await this.$http.post("/login", {
-        //     phoneNumber: this.phoneNumber,
-        //     validateCode: this.validateCode
-        // });
+        const { data } = await this.$http.post<ResponseModel<string>>(
+            "/api/Values/UserLogin",
+            null,
+            {
+                params: {
+                    mobile: this.phoneNumber,
+                    password: this.password,
+                    checkCode: this.validateCode,
+                    loginType: 1
+                }
+            }
+        );
 
-        await new Promise((reslove, reject) => {
-            setTimeout(() => {
-                reslove();
-            }, 2000);
-        });
+        const userToken = data.data;
 
-        const userInfo: UserInfo = {
-            userName: "zhaozhipeng",
-            nickName: "zzp",
-            phoneNumber: "183****4021"
-        };
-        this.$store.commit(SET_USER_LOGIN_STATE, true);
-        this.$store.commit(UPDATE_USER_INFO, userInfo);
-        localStorage.setItem("user_info", JSON.stringify(userInfo));
-        localStorage.setItem("expired_at", (+new Date() + 60 * 1000 * 10).toString());
-        const toPath = this.$route.query.redirect as string || "/home";
+        localStorage.setItem("user_token", userToken);
+
+        this.$store.commit(SET_USER_TOKEN, userToken);
+        // this.$store.commit(UPDATE_USER_INFO, userInfo);
+        localStorage.setItem(
+            "expired_at",
+            (+new Date() + 60 * 1000 * 60).toString()
+        );
+        const toPath = (this.$route.query.redirect as string) || "/home";
         this.$router.push(toPath);
+    }
+    private validatePassword(password: string) {
+        return password.trim().length >= 6 || "请输入至少6位密码";
     }
     private async getValidateCode() {
         clearInterval(remainTimeTimer);

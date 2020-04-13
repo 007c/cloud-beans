@@ -3,7 +3,7 @@ import store from "@/store";
 
 export default function(router: VueRouter) {
     router.beforeEach(function(to, from, next) {
-        const isLogin = store.state.userState.isLogin;
+        const isLogin = store.getters.isLogin;
 
         if (to.path === "/login" && isLogin) {
             next("/home");

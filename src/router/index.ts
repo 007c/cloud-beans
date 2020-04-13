@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig, Route } from 'vue-router';
 import installRouterGuards from './installRouterGuards';
+import CoreLayout from "@/components/CoreLayout.vue";
 
 Vue.use(VueRouter);
 
@@ -18,7 +19,7 @@ export const bottomMenus: Menu[] = [
   {
     icon: "class",
     name: "课堂",
-    path: "/class/:id?",
+    path: "/classes",
     component: () => import("../views/ClassView.vue")
   },
   {
@@ -59,7 +60,9 @@ export const mainMenus: Menu[] = [
 export const routes: RouteConfig[] = [
   {
     path: "/",
-    redirect: "/home"
+    redirect: "/home",
+    component: CoreLayout,
+    children: bottomMenus
   },
   {
     path: "/login",

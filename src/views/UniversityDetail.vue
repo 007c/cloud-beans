@@ -1,7 +1,7 @@
 <template>
   <v-container class="pt-0">
     <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
-      <v-row no-gutters>
+      <!-- <v-row no-gutters>
         <v-col cols="2">
           <v-btn @click="$router.go(-1)" icon color="primary">
             <v-icon>arrow_back</v-icon>
@@ -17,7 +17,8 @@
             <v-icon>{{!follwed ? 'favorite_border' : 'favorite'}}</v-icon>
           </v-btn>
         </v-col>
-      </v-row>
+      </v-row> -->
+      <header-bar :followed="followed" @follow="followUniversity" :title="universityName" with-follow></header-bar>
       <v-divider></v-divider>
     </div>
     <v-row>
@@ -81,7 +82,7 @@ import RecruitInfo from "./RecruitInfo.vue";
 export default class extends Vue {
     private universityName: string = "西南大学";
     private universityId!: number;
-    private follwed: boolean = false;
+    private followed: boolean = false;
 
     private universityLogo: string =
         "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585904564715&di=bfc1df6022e4a5c0bbf7240d76a430d3&imgtype=0&src=http%3A%2F%2Fimg.gaosan.com%2Fupload%2F2017-5%2F52ddc53c4b0cc.jpg";
@@ -97,7 +98,7 @@ export default class extends Vue {
     private async followUniversity() {
         await new Promise((resolve, reject) => {
             setTimeout(() => {
-                this.follwed = !this.follwed;
+                this.followed = !this.followed;
                 resolve();
             }, 1000);
         });

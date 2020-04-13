@@ -1,10 +1,11 @@
 import { Module } from "vuex";
-import { UPDATE_USER_INFO, SET_USER_LOGIN_STATE, UPDATE_STUDENT_INFO } from "./mutation-types";
+import { UPDATE_USER_INFO, SET_USER_TOKEN, UPDATE_STUDENT_INFO } from "./mutation-types";
 
 export interface UserState {
     userInfo: UserInfo;
     studentInfo: StudentInfo;
     isLogin: boolean;
+    token: string | undefined;
 }
 
 export interface StudentInfo {
@@ -29,7 +30,7 @@ export interface UserInfo {
 }
 
 const getIntialState = function(): UserState {
-    const userInfo = localStorage.getItem("user_info");
+    const userToken = localStorage.getItem("user_token");
     const expiredAt = localStorage.getItem("expired_at");
     const initialState: UserState = {
         userInfo: {
@@ -46,14 +47,14 @@ const getIntialState = function(): UserState {
             province: "",
             subject: null
         },
-        isLogin: false
+        isLogin: false,
+        token: ""
     }
-    if (!userInfo || new Date() > new Date(Number(expiredAt))) {
-        localStorage.removeItem("user_info");
+    if (!userToken || new Date() > new Date(Number(expiredAt))) {
+        localStorage.removeItem("user_token");
         localStorage.removeItem("expired_at");
     } else {
-        initialState.userInfo = JSON.parse(userInfo!);
-        initialState.isLogin = true;
+        initialState.token = userToken;
     }
     return initialState;
 }
@@ -68,14 +69,20 @@ const userState: Module<UserState, any> = {
                 userInfo[key] = payload[key] as never;
             }
         },
-        [SET_USER_LOGIN_STATE](state, isLogin: boolean) {
-            state.isLogin = isLogin;
-        },
         [UPDATE_STUDENT_INFO]({ studentInfo }, payload: StudentInfo) {
             const keys = (Object.keys(payload) as Array<keyof StudentInfo>);
             for (const key of keys) {
                 studentInfo[key] = payload[key] as never;
             }
+        },
+        [SET_USER_TOKEN](state, token: string) {
+            state.token = token;
+        }
+    },
+
+    getters: {
+        isLogin(state): boolean {
+            return state.token !== "";
         }
     }
 }

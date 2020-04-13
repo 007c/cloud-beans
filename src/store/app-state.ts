@@ -3,7 +3,8 @@ import {
     INCREMENT_REQUEST_COUNT,
     REDUCE_REQUEST_COUNT,
     UPDATE_APP_ERROR_MESSAGE,
-    SET_WX_SHARE_CONFIG
+    SET_WX_SHARE_CONFIG,
+    APP_ERROR_MESSAGE_STATUS
 } from "./mutation-types"
 
 export interface WxShareConfig {
@@ -53,6 +54,9 @@ const appState: Module<AppState, any> = {
                 ...state.wxShareConfig,
                 ...payload
             }
+        },
+        [APP_ERROR_MESSAGE_STATUS](state, status: boolean) {
+            state.shouldShowErrorMsg = status;
         }
     },
     getters: {

@@ -1,7 +1,7 @@
 <template>
   <v-container class="pt-0">
     <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
-      <v-row no-gutters>
+      <!-- <v-row no-gutters>
         <v-col cols="2">
           <v-btn @click="$router.go(-1)" icon color="primary">
             <v-icon>arrow_back</v-icon>
@@ -15,7 +15,8 @@
             <v-icon>{{!follwed ? 'favorite_border' : 'favorite'}}</v-icon>
           </v-btn>
         </v-col>
-      </v-row>
+      </v-row>-->
+      <header-bar @follow="followMajor" :followed="followed" :title="majorName" with-follow></header-bar>
       <v-divider></v-divider>
     </div>
     <v-row>
@@ -185,7 +186,7 @@ interface ListItem {
 export default class extends Vue {
     private majorName: string = "经济学";
     private majorId!: number;
-    private follwed: boolean = false;
+    private followed: boolean = false;
 
     private majorLogo: string = "";
 
@@ -244,10 +245,10 @@ export default class extends Vue {
     }
 
     @withLoading()
-    private async followUniversity() {
+    private async followMajor() {
         await new Promise((resolve, reject) => {
             setTimeout(() => {
-                this.follwed = !this.follwed;
+                this.followed = !this.followed;
                 resolve();
             }, 1000);
         });

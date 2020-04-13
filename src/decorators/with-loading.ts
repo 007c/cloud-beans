@@ -14,7 +14,7 @@ export function withLoading() {
                     return await method.apply(this, arguments);
                 } catch (ex) {
                     // handle Errors;
-                    store.commit(UPDATE_APP_ERROR_MESSAGE);
+                    throw ex;
                 } finally {
                     store.commit(REDUCE_REQUEST_COUNT)
                 }

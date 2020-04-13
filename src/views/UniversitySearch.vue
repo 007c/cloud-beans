@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row no-gutters>
+    <!-- <v-row no-gutters>
       <v-col cols="2">
         <v-btn @click="$router.go(-1)" icon color="primary">
           <v-icon>arrow_back</v-icon>
@@ -10,7 +10,8 @@
         <h1 class="primary--text subtitle-1 text-center font-weight-bold">院校查询</h1>
       </v-col>
       <v-col cols="2"></v-col>
-    </v-row>
+    </v-row> -->
+    <header-bar title="院校查询"></header-bar>
     <v-divider></v-divider>
     <v-row>
       <v-col class="pl-6 pr-6">

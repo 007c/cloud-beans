@@ -20,6 +20,7 @@
     "no-string-literal": false,
     "no-var-requires": false,
     "no-unused-expression": [true, "allow-fast-null-checks"],
-    "only-arrow-functions": [false, "allow-declarations", "allow-named-functions"]
+    "only-arrow-functions": [false, "allow-declarations", "allow-named-functions"],
+    "space-before-function-paren": false
   }
 }

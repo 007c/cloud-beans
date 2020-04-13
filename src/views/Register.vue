@@ -118,16 +118,14 @@ export default class extends Vue {
             return;
         }
 
-        // await this.$http.post("/login", {
-        //     phoneNumber: this.phoneNumber,
-        //     validateCode: this.validateCode
-        // });
-
-        await new Promise((reslove, reject) => {
-            setTimeout(() => {
-                reslove();
-            }, 2000);
+        await this.$http.post("/api/Users/RegisterUser", null, {
+            params: {
+                mobile: this.phoneNumber,
+                password: this.password,
+                checkCode: this.validateCode
+            }
         });
+
         this.$router.push("/login");
     }
     private async getValidateCode() {

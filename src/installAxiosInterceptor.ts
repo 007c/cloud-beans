@@ -21,23 +21,24 @@ export default function (axios: AxiosStatic) {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
         const data: ResponseModel<any> = response.data;
-
-        if (data.msg) {
-            store.commit(UPDATE_APP_ERROR_MESSAGE, data.msg);
-        }
-
         if (data.state !== 0) {
-            localStorage.removeItem("user_token");
-            store.commit(SET_USER_TOKEN, "");
-            router.push("/login");
-            store.commit(UPDATE_APP_ERROR_MESSAGE, "您的登录已过期，请重新登录!")
-            store.commit(APP_ERROR_MESSAGE_STATUS, true);
+            store.commit(UPDATE_APP_ERROR_MESSAGE, data.msg);
+            setTimeout(() => {
+                store.commit(APP_ERROR_MESSAGE_STATUS, false);
+            }, 5000)
+            return Promise.reject({
+                response,
+                message: data.msg
+            });
         }
-
         return response;
     }, function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
+        const { response: { config } } = error;
+
+        store.commit(UPDATE_APP_ERROR_MESSAGE, `${config.url}<br> ${error.message}`);
+        console.log(error)
         return Promise.reject(error);
     });
 }

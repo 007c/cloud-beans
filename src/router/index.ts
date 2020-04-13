@@ -96,12 +96,27 @@ export const routes: RouteConfig[] = [
     meta: {
       requireLogin: true
     }
+  },
+  {
+    path: "/class/:id",
+    component: () => import("../views/ClassDetail.vue")
+  },
+  {
+    path: "/prompt/:id?",
+    component: () => import("../views/Prompt.vue")
   }
 ];
 
 
 const router = new VueRouter({
   routes: [...routes, ...bottomMenus, ...mainMenus],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 });
 
 installRouterGuards(router);

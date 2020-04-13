@@ -42,7 +42,13 @@
       </v-row>
       <v-row v-show="loginType === 2">
         <v-col col="12" style="position:relative">
-          <v-text-field v-model="validateCode" type="phone" label="验证码"></v-text-field>
+          <v-text-field
+            v-model="validateCode"
+            type="phone"
+            label="验证码"
+            validate-on-blur
+            :rules="[validateCheckCode]"
+          ></v-text-field>
           <v-btn
             :disabled="remainTime !== 0"
             class="mt-2"
@@ -58,6 +64,10 @@
             <span v-if="remainTime !== 0">{{remainTime}}S后获取</span>
           </v-btn>
         </v-col>
+      </v-row>
+      <v-row class="justify-end mt-n6" no-gutters>
+        <v-btn v-if="loginType===1" @click="loginType=2" text color="primary">验证码登录</v-btn>
+        <v-btn v-if="loginType===2" @click="loginType=1" text color="primary">密码登录</v-btn>
       </v-row>
       <v-row>
         <v-col>
@@ -106,6 +116,7 @@ export default class extends Vue {
     private validateCode: string = "";
     private remainTime: number = 0;
     private password: string = "";
+    // 用户登录【可用】 1手机号+密码(可用) 2手机号+验证码登录
     private loginType: 1 | 2 = 1;
     @withLoading()
     private async login() {
@@ -123,7 +134,7 @@ export default class extends Vue {
                     mobile: this.phoneNumber,
                     password: this.password,
                     checkCode: this.validateCode,
-                    loginType: 1
+                    loginType: this.loginType
                 }
             }
         );
@@ -142,8 +153,20 @@ export default class extends Vue {
         this.$router.push(toPath);
     }
     private validatePassword(password: string) {
+        if (this.loginType === 2) {
+            return true;
+        }
         return password.trim().length >= 6 || "请输入至少6位密码";
     }
+
+    private validateCheckCode(code: string) {
+        if (this.loginType === 1) {
+            return true;
+        }
+
+        return code.trim() !== "" || "请输入验证码";
+    }
+
     private async getValidateCode() {
         clearInterval(remainTimeTimer);
         // await this.$http.get('/validateCode');

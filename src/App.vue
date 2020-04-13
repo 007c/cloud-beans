@@ -38,8 +38,8 @@ p {
     <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
       <v-progress-circular indeterminate color="primary" class="mb-0"></v-progress-circular>
     </div>
-    <v-snackbar :value="shouldShowAppErrorMsg">
-      {{ appErrorMsg }}
+    <v-snackbar :timeout="0" :value="shouldShowAppErrorMsg">
+      <span v-html="appErrorMsg"></span>
       <v-btn color="pink" text @click="closeErrorMsg" icon>
           <v-icon>close</v-icon>
       </v-btn>

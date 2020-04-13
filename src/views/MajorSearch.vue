@@ -6,7 +6,22 @@
 
 <template>
   <v-container style="height:100%">
-    <v-tabs grow class="pl-4 pr-4" v-model="tabIndex">
+    <header-bar title="专业查询"></header-bar>
+    <v-divider></v-divider>
+    <v-row>
+      <v-col class="pl-6 pr-6">
+        <v-text-field
+          height="15px"
+          hide-details
+          dense
+          outlined
+          append-icon="search"
+          placeholder="请输入专业名称"
+          v-model="majorName"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-tabs grow v-model="tabIndex">
       <v-tab v-for="name in tabs" :key="name">{{name}}</v-tab>
     </v-tabs>
     <v-divider></v-divider>
@@ -55,6 +70,7 @@ interface TreeView {
     name: "MajorSearch"
 })
 export default class extends Vue {
+    private majorName: string = "";
     private itemIndex: number = 0;
     private majors: string[] = ["经济学", "数学", "计算机科学", "贸易学"];
     private tabs: string[] = ["本科", "专科"];
@@ -83,7 +99,7 @@ export default class extends Vue {
     private tabIndex = 0;
 
     private onTreeActive([params]: TreeView[]) {
-        this.$router.push(`/major/detail/${params.id}`)
+        this.$router.push(`/major/detail/${params.id}`);
     }
 }
 </script>

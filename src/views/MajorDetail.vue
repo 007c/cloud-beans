@@ -119,7 +119,7 @@
         </v-row>
         <v-list two-line class="mt-2">
           <v-list-item v-for="item in listData" :key="item.id" class="mb-2 pa-0">
-            <v-card width="100%" class="pd-2 pt-2 pl-2 row no-gutters">
+            <v-card width="100%" class="pd-2 pt-2 pl-2 row no-gutters d-flex">
               <div class="col-4 pt-0 pb-0 justify-center d-flex flex-column align-center">
                 <v-list-item-avatar color="secondary" class="mb-2" size="60">
                   <v-img :src="item.logo" v-if="item.logo"></v-img>
@@ -136,7 +136,7 @@
                   <span>{{item.university}}</span>
                 </v-tooltip>
               </div>
-              <v-list-item-content class="pa-0">
+              <v-list-item-content class="pa-0 col-8">
                 <v-simple-table class="pa-0 text-center">
                   <template v-slot:default>
                     <thead>

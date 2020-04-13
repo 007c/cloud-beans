@@ -1,7 +1,7 @@
 import { AxiosStatic } from 'axios';
 import router from "@/router";
 import store from "@/store";
-import { SET_USER_TOKEN, UPDATE_APP_ERROR_MESSAGE, APP_ERROR_MESSAGE_STATUS } from './store/mutation-types';
+import { SET_USER_TOKEN, UPDATE_APP_MESSAGE, APP_ERROR_MESSAGE_STATUS } from './store/mutation-types';
 
 
 export default function (axios: AxiosStatic) {
@@ -22,14 +22,11 @@ export default function (axios: AxiosStatic) {
         // Do something with response data
         const data: ResponseModel<any> = response.data;
         if (data.state !== 0) {
-            store.commit(UPDATE_APP_ERROR_MESSAGE, data.msg);
+            store.commit(UPDATE_APP_MESSAGE, data.msg);
             setTimeout(() => {
                 store.commit(APP_ERROR_MESSAGE_STATUS, false);
             }, 5000)
-            return Promise.reject({
-                response,
-                message: data.msg
-            });
+            return Promise.reject(data);
         }
         return response;
     }, function (error) {
@@ -37,7 +34,13 @@ export default function (axios: AxiosStatic) {
         // Do something with response error
         const { response: { config } } = error;
 
-        store.commit(UPDATE_APP_ERROR_MESSAGE, `${config.url}<br> ${error.message}`);
+        store.commit(UPDATE_APP_MESSAGE, {
+            msg: `${config.url}<br> ${error.message}`,
+            position: "bottom",
+            type: "",
+            timeout: 0,
+            debug: true
+        });
         console.log(error)
         return Promise.reject(error);
     });

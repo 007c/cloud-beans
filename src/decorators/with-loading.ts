@@ -2,7 +2,6 @@ import store from "@/store";
 import {
     INCREMENT_REQUEST_COUNT,
     REDUCE_REQUEST_COUNT,
-    UPDATE_APP_ERROR_MESSAGE
 } from "@/store/mutation-types";
 export function withLoading() {
     return function handler(target: any, propertyName: string, descriptor: PropertyDescriptor) {

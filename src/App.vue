@@ -38,10 +38,18 @@ p {
     <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
       <v-progress-circular indeterminate color="primary" class="mb-0"></v-progress-circular>
     </div>
-    <v-snackbar :timeout="0" :value="shouldShowAppErrorMsg">
-      <span v-html="appErrorMsg"></span>
-      <v-btn color="pink" text @click="closeErrorMsg" icon>
-          <v-icon>close</v-icon>
+    <v-snackbar
+      :right="appErrorMsg.position==='right'"
+      :top="appErrorMsg.position==='top'"
+      :left="appErrorMsg.position==='left'"
+      :bottom="appErrorMsg.position==='bottom'"
+      :color="appErrorMsg.color"
+      :timeout="0"
+      :value="shouldShowAppErrorMsg"
+    >
+      <span v-html="appErrorMsg.msg"></span>
+      <v-btn color="white" text @click="closeErrorMsg" icon>
+        <v-icon>close</v-icon>
       </v-btn>
     </v-snackbar>
   </v-app>
@@ -49,11 +57,14 @@ p {
 
 <script lang="ts">
 import Vue from "vue";
-import { AppState, WxShareConfig } from "@/store/app-state";
+import { AppState, WxShareConfig, MessageInfo } from "@/store/app-state";
 import crypto from "crypto-js";
 import { AxiosResponse } from "axios";
 import eventBus from "./event-bus";
-import { SET_WX_SHARE_CONFIG, APP_ERROR_MESSAGE_STATUS } from "@/store/mutation-types";
+import {
+    SET_WX_SHARE_CONFIG,
+    APP_ERROR_MESSAGE_STATUS
+} from "@/store/mutation-types";
 export default Vue.extend({
     name: "App",
 
@@ -74,13 +85,13 @@ export default Vue.extend({
         shouldShowAppErrorMsg() {
             return this.$store.state.appState.shouldShowErrorMsg;
         },
-        appErrorMsg() {
+        appErrorMsg(): MessageInfo {
             return this.$store.state.appState.appErrorMsg;
         }
     },
     methods: {
         closeErrorMsg() {
-            this.$store.commit(APP_ERROR_MESSAGE_STATUS, false)
+            this.$store.commit(APP_ERROR_MESSAGE_STATUS, false);
         },
         async getWxAccessToken() {
             const rsp: AxiosResponse<{

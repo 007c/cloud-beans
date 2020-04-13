@@ -2,7 +2,7 @@ import { Module } from "vuex";
 import {
     INCREMENT_REQUEST_COUNT,
     REDUCE_REQUEST_COUNT,
-    UPDATE_APP_ERROR_MESSAGE,
+    UPDATE_APP_MESSAGE,
     SET_WX_SHARE_CONFIG,
     APP_ERROR_MESSAGE_STATUS
 } from "./mutation-types"
@@ -17,16 +17,32 @@ export interface WxShareConfig {
 export interface AppState {
     pendingRequest: number;
     mode: string;
-    appErrorMsg: string;
+    appErrorMsg: MessageInfo;
     shouldShowErrorMsg: boolean;
     wxShareConfig: WxShareConfig
 }
+
+export interface MessageInfo {
+    color: string;
+    timeout: number;
+    msg: string;
+    position: "top" | "left" | "right" | "bottom",
+    // only show in debug mode;
+    debug?: boolean;
+}
+
+let timerId: number | undefined;
 
 const appState: Module<AppState, any> = {
     state: {
         pendingRequest: 0,
         mode: process.env.NODE_ENV,
-        appErrorMsg: '',
+        appErrorMsg: {
+            color: "",
+            timeout: 0,
+            msg: "",
+            position: "bottom"
+        },
         shouldShowErrorMsg: false,
         wxShareConfig: {
             appId: 'wx922d0b00cb4edb33',
@@ -43,10 +59,15 @@ const appState: Module<AppState, any> = {
         [REDUCE_REQUEST_COUNT](state) {
             state.pendingRequest -= 1;
         },
-        [UPDATE_APP_ERROR_MESSAGE](state, msg: string) {
-            state.appErrorMsg = msg;
-            if (state.mode !== "production") {
-                state.shouldShowErrorMsg = true;
+        [UPDATE_APP_MESSAGE](state, payload: MessageInfo) {
+            const { timeout, debug } = payload
+            state.appErrorMsg = payload;
+            !debug && (state.shouldShowErrorMsg = true)
+            if (timeout > 0) {
+                clearTimeout(timerId);
+                timerId = setTimeout(() => {
+                    state.shouldShowErrorMsg = false;
+                }, timeout);
             }
         },
         [SET_WX_SHARE_CONFIG](state, payload: { timeStamp: number, nonceStr: string, signature: string }) {

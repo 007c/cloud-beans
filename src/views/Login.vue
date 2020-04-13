@@ -104,7 +104,7 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { SET_USER_TOKEN, UPDATE_USER_INFO } from "@/store/mutation-types";
+import { SET_USER_TOKEN, UPDATE_USER_INFO, UPDATE_APP_MESSAGE } from "@/store/mutation-types";
 import { UserInfo } from "@/store/use-state";
 import { AxiosResponse } from "axios";
 let remainTimeTimer: number | undefined;
@@ -126,31 +126,40 @@ export default class extends Vue {
             return;
         }
 
-        const { data } = await this.$http.post<ResponseModel<string>>(
-            "/api/Values/UserLogin",
-            null,
-            {
-                params: {
-                    mobile: this.phoneNumber,
-                    password: this.password,
-                    checkCode: this.validateCode,
-                    loginType: this.loginType
+        try {
+            const { data } = await this.$http.post<ResponseModel<string>>(
+                "/api/Values/UserLogin",
+                null,
+                {
+                    params: {
+                        mobile: this.phoneNumber,
+                        password: this.password,
+                        checkCode: this.validateCode,
+                        loginType: this.loginType
+                    }
                 }
-            }
-        );
+            );
 
-        const userToken = data.data;
+            const userToken = data.data;
 
-        localStorage.setItem("user_token", userToken);
+            localStorage.setItem("user_token", userToken);
 
-        this.$store.commit(SET_USER_TOKEN, userToken);
-        // this.$store.commit(UPDATE_USER_INFO, userInfo);
-        localStorage.setItem(
-            "expired_at",
-            (+new Date() + 60 * 1000 * 60).toString()
-        );
-        const toPath = (this.$route.query.redirect as string) || "/home";
-        this.$router.push(toPath);
+            this.$store.commit(SET_USER_TOKEN, userToken);
+            // this.$store.commit(UPDATE_USER_INFO, userInfo);
+            localStorage.setItem(
+                "expired_at",
+                (+new Date() + 60 * 1000 * 60).toString()
+            );
+            const toPath = (this.$route.query.redirect as string) || "/home";
+            this.$router.push(toPath);
+        } catch (ex) {
+            this.$store.commit(UPDATE_APP_MESSAGE, {
+              msg: "账号或密码错误，请检查！",
+              timeout: 5000,
+              color: "info",
+              position: "top"
+            });
+        }
     }
     private validatePassword(password: string) {
         if (this.loginType === 2) {

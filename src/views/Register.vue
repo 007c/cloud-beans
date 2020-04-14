@@ -53,9 +53,16 @@
       </v-row>
       <v-row>
         <v-col col="12" style="position:relative">
-          <v-text-field v-model="validateCode" type="phone" label="验证码"></v-text-field>
+          <v-text-field
+            validate-on-blur
+            :rules="[validateCheckCode]"
+            v-model="validateCode"
+            type="phone"
+            label="验证码"
+            :hint="hintText"
+          ></v-text-field>
           <v-btn
-            :disabled="remainTime !== 0"
+            :disabled="remainTime !== 0 || !isPhoneNumber(phoneNumber)"
             class="mt-2"
             absolute
             small
@@ -100,6 +107,7 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
+import { UPDATE_APP_MESSAGE } from "../store/mutation-types";
 let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
@@ -110,6 +118,8 @@ export default class extends Vue {
     private remainTime: number = 0;
     private password: string = "";
     private repeatPassword: string = "";
+    private validateCodeNum: string = "";
+    private hintText: string = "请先获取验证码"
     @withLoading()
     private async register() {
         const loginForm: any = this.$refs.registerForm;
@@ -118,17 +128,46 @@ export default class extends Vue {
             return;
         }
 
-        await this.$http.post("/api/Users/RegisterUser", null, {
-            params: {
+        try {
+            await this.$http.post("/api/Users/RegisterByPwd", {
                 mobile: this.phoneNumber,
-                password: this.password,
-                checkCode: this.validateCode
-            }
-        });
+                pwd: this.password,
+                checkCode: this.validateCode,
+                num: parseInt(this.validateCodeNum, 10)
+            });
 
-        this.$router.push("/login");
+            this.$router.push("/login");
+        } catch (ex) {
+            const { data } = ex.response;
+            if (data) {
+                this.$store.commit(UPDATE_APP_MESSAGE, {
+                    msg: ex.message,
+                    position: "top",
+                    color: "",
+                    timeout: 3000
+                });
+            }
+        }
     }
+
+    private validateCheckCode(code: string) {
+        return code.trim() !== "" || "请输入验证码";
+    }
+
     private async getValidateCode() {
+        const { data } = await this.$http.get<ResponseModel<string>>(
+            "/api/Users/GetRegisterCheckCode",
+            {
+                params: {
+                    mobile: this.phoneNumber
+                }
+            }
+        );
+
+        this.validateCodeNum = data.data;
+
+        this.hintText = `请输入序号为【${data.data}】的验证码`;
+
         clearInterval(remainTimeTimer);
         // await this.$http.get('/validateCode');
         this.remainTime = 60;
@@ -140,8 +179,13 @@ export default class extends Vue {
             }
         }, 1000);
     }
+
+    private isPhoneNumber(phoneNumber: string) {
+        return /^1[3456789]\d{9}$/.test(phoneNumber);
+    }
+
     private validatePhoneNumber(phoneNumber: string) {
-        return /^1[3456789]\d{9}$/.test(phoneNumber) || "请输入正确的手机号码";
+        return this.isPhoneNumber(phoneNumber) || "请输入正确的手机号码";
     }
 
     private validatePassword(password: string) {

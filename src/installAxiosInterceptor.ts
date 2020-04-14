@@ -1,8 +1,19 @@
 import { AxiosStatic } from 'axios';
 import router from "@/router";
 import store from "@/store";
-import { SET_USER_TOKEN, UPDATE_APP_MESSAGE, APP_ERROR_MESSAGE_STATUS } from './store/mutation-types';
+import { UPDATE_APP_MESSAGE } from './store/mutation-types';
 
+const showDebugErrorMsg = function (error: any) {
+    const { response: { config } } = error;
+
+    store.commit(UPDATE_APP_MESSAGE, {
+        msg: `${config.url}<br> ${error.message}`,
+        position: "bottom",
+        type: "",
+        timeout: 0,
+        debug: true
+    });
+}
 
 export default function (axios: AxiosStatic) {
     // Add a request interceptor
@@ -22,26 +33,20 @@ export default function (axios: AxiosStatic) {
         // Do something with response data
         const data: ResponseModel<any> = response.data;
         if (data.state !== 0) {
-            store.commit(UPDATE_APP_MESSAGE, data.msg);
-            setTimeout(() => {
-                store.commit(APP_ERROR_MESSAGE_STATUS, false);
-            }, 5000)
-            return Promise.reject(data);
+            const error = { response, message: data.msg, data };
+            showDebugErrorMsg(error);
+            return Promise.reject(error);
         }
         return response;
     }, function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        const { response: { config } } = error;
+        showDebugErrorMsg(error);
 
-        store.commit(UPDATE_APP_MESSAGE, {
-            msg: `${config.url}<br> ${error.message}`,
-            position: "bottom",
-            type: "",
-            timeout: 0,
-            debug: true
-        });
-        console.log(error)
+        if (error.response.status === 401) {
+            router.push('/login')
+        }
+
         return Promise.reject(error);
     });
 }

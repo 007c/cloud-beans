@@ -31,7 +31,7 @@ export default class extends Vue {
 
     private classItem!: ClassItem;
 
-    created() {
+    private created() {
         const articleId = parseInt(this.$route.params.id, 10);
         this.classItem = classes[articleId];
         this.articleId = articleId;

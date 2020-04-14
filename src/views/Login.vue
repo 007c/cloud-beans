@@ -46,6 +46,7 @@
             v-model="validateCode"
             type="phone"
             label="验证码"
+            :hint="hintText"
             validate-on-blur
             :rules="[validateCheckCode]"
           ></v-text-field>
@@ -104,7 +105,11 @@ interface Data {
 
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { SET_USER_TOKEN, UPDATE_USER_INFO, UPDATE_APP_MESSAGE } from "@/store/mutation-types";
+import {
+    SET_USER_TOKEN,
+    UPDATE_USER_INFO,
+    UPDATE_APP_MESSAGE
+} from "@/store/mutation-types";
 import { UserInfo } from "@/store/use-state";
 import { AxiosResponse } from "axios";
 let remainTimeTimer: number | undefined;
@@ -116,6 +121,7 @@ export default class extends Vue {
     private validateCode: string = "";
     private remainTime: number = 0;
     private password: string = "";
+    private hintText: string = "请先获取验证码"
     // 用户登录【可用】 1手机号+密码(可用) 2手机号+验证码登录
     private loginType: 1 | 2 = 1;
     @withLoading()
@@ -127,19 +133,16 @@ export default class extends Vue {
         }
 
         try {
-            const { data } = await this.$http.post<ResponseModel<string>>(
-                "/api/Values/UserLogin",
-                null,
-                {
-                    params: {
-                        mobile: this.phoneNumber,
-                        password: this.password,
-                        checkCode: this.validateCode,
-                        loginType: this.loginType
-                    }
-                }
-            );
+            let rspData: AxiosResponse<ResponseModel<string>>;
 
+            // { data } = await this.loginByPassword();
+            if (this.loginType === 1) {
+                rspData = await this.loginByPassword();
+            } else {
+                rspData = await this.loginByValidateCode();
+            }
+
+            const { data } = rspData;
             const userToken = data.data;
 
             localStorage.setItem("user_token", userToken);
@@ -154,13 +157,34 @@ export default class extends Vue {
             this.$router.push(toPath);
         } catch (ex) {
             this.$store.commit(UPDATE_APP_MESSAGE, {
-              msg: "账号或密码错误，请检查！",
-              timeout: 5000,
-              color: "info",
-              position: "top"
+                msg: "账号或密码错误，请检查！",
+                timeout: 5000,
+                color: "info",
+                position: "top"
             });
         }
     }
+
+    private async loginByValidateCode() {
+        return this.$http.post<ResponseModel<string>>(
+            "/api/Values/LoginByPwd",
+            {
+                mobile: this.phoneNumber,
+                checkCode: this.validateCheckCode,
+            }
+        )
+    }
+
+    private async loginByPassword() {
+        return this.$http.post<ResponseModel<string>>(
+            "/api/Values/LoginByPwd",
+            {
+                mobile: this.phoneNumber,
+                pwd: this.password,
+            }
+        );
+    }
+
     private validatePassword(password: string) {
         if (this.loginType === 2) {
             return true;

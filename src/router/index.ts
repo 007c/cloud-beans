@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig, Route } from 'vue-router';
 import installRouterGuards from './installRouterGuards';
 import CoreLayout from "@/components/CoreLayout.vue";
+import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
 
@@ -14,7 +15,7 @@ export const bottomMenus: Menu[] = [
     icon: "home",
     path: '/home',
     name: '首页',
-    component: () => import("../views/Home.vue"),
+    component: Home,
   },
   {
     icon: "class",

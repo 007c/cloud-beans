@@ -62,7 +62,9 @@ const appState: Module<AppState, any> = {
         [UPDATE_APP_MESSAGE](state, payload: MessageInfo) {
             const { timeout, debug } = payload
             state.appErrorMsg = payload;
-            !debug && (state.shouldShowErrorMsg = true)
+            if (debug && process.env.NODE_ENV !== "production") {
+                state.shouldShowErrorMsg = true;
+            }
             if (timeout > 0) {
                 clearTimeout(timerId);
                 timerId = setTimeout(() => {

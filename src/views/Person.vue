@@ -29,7 +29,7 @@
 
     <v-list>
       <template v-for="(menu, index) in menuList">
-        <v-list-item :key="menu.path">
+        <v-list-item :key="menu.path" class="pl-0">
           <v-list-item-avatar>
             <v-icon>{{menu.icon}}</v-icon>
           </v-list-item-avatar>

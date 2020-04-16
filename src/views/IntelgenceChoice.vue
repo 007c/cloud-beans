@@ -64,7 +64,7 @@
           item-value="value"
         ></v-select>
       </v-col>
-      <v-col>
+      <v-col cols="12">
         <v-select
           class="caption"
           hide-details
@@ -128,7 +128,7 @@ interface ListItem {
         studentInfoBar
     },
     computed: {
-        ...mapGetters(["universityTypes", "universityLevels", "universityTags"])
+        ...mapGetters(["universityTypes", "universityLevels", "universityTags", "areaList"])
     }
 })
 export default class extends Vue {
@@ -159,23 +159,6 @@ export default class extends Vue {
     private universityTag = 0;
 
     private listData: ListItem[] = [];
-
-    private areaList: AreaTree[] = [
-        {
-            label: "四川",
-            value: 1,
-            children: [
-                {
-                    label: "成都",
-                    value: 2
-                },
-                {
-                    label: "绵阳",
-                    value: 3
-                }
-            ]
-        }
-    ];
 
     private created() {
         this.getListData();

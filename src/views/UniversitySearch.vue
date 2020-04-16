@@ -86,7 +86,19 @@
           v-model="universityTag"
           item-value="value"
           @change="searchList"
-        ></v-select>
+        >
+          <template v-slot:prepend-item>
+            <v-list-item ripple @click="toggle">
+              <v-list-item-action>
+                <v-icon :color="isAllTagsSelected ? 'primary' : ''">{{ icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>全选</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+          </template>
+        </v-select>
       </v-col>
     </v-row>
     <v-list>
@@ -133,12 +145,7 @@ const findTreePath = function(tree: AreaTree[], nodeValue: number) {
         UniversityRow
     },
     computed: {
-        ...mapGetters([
-            "universityTypes",
-            "universityLevels",
-            "universityTags",
-            "areaList"
-        ])
+        ...mapGetters(["universityTypes", "universityLevels", "areaList"])
     }
 })
 export default class extends Vue {
@@ -153,7 +160,7 @@ export default class extends Vue {
 
     private universityLevel = 0;
 
-    private universityTag = [0];
+    private universityTag: number[] = [];
 
     private listData: ListItem[] = [];
 
@@ -162,6 +169,16 @@ export default class extends Vue {
     private pageSize: number = 10;
 
     private shoudShowNoDataTip = false;
+
+    get universityTags(): Array<SelectOption<number>> {
+        return this.$store.getters.universityTags;
+    }
+
+    get icon() {
+        if (this.isAllTagsSelected) return "check_box";
+        // if (this.universityTag.length > 0) return "indeterminate_check_box";
+        return "check_box_outline_blank";
+    }
 
     private created() {
         this.getListData();
@@ -190,6 +207,20 @@ export default class extends Vue {
         this.defaultValue = res.map((item) => item.value);
         this.areaText = res.map((item) => item.label).join("");
         this.searchList();
+    }
+
+    private toggle() {
+        if (this.isAllTagsSelected) {
+            this.universityTag = [];
+        } else {
+            this.universityTag = this.universityTags.map((item) => item.value);
+        }
+
+        this.searchList();
+    }
+
+    get isAllTagsSelected() {
+        return this.universityTag.length === this.universityTags.length;
     }
 
     @withLoading()

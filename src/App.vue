@@ -200,6 +200,7 @@ export default Vue.extend({
             const rsp: AxiosResponse<ResponseModel<
                 DataModel[]
             >> = await this.$http.get("/api/CommTypes/CommTypes5");
+            rsp.data.data.shift();
             this.$store.commit(SET_UNIVERSITY_TAGS, rsp.data.data);
         },
         async getUniversityTypes() {

@@ -4,7 +4,8 @@ import {
     REDUCE_REQUEST_COUNT,
     UPDATE_APP_MESSAGE,
     SET_WX_SHARE_CONFIG,
-    APP_ERROR_MESSAGE_STATUS
+    APP_ERROR_MESSAGE_STATUS,
+    SET_APP_LOGIN_GUIDE_STATUS
 } from "./mutation-types"
 
 export interface WxShareConfig {
@@ -19,7 +20,8 @@ export interface AppState {
     mode: string;
     appErrorMsg: MessageInfo;
     shouldShowErrorMsg: boolean;
-    wxShareConfig: WxShareConfig
+    wxShareConfig: WxShareConfig;
+    shouldShowLoginGuide: boolean;
 }
 
 export interface MessageInfo {
@@ -36,6 +38,7 @@ let timerId: number | undefined;
 const appState: Module<AppState, any> = {
     state: {
         pendingRequest: 0,
+        shouldShowLoginGuide: false,
         mode: process.env.NODE_ENV,
         appErrorMsg: {
             color: "",
@@ -62,8 +65,9 @@ const appState: Module<AppState, any> = {
         [UPDATE_APP_MESSAGE](state, payload: MessageInfo) {
             const { timeout, debug } = payload
             state.appErrorMsg = payload;
-            if (debug && process.env.NODE_ENV !== "production") {
-                state.shouldShowErrorMsg = true;
+            state.shouldShowErrorMsg = true;
+            if (debug && process.env.NODE_ENV === "production") {
+                state.shouldShowErrorMsg = false;
             }
             if (timeout > 0) {
                 clearTimeout(timerId);
@@ -80,6 +84,9 @@ const appState: Module<AppState, any> = {
         },
         [APP_ERROR_MESSAGE_STATUS](state, status: boolean) {
             state.shouldShowErrorMsg = status;
+        },
+        [SET_APP_LOGIN_GUIDE_STATUS](state, status: boolean) {
+            state.shouldShowLoginGuide = status;
         }
     },
     getters: {

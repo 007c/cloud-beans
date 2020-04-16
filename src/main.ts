@@ -7,7 +7,8 @@ import VueAxios from "vue-axios";
 import axios from "axios";
 import "@/components";
 import installAxiosInterceptor from './installAxiosInterceptor';
-const VuePickerMobile = require('vue-picker-mobile')
+import "./installBottomScrollUpEvents";
+const VuePickerMobile = require('@/package');
 
 
 Vue.config.productionTip = false;

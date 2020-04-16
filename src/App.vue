@@ -52,6 +52,19 @@ p {
         <v-icon>close</v-icon>
       </v-btn>
     </v-snackbar>
+    <v-dialog :value="shouldShowLoginGuide">
+      <v-card>
+        <v-card-title class="subtitle-1 lighten-2">登录提示</v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text class="pt-2">该功能需要登录后才能查看，您还未登录！</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="resloveLogin" text>去登陆</v-btn>
+          <v-btn color="secondary" @click="cancelLogin" text>取消</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -59,12 +72,24 @@ p {
 import Vue from "vue";
 import { AppState, WxShareConfig, MessageInfo } from "@/store/app-state";
 import crypto from "crypto-js";
-import { AxiosResponse } from "axios";
+import Axios, { AxiosResponse } from "axios";
 import eventBus from "./event-bus";
 import {
     SET_WX_SHARE_CONFIG,
-    APP_ERROR_MESSAGE_STATUS
+    APP_ERROR_MESSAGE_STATUS,
+    SET_APP_LOGIN_GUIDE_STATUS,
+    SET_UNIVERSITY_TAGS,
+    SET_UNIVERSITY_TYPES,
+    SET_UNIVERSITY_LEVELS,
+    SET_AREE_TREE
 } from "@/store/mutation-types";
+import { getReslover, getRejecter } from "@/loginGuideController";
+import { DataModel } from "./store/cache-data";
+interface TreeData {
+    text: string;
+    id: number;
+    children: TreeData[];
+}
 export default Vue.extend({
     name: "App",
 
@@ -87,9 +112,20 @@ export default Vue.extend({
         },
         appErrorMsg(): MessageInfo {
             return this.$store.state.appState.appErrorMsg;
+        },
+        shouldShowLoginGuide() {
+            return this.$store.state.appState.shouldShowLoginGuide;
         }
     },
     methods: {
+        resloveLogin() {
+            getReslover()();
+            this.$store.commit(SET_APP_LOGIN_GUIDE_STATUS, false);
+        },
+        cancelLogin() {
+            getRejecter()();
+            this.$store.commit(SET_APP_LOGIN_GUIDE_STATUS, false);
+        },
         closeErrorMsg() {
             this.$store.commit(APP_ERROR_MESSAGE_STATUS, false);
         },
@@ -153,6 +189,56 @@ export default Vue.extend({
                 signature: wxConfig.signature, // 必填，签名
                 jsApiList: ["updateAppMessageShareData"] // 必填，需要使用的JS接口列表
             });
+        },
+        loadAppRelatedData() {
+            this.getUniversityTags();
+            this.getUniversityTypes();
+            this.getUniversityLevels();
+            this.getAreeTree();
+        },
+        async getUniversityTags() {
+            const rsp: AxiosResponse<ResponseModel<
+                DataModel[]
+            >> = await this.$http.get("/api/CommTypes/CommTypes5");
+            this.$store.commit(SET_UNIVERSITY_TAGS, rsp.data.data);
+        },
+        async getUniversityTypes() {
+            const rsp: AxiosResponse<ResponseModel<
+                DataModel[]
+            >> = await this.$http.get("/api/CommTypes/CommTypes3");
+            this.$store.commit(SET_UNIVERSITY_TYPES, rsp.data.data);
+        },
+        async getUniversityLevels() {
+            const rsp: AxiosResponse<ResponseModel<
+                DataModel[]
+            >> = await this.$http.get("/api/CommTypes/CommTypes4");
+            this.$store.commit(SET_UNIVERSITY_LEVELS, rsp.data.data);
+        },
+        async getAreeTree() {
+            const rsp = await this.$http.get<ResponseModel<string>>(
+                "/api/Areas/GetAreaTree2"
+            );
+            const treeData = this.transformTree(JSON.parse(rsp.data.data));
+            this.$store.commit(SET_AREE_TREE, treeData);
+        },
+        transformTree(treeData: TreeData[]): AreaTree[] {
+            if (!treeData) {
+                return [];
+            }
+            const tree: AreaTree[] = [];
+            for (const item of treeData) {
+                const treeItem: AreaTree = {
+                    label: item.text,
+                    value: item.id
+                };
+
+                if (item.children) {
+                    treeItem.children = this.transformTree(item.children);
+                }
+
+                tree.push(treeItem);
+            }
+            return tree;
         }
     },
     async mounted() {
@@ -164,6 +250,7 @@ export default Vue.extend({
         //     // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
         // });
         // this.goShare();
+        this.loadAppRelatedData();
     }
 });
 </script>

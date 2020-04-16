@@ -10,8 +10,11 @@
       fixed
       color="primary text--lighten-1 d-flex align-center"
     >
-      <v-btn class="body-1 pt-3 pb-3" v-for="menu in menus" :to="menu.path" :key="menu.path">
-        <span>{{menu.name}}</span>
+      <v-btn class="body-1 py-4" v-for="menu in menus" :to="menu.path" :key="menu.path">
+        <v-badge v-if="shouldShowBadges(menu)" color="red" :content="badges[menu.badgesKey]">
+          <span>{{menu.name}}</span>
+        </v-badge>
+        <span v-else>{{menu.name}}</span>
         <v-icon class="mr-2" style="font-size: 1.5rem" v-if="menu.icon">{{menu.icon}}</v-icon>
       </v-btn>
     </v-bottom-navigation>
@@ -20,7 +23,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 
-import { bottomMenus } from "@/router";
+import { bottomMenus, Menu } from "@/router";
 
 let scrollHandler: () => void;
 
@@ -31,6 +34,9 @@ export default class extends Vue {
     private menus = bottomMenus;
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
+    private badges: Dict<number> = {
+        message: 0
+    };
     private mounted() {
         this.scrollY = window.scrollY;
         // this.updateShare();
@@ -44,10 +50,15 @@ export default class extends Vue {
         };
 
         window.addEventListener("scroll", scrollHandler);
+        this.badges.message = 5;
     }
 
     private beforeDestroy() {
         window.removeEventListener("scroll", scrollHandler);
+    }
+
+    private shouldShowBadges(menu: Menu): boolean {
+        return menu.badgesKey !== undefined && this.badges[menu.badgesKey] !== 0;
     }
 }
 </script>

@@ -135,7 +135,7 @@ export default class extends Vue {
 
         window.addEventListener("scroll", scrollHandler);
         if (process.env.NODE_ENV !== "production") {
-            this.listUsers();
+            // this.listUsers();
         }
     }
 

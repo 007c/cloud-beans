@@ -28,3 +28,7 @@ declare interface ResponseModel<T> {
   msg: string | null;
   data: T;
 }
+
+declare interface Dict<T> {
+  [prop: string]: T;
+}

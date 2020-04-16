@@ -113,12 +113,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import studentInfoBar from "@/components/StudentInfoBar.vue";
-import {
-    universityTypes,
-    universityLevels,
-    universityTags
-} from "./selectOptions";
 import eventBus from "../event-bus";
+import { mapGetters } from "vuex";
 
 interface ListItem {
     logo: string;
@@ -130,6 +126,9 @@ interface ListItem {
     name: "universitySearch",
     components: {
         studentInfoBar
+    },
+    computed: {
+        ...mapGetters(["universityTypes", "universityLevels", "universityTags"])
     }
 })
 export default class extends Vue {
@@ -139,12 +138,6 @@ export default class extends Vue {
     private defaultValue = [1, 3];
 
     private areaText: string = "";
-
-    private universityTypes = universityTypes;
-
-    private universityLevels = universityLevels;
-
-    private universityTags = universityTags;
 
     private choiceItems: Array<SelectOption<number>> = [
         {

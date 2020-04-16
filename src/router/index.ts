@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 export interface Menu extends RouteConfig {
   icon: string;
+  badgesKey?: string;
 }
 
 export const bottomMenus: Menu[] = [
@@ -24,12 +25,58 @@ export const bottomMenus: Menu[] = [
     component: () => import("../views/ClassView.vue")
   },
   {
+    icon: "message",
+    name: "消息",
+    path: "/message",
+    badgesKey: "message",
+    component: () => import("../views/Message.vue")
+  },
+  {
     icon: "person",
     name: "我的",
     path: "/person",
     component: () => import("../views/Person.vue")
   }
 ];
+
+export const personMenu: Menu[] = [
+  {
+    icon: "bookmark_border",
+    name: "我收藏的院校",
+    path: "/followed/university",
+    component: () => import("../views/FollowedUniversity.vue")
+  },
+  {
+    icon: "bookmark_border",
+    name: "我收藏的专业",
+    path: "/followed/major"
+  },
+  {
+    icon: "bookmark_border",
+    name: "我收藏的文章",
+    path: "/followed/article"
+  },
+  {
+    icon: "insert_drive_file",
+    name: "我的测评报告",
+    path: "/evaluation/result"
+  },
+  {
+    icon: "call",
+    name: "联系客服",
+    path: "/contactus",
+    component: () => import("../views/ContactUs.vue")
+  },
+  {
+    icon: "settings",
+    name: "系统设置",
+    path: "/systemSetting",
+    component: () => import("../views/SystemSetting.vue"),
+    meta: {
+      requireLogin: true
+    }
+  }
+]
 
 export const mainMenus: Menu[] = [
   {
@@ -58,7 +105,7 @@ export const mainMenus: Menu[] = [
   }
 ];
 
-export const routes: RouteConfig[] = [
+export const routes = [
   {
     path: "/",
     redirect: "/home",
@@ -73,12 +120,18 @@ export const routes: RouteConfig[] = [
   {
     path: "/university/detail/:id",
     name: "universityDetail",
-    component: () => import("../views/UniversityDetail.vue")
+    component: () => import("../views/UniversityDetail.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: "/major/detail/:id",
     name: "majorDetail",
-    component: () => import("../views/MajorDetail.vue")
+    component: () => import("../views/MajorDetail.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: "/register",
@@ -105,12 +158,25 @@ export const routes: RouteConfig[] = [
   {
     path: "/prompt/:id?",
     component: () => import("../views/Prompt.vue")
-  }
+  },
+  {
+    path: "/profile",
+    component: () => import("@/components/PersonalCenterLayout.vue"),
+    children: [
+      ...personMenu,
+      {
+        path: "/password/reset",
+        name: "密码设置",
+        component: () => import("../views/ResetPassword.vue"),
+      }
+    ]
+  },
+
 ];
 
 
 const router = new VueRouter({
-  routes: [...routes, ...bottomMenus, ...mainMenus],
+  routes: [...routes, ...bottomMenus, ...mainMenus] as RouteConfig[],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

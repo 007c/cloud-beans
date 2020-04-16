@@ -167,7 +167,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
-import { universityTypes, universityLevels, yearItems } from "./selectOptions";
+import { yearItems } from "./selectOptions";
+import { mapGetters } from 'vuex';
 
 interface ListItem {
     university: string;
@@ -181,7 +182,10 @@ interface ListItem {
 }
 
 @Component({
-    name: "MajorDetail"
+    name: "MajorDetail",
+    computed: {
+      ...mapGetters(["universityTypes", "universityLevels"])
+    }
 })
 export default class extends Vue {
     private majorName: string = "经济学";
@@ -214,10 +218,6 @@ export default class extends Vue {
             ]
         }
     ];
-
-    private universityTypes = universityTypes;
-
-    private universityLevels = universityLevels;
 
     private yearItems = yearItems;
 

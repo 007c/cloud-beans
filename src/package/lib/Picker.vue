@@ -83,16 +83,12 @@ export default {
                 this.list[0].constructor === Object
                     ? [this.list]
                     : [util.normalizeData(this.list)];
-        }
-        // 判断是多列非联动
-        else if (this.isMulti && !this.isRelate) {
+        } else if (this.isMulti && !this.isRelate) {
             this.listData =
                 this.list[0][0].constructor === Object
                     ? this.list
                     : util.normalizeData(this.list);
-        }
-        // 判断多列且联动
-        else {
+        } else {
             const def = this.defaultVal.slice();
             this.listData = [this.list].concat(util.getDefault(this.list, def));
         }
@@ -112,11 +108,11 @@ export default {
             // 联动数据并且是非首次渲染的数据
             if (this.isMulti && this.isRelate && !isInit) {
                 const emit = [];
-                const def = this.defaultVal.map((i, index) => {
-                    if (index > col) {
-                        emit.push(index);
+                const def = this.defaultVal.map((i, defIndex) => {
+                    if (defIndex > col) {
+                        emit.push(defIndex);
                     }
-                    return index > col ? 0 : i;
+                    return defIndex > col ? 0 : i;
                 });
                 // 获取数组的前半部分
                 const listBefore = this.listData.slice(0, col + 1);
@@ -133,7 +129,6 @@ export default {
                 this.userEvent.$emit("changeDefaultItem", emit);
             }
             // 最后一列change 或者是通过滑动的  则触发onChange事件
-            console.log("this.res====>", this.res, !isInit);
             // if (this.isRelate) {
             //     if (this.listData.length === col + 1) {
             //         this.$emit("onChange", this.res);
@@ -152,9 +147,10 @@ export default {
         }
     },
     computed: {
-        defaultVal: function() {
+        defaultVal() {
             let length = 1;
             if (!this.isMulti) {
+                // pass
             } else if (this.isMulti && !this.isRelate) {
                 length = this.list.length;
             } else {

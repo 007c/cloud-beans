@@ -2,7 +2,7 @@ import { Module } from "vuex";
 import { SET_UNIVERSITY_LEVELS, SET_UNIVERSITY_TAGS, SET_UNIVERSITY_TYPES, SET_AREE_TREE } from './mutation-types';
 
 export interface DataModel {
-    "typeCode": string;
+    "typeCode": number;
     "classCode": number;
     "typeName": string;
     "remark": string;
@@ -25,7 +25,7 @@ const mapToSelectOptions = function (dataModel: DataModel[]): Array<SelectOption
     return dataModel.map((item) => {
         return {
             text: item.typeName,
-            value: item.typeCode
+            value: item.typeCode + "|" + item.typeName
         }
     })
 }

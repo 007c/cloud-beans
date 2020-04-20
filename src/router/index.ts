@@ -110,7 +110,11 @@ export const routes = [
     path: "/",
     redirect: "/home",
     component: CoreLayout,
-    children: bottomMenus
+    children: [
+      bottomMenus[0],
+      bottomMenus[1],
+      bottomMenus[3]
+    ]
   },
   {
     path: "/login",
@@ -171,7 +175,7 @@ export const routes = [
       }
     ]
   },
-
+  bottomMenus[2]
 ];
 
 

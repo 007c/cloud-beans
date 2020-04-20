@@ -23,8 +23,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 
-import { bottomMenus, Menu } from "@/router";
-
+import { bottomMenus, Menu } from "../router";
 let scrollHandler: () => void;
 
 @Component({
@@ -37,6 +36,25 @@ export default class extends Vue {
     private badges: Dict<number> = {
         message: 0
     };
+
+    get isLogin() {
+        return this.$store.getters.isLogin;
+    }
+
+    private created() {
+        if (this.isLogin) {
+            this.getUnReadMessageCount();
+        }
+    }
+
+    private async getUnReadMessageCount() {
+        const rsp = await this.$http.get<ResponseModel<string>>(
+            "/api/Messages/GetCount"
+        );
+        const data = JSON.parse(rsp.data.data);
+        this.badges.message = data.notread;
+    }
+
     private mounted() {
         this.scrollY = window.scrollY;
         // this.updateShare();
@@ -58,7 +76,11 @@ export default class extends Vue {
     }
 
     private shouldShowBadges(menu: Menu): boolean {
-        return menu.badgesKey !== undefined && this.badges[menu.badgesKey] !== 0;
+        return (
+            menu.badgesKey !== undefined &&
+            this.badges[menu.badgesKey] !== 0 &&
+            this.isLogin
+        );
     }
 }
 </script>

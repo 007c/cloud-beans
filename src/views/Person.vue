@@ -4,7 +4,7 @@
     <v-divider></v-divider>
     <v-row>
       <v-col cols="3" class="pr-0">
-        <v-avatar class="mt-n1" size="65" color="grey">
+        <v-avatar class="mt-n1" size="55" color="grey">
           <v-icon color="white">person</v-icon>
         </v-avatar>
       </v-col>

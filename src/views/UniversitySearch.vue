@@ -175,9 +175,25 @@ export default class extends Vue {
     }
 
     get icon() {
-        if (this.isAllTagsSelected) return "check_box";
+        if (this.isAllTagsSelected) {
+            return "check_box";
+        }
         // if (this.universityTag.length > 0) return "indeterminate_check_box";
         return "check_box_outline_blank";
+    }
+
+    get isAllTagsSelected() {
+        return this.universityTag.length === this.universityTags.length;
+    }
+
+    private toggle() {
+        if (this.isAllTagsSelected) {
+            this.universityTag = [];
+        } else {
+            this.universityTag = this.universityTags.map((item) => item.value);
+        }
+
+        this.searchList();
     }
 
     private created() {
@@ -207,20 +223,6 @@ export default class extends Vue {
         this.defaultValue = res.map((item) => item.value);
         this.areaText = res.map((item) => item.label).join("");
         this.searchList();
-    }
-
-    private toggle() {
-        if (this.isAllTagsSelected) {
-            this.universityTag = [];
-        } else {
-            this.universityTag = this.universityTags.map((item) => item.value);
-        }
-
-        this.searchList();
-    }
-
-    get isAllTagsSelected() {
-        return this.universityTag.length === this.universityTags.length;
     }
 
     @withLoading()

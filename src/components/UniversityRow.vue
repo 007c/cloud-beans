@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="pa-0 mb-2">
-    <v-card :to="'/university/detail/' + item.id" width="100%" class="d-flex pl-2 pr-2">
+    <v-card width="100%" class="d-flex pl-2 pr-2">
       <div class="d-flex align-center mr-3">
         <v-list-item-avatar color="secondary" size="60">
           <v-img :src="item.logo" v-if="item.logo"></v-img>
@@ -8,15 +8,16 @@
         </v-list-item-avatar>
       </div>
       <v-list-item-content>
-        <v-list-item-title class="d-flex justify-space-between">
+        <v-list-item-title :to="'/university/detail/' + item.id" class="d-flex justify-space-between align-center">
           <span>{{item.fullName}}</span>
-          <span class="body-2">{{item.provinceName}}</span>
+          <advisory-btn @click.native.stop :typeCode="1"></advisory-btn>
+          <!-- <span class="body-2">{{item.provinceName}}</span> -->
         </v-list-item-title>
         <v-list-item-content class="pa-0">
           <v-row no-gutters class="caption">
-            <v-col class cols="4" sm="3">{{item.eduTypeName}}</v-col>
+            <v-col class cols="4" sm="3">{{item.provinceName}}</v-col>
             <v-col class cols="8" sm="4">{{item.labels.split(',').slice(0, 3).join(' ')}}</v-col>
-            <v-col class cols="12" sm="5">2019年分数线：665</v-col>
+            <v-col class cols="12" sm="5">热度： {{item.popularity}}</v-col>
           </v-row>
         </v-list-item-content>
       </v-list-item-content>

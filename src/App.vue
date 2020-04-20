@@ -81,7 +81,8 @@ import {
     SET_UNIVERSITY_TAGS,
     SET_UNIVERSITY_TYPES,
     SET_UNIVERSITY_LEVELS,
-    SET_AREE_TREE
+    SET_AREE_TREE,
+    SET_SYSTEM_SUPPORTED_MESSAGES
 } from "@/store/mutation-types";
 import { getReslover, getRejecter } from "@/loginGuideController";
 import { DataModel } from "./store/cache-data";
@@ -195,6 +196,11 @@ export default Vue.extend({
             this.getUniversityTypes();
             this.getUniversityLevels();
             this.getAreeTree();
+            this.getSupportedMessages();
+        },
+        async getSupportedMessages() {
+            const rsp = await this.$http.get<ResponseModel<DataModel[]>>('/api/CommTypes/CommTypes7');
+            this.$store.commit(SET_SYSTEM_SUPPORTED_MESSAGES, rsp.data.data)
         },
         async getUniversityTags() {
             const rsp: AxiosResponse<ResponseModel<
@@ -222,6 +228,7 @@ export default Vue.extend({
             const treeData = this.transformTree(JSON.parse(rsp.data.data));
             this.$store.commit(SET_AREE_TREE, treeData);
         },
+        
         transformTree(treeData: TreeData[]): AreaTree[] {
             if (!treeData) {
                 return [];

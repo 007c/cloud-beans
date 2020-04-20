@@ -127,7 +127,7 @@ import { Vue, Component, Prop, Ref } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 import { createDebounce } from "../util";
 import moment from "moment";
-import { UserInfo } from '../store/use-state';
+import { UserInfo } from "../store/use-state";
 
 let scrollHander!: () => void;
 
@@ -157,12 +157,28 @@ export default class extends Vue {
     private messages: Message[] = [];
     private async created() {
         if (this.isLogin) {
+            this.parseRouteMessage();
             await this.getAllMessages();
             scrollHander = createDebounce(this.updateUnReadMessage, 1000, 1000);
             this.onListScroll();
         } else {
             await this.getSystemMessages();
         }
+    }
+
+    private parseRouteMessage() {
+        const query = this.$route.query;
+        if (query.typeCode) {
+            this.message = query.template as string;
+            this.sendMessageToPlatform(parseInt(query.typeCode as string, 10));
+        }
+    }
+
+    private async sendMessageToPlatform(typeCode: MessageTypeCode) {
+        const rsp = await this.$http.post("/api/Messages/SendDeadultToPlat", {
+            typeCode,
+            msg: this.message
+        });
     }
 
     private async getSystemMessages() {
@@ -177,7 +193,7 @@ export default class extends Vue {
     }
 
     get userInfo(): UserInfo {
-      return this.$store.state.userState.userInfo;
+        return this.$store.state.userState.userInfo;
     }
 
     get unReadMessageCount(): number {

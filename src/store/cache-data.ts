@@ -1,5 +1,5 @@
 import { Module } from "vuex";
-import { SET_UNIVERSITY_LEVELS, SET_UNIVERSITY_TAGS, SET_UNIVERSITY_TYPES, SET_AREE_TREE } from './mutation-types';
+import { SET_UNIVERSITY_LEVELS, SET_UNIVERSITY_TAGS, SET_UNIVERSITY_TYPES, SET_AREE_TREE, SET_SYSTEM_SUPPORTED_MESSAGES } from './mutation-types';
 
 export interface DataModel {
     "typeCode": number;
@@ -19,6 +19,7 @@ export interface CacheDataState {
     universityLevelsData: DataModel[];
     universityTagsData: DataModel[];
     areaTree: AreaTree[];
+    supportedMessages: DataModel[];
 }
 
 const mapToSelectOptions = function (dataModel: DataModel[]): Array<SelectOption<string>> {
@@ -35,7 +36,8 @@ const cacheDataState: Module<CacheDataState, any> = {
         universityTypesData: [],
         universityLevelsData: [],
         universityTagsData: [],
-        areaTree: []
+        areaTree: [],
+        supportedMessages: []
     },
 
     mutations: {
@@ -50,6 +52,9 @@ const cacheDataState: Module<CacheDataState, any> = {
         },
         [SET_AREE_TREE](state, payload: AreaTree[]) {
             state.areaTree = payload;
+        },
+        [SET_SYSTEM_SUPPORTED_MESSAGES](state, payload: DataModel[]) {
+            state.supportedMessages = payload;
         }
     },
 
@@ -65,6 +70,13 @@ const cacheDataState: Module<CacheDataState, any> = {
         },
         areaList(state): AreaTree[] {
             return state.areaTree;
+        },
+        messageTemplate(state): Dict<string> {
+            const ret: Dict<string> = {};
+            state.supportedMessages.forEach(item => {
+                ret[item.typeCode] = item.remark;
+            })
+            return ret;
         }
     }
 }

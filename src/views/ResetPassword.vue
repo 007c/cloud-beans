@@ -76,6 +76,7 @@ interface Data {
 import { withLoading } from "@/decorators/with-loading";
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { UPDATE_APP_MESSAGE, SET_USER_TOKEN } from "../store/mutation-types";
+import { LOGIN_OUT } from '../store/actions';
 let remainTimeTimer: number | undefined;
 
 @Component({
@@ -132,9 +133,7 @@ export default class extends Vue {
     }
 
     private loginOut() {
-        localStorage.removeItem("user_token");
-        localStorage.removeItem("expired_at");
-        this.$store.commit(SET_USER_TOKEN, "");
+      this.$store.dispatch(LOGIN_OUT);
     }
 
     private async getValidateCode() {

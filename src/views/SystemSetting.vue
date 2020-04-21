@@ -24,16 +24,14 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { SET_USER_TOKEN } from "../store/mutation-types";
+import { LOGIN_OUT } from "../store/actions";
 
 @Component({
     name: "SystemSetting"
 })
 export default class extends Vue {
     private loginOut() {
-        localStorage.removeItem("user_token");
-        localStorage.removeItem("expired_at");
-        this.$store.commit(SET_USER_TOKEN, "");
+        this.$store.dispatch(LOGIN_OUT);
         this.$router.push("/home");
     }
 }

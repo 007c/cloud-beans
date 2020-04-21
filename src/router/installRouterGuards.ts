@@ -1,7 +1,6 @@
 import VueRouter from 'vue-router';
 import store from "@/store";
 import { startAsyncGuide } from "@/loginGuideController";
-import { SET_APP_LOGIN_GUIDE_STATUS } from '@/store/mutation-types';
 export default function (router: VueRouter) {
     router.beforeEach(function (to, from, next) {
         const isLogin = store.getters.isLogin;
@@ -23,7 +22,6 @@ export default function (router: VueRouter) {
                 }).catch(function () {
                     // cancel route
                 })
-                store.commit(SET_APP_LOGIN_GUIDE_STATUS, true);
                 return;
             }
         }

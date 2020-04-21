@@ -46,6 +46,9 @@
     background: #a0e75b;
     display: inline-block;
 }
+.message-content {
+    display: inline-block;
+}
 </style>
 <template>
   <v-container class="pa-0">
@@ -74,7 +77,22 @@
       >
         <v-list class="message-v-list" ref="messageList">
           <template v-for="item in messages">
-            <v-list-item v-if="item.msgToUser === 1" :key="item.id" class="d-flex align-start mb-2">
+            <v-list-item class="d-flex align-start mb-2" v-if="item.isPublish===1" :key="item.id">
+              <v-list-item-content class="py-0">
+                <v-list-item-title class="caption text-center"></v-list-item-title>
+                <v-card flat class="card d-flex justify-center">
+                  <span
+                    class="pa-2 grey d-inline-bolck white--text lighten-1 caption"
+                  >系统公告：{{item.msgContent}}</span>
+                </v-card>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              v-else-if="item.msgToUser === 1"
+              :key="item.id"
+              class="d-flex align-start mb-2"
+              :ref="item.__unReadMark ? 'firstUnReadMsg' : ''"
+            >
               <v-avatar size="40" color="grey" class="mr-2">
                 <v-icon color="white">people</v-icon>
               </v-avatar>
@@ -88,7 +106,12 @@
                 </v-card>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item v-else :key="item.id" class="d-flex align-start mb-2">
+            <v-list-item
+              v-else
+              :key="item.id"
+              :ref="item.__unReadMark ? 'firstUnReadMsg' : ''"
+              class="d-flex align-start mb-2"
+            >
               <v-list-item-content class="py-0 text-content pl-6">
                 <v-list-item-title class="caption">{{userInfo.userName}}</v-list-item-title>
                 <v-list-item-title class="caption text-right">{{formatTime(item.sendTime)}}</v-list-item-title>
@@ -128,6 +151,7 @@ import { withLoading } from "../decorators/with-loading";
 import { createDebounce } from "../util";
 import moment from "moment";
 import { UserInfo } from "../store/use-state";
+import { startAsyncGuide } from "../loginGuideController";
 
 let scrollHander!: () => void;
 
@@ -139,14 +163,20 @@ interface Message {
     msgToUser: 0 | 1;
     sendTime: string;
     id: string;
+    userID: string;
+    isPublish: 0 | 1;
+    __unReadMark?: boolean;
 }
 
 export enum MessageTypeCode {
     "DEFAULT",
     "UNIVERSITY",
     "MAJOR",
-    "EXAMIZE"
+    "EXAMIZE",
+    "USER"
 }
+
+const systemId = "00000000-0000-0000-0000-000000000000";
 
 @Component({
     name: "Message"
@@ -159,7 +189,7 @@ export default class extends Vue {
         if (this.isLogin) {
             this.parseRouteMessage();
             await this.getAllMessages();
-            scrollHander = createDebounce(this.updateUnReadMessage, 1000, 1000);
+            scrollHander = createDebounce(this.updateUnReadMessage, 1000, 6000);
             this.onListScroll();
         } else {
             await this.getSystemMessages();
@@ -170,15 +200,18 @@ export default class extends Vue {
         const query = this.$route.query;
         if (query.typeCode) {
             this.message = query.template as string;
-            this.sendMessageToPlatform(parseInt(query.typeCode as string, 10));
+            this.sendMessage(parseInt(query.typeCode as string, 10));
         }
     }
 
     private async sendMessageToPlatform(typeCode: MessageTypeCode) {
-        const rsp = await this.$http.post("/api/Messages/SendDeadultToPlat", {
-            typeCode,
-            msg: this.message
-        });
+        return await this.$http.post<ResponseModel<string>>(
+            "/api/Messages/SendDeadultToPlat",
+            {
+                typeCode,
+                msg: this.message
+            }
+        );
     }
 
     private async getSystemMessages() {
@@ -201,7 +234,9 @@ export default class extends Vue {
     }
 
     get unReadMessages(): Message[] {
-        return this.messages.filter((item) => item.isRead === 0);
+        return this.messages.filter(
+            (item) => item.isRead === 0 && item.isPublish !== 1
+        );
     }
 
     private formatTime(timeString: string) {
@@ -217,18 +252,30 @@ export default class extends Vue {
     }
 
     private onTipClick() {
-        this.goBottom();
+        this.goFirstUnReadMessage();
         this.updateUnReadMessage();
     }
+    private goFirstUnReadMessage() {
+        const firstUnReadMsg = this.$refs.firstUnReadMsg as any[];
+        if (firstUnReadMsg && firstUnReadMsg[0]) {
+            const unReadMsgEl = firstUnReadMsg[0].$el as HTMLDivElement;
+            this.scrollTo(unReadMsgEl.offsetTop);
+        }
+    }
+
+    private scrollTo(top: number) {
+        const scrollContainer = this.$refs.scrollContainer as HTMLDivElement;
+        scrollContainer.scroll({
+            top,
+            behavior: "smooth"
+        });
+    }
+
     private goBottom() {
         const messageList = this.$refs.messageList as any;
         const messageEl = messageList.$el as HTMLDivElement;
         const offsetHeight = messageEl.offsetHeight;
-        const scrollContainer = this.$refs.scrollContainer as HTMLDivElement;
-        scrollContainer.scroll({
-            top: offsetHeight,
-            behavior: "smooth"
-        });
+        this.scrollTo(offsetHeight);
     }
 
     private onListScroll() {
@@ -247,12 +294,24 @@ export default class extends Vue {
 
     private async updateUnReadMessage() {
         const unReadIds = this.unReadMessages.map((item) => item.id).join("|");
-        const rsp = await this.$http.put("/api/Messages/SetRead", unReadIds, {
-            headers: {
-                "content-type": "application/json-patch+json"
+        const rsp = await this.$http.put(
+            "/api/Messages/SetRead",
+            {
+                toUserIDs: unReadIds,
+                systemIDs: this.messages
+                    .filter((item) => item.isPublish === 1 && item.isRead === 0)
+                    .map((item) => item.id)
+                    .join("|")
+            },
+            {
+                headers: {
+                    "content-type": "application/json-patch+json"
+                }
             }
+        );
+        this.unReadMessages.forEach((item) => {
+            item.isRead = 1;
         });
-        this.getAllMessages();
     }
 
     @withLoading()
@@ -260,17 +319,50 @@ export default class extends Vue {
         const rsp = await this.$http.get<ResponseModel<Message[]>>(
             "/api/Messages/GetMsg"
         );
+
+        this.markFirstUnReadMessage(rsp.data.data);
+
         this.messages = rsp.data.data;
     }
 
+    private markFirstUnReadMessage(messages: Message[]) {
+        for (const item of messages) {
+            if (item.isRead === 0) {
+                item.__unReadMark = true;
+                return;
+            }
+        }
+    }
+
     private async sendMessage(typeCode: MessageTypeCode = 0) {
-        const rsp = await this.$http.post("/api/Messages/SendDefaultToUser", {
-            typeCode,
-            msg: this.message
-        });
+        if (!this.isLogin) {
+            await startAsyncGuide().then(() => {
+                this.$router.push({
+                    path: "/login",
+                    query: {
+                        redirect: this.$route.fullPath
+                    }
+                });
+            });
+            return;
+        }
+
+        const rsp = await this.sendMessageToPlatform(MessageTypeCode.USER);
+
+        if (rsp.data.state === 0) {
+            this.messages.push({
+                msgContent: this.message,
+                isRead: 1,
+                msgToUser: 0,
+                sendTime: new Date().toUTCString(),
+                id: "",
+                userID: "",
+                isPublish: 0
+            });
+        }
         this.message = "";
 
-        await this.getAllMessages();
+        // await this.getAllMessages();
         this.$nextTick(this.goBottom);
     }
 }

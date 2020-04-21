@@ -199,8 +199,10 @@ export default Vue.extend({
             this.getSupportedMessages();
         },
         async getSupportedMessages() {
-            const rsp = await this.$http.get<ResponseModel<DataModel[]>>('/api/CommTypes/CommTypes7');
-            this.$store.commit(SET_SYSTEM_SUPPORTED_MESSAGES, rsp.data.data)
+            const rsp = await this.$http.get<ResponseModel<DataModel[]>>(
+                "/api/CommTypes/CommTypes7"
+            );
+            this.$store.commit(SET_SYSTEM_SUPPORTED_MESSAGES, rsp.data.data);
         },
         async getUniversityTags() {
             const rsp: AxiosResponse<ResponseModel<
@@ -228,7 +230,7 @@ export default Vue.extend({
             const treeData = this.transformTree(JSON.parse(rsp.data.data));
             this.$store.commit(SET_AREE_TREE, treeData);
         },
-        
+
         transformTree(treeData: TreeData[]): AreaTree[] {
             if (!treeData) {
                 return [];

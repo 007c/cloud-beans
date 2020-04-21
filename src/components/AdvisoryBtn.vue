@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
+import { startAsyncGuide } from "../loginGuideController";
 @Component({
     name: "AdvisoryBtn"
 })
@@ -12,9 +13,22 @@ export default class extends Vue {
     get messageTemplate(): Dict<string> {
         return this.$store.getters.messageTemplate;
     }
+    get isLogin() {
+        return this.$store.getters.isLogin;
+    }
     private gotoMessage() {
         this.$emit("click");
         const messageTemplate = this.messageTemplate[this.typeCode];
+        if (!this.isLogin) {
+            return startAsyncGuide().then(() => {
+                this.$router.push({
+                    path: "/login",
+                    query: {
+                        redirect: this.$route.fullPath
+                    }
+                });
+            });
+        }
         this.$router.push({
             path: "/message",
             query: {

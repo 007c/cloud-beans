@@ -1,5 +1,6 @@
 import { Module } from "vuex";
 import { UPDATE_USER_INFO, SET_USER_TOKEN, UPDATE_STUDENT_INFO } from "./mutation-types";
+import { LOGIN_OUT } from './actions';
 
 export interface UserState {
     userInfo: UserInfo;
@@ -29,7 +30,7 @@ export interface UserInfo {
     role?: string;
 }
 
-const getIntialState = function(): UserState {
+const getIntialState = function (): UserState {
     const userToken = localStorage.getItem("user_token");
     const expiredAt = localStorage.getItem("expired_at");
     const initialState: UserState = {
@@ -77,6 +78,14 @@ const userState: Module<UserState, any> = {
         },
         [SET_USER_TOKEN](state, token: string) {
             state.token = token;
+        }
+    },
+
+    actions: {
+        [LOGIN_OUT]({ commit }) {
+            localStorage.removeItem("user_token");
+            localStorage.removeItem("expired_at");
+            commit(SET_USER_TOKEN, "");
         }
     },
 

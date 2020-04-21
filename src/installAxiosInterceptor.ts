@@ -1,7 +1,8 @@
 import { AxiosStatic } from 'axios';
 import router from "@/router";
 import store from "@/store";
-import { UPDATE_APP_MESSAGE } from './store/mutation-types';
+import { UPDATE_APP_MESSAGE, SET_USER_TOKEN } from './store/mutation-types';
+import { LOGIN_OUT } from './store/actions';
 
 const showDebugErrorMsg = function (error: any) {
     const { response: { config } } = error;
@@ -41,10 +42,18 @@ export default function (axios: AxiosStatic) {
     }, function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        showDebugErrorMsg(error);
 
         if (error.response.status === 401) {
-            router.push('/login')
+            store.dispatch(LOGIN_OUT);
+            router.push('/login');
+            store.commit(UPDATE_APP_MESSAGE, {
+                msg: "您还未登录或登录已过期，请重新登录！",
+                color: "info",
+                timeout: 3000,
+                position: "top"
+            })
+        } else {
+            showDebugErrorMsg(error);
         }
 
         return Promise.reject(error);

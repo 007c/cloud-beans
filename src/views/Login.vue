@@ -108,10 +108,12 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import {
     SET_USER_TOKEN,
     UPDATE_USER_INFO,
-    UPDATE_APP_MESSAGE
+    UPDATE_APP_MESSAGE,
+    UPDATE_STUDENT_INFO
 } from "@/store/mutation-types";
-import { UserInfo } from "@/store/use-state";
+import { UserInfo, StudentInfo } from "@/store/use-state";
 import { AxiosResponse } from "axios";
+import { GET_USER_BASE_INFO } from "../store/actions";
 let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
@@ -121,7 +123,7 @@ export default class extends Vue {
     private validateCode: string = "";
     private remainTime: number = 0;
     private password: string = "";
-    private hintText: string = "请先获取验证码"
+    private hintText: string = "请先获取验证码";
     // 用户登录【可用】 1手机号+密码(可用) 2手机号+验证码登录
     private loginType: 1 | 2 = 1;
     @withLoading()
@@ -154,6 +156,7 @@ export default class extends Vue {
                 (+new Date() + 60 * 1000 * 60).toString()
             );
             const toPath = (this.$route.query.redirect as string) || "/home";
+            this.$store.dispatch(GET_USER_BASE_INFO);
             this.$router.push(toPath);
         } catch (ex) {
             this.$store.commit(UPDATE_APP_MESSAGE, {
@@ -170,9 +173,9 @@ export default class extends Vue {
             "/api/Values/LoginByPwd",
             {
                 mobile: this.phoneNumber,
-                checkCode: this.validateCheckCode,
+                checkCode: this.validateCheckCode
             }
-        )
+        );
     }
 
     private async loginByPassword() {
@@ -180,7 +183,7 @@ export default class extends Vue {
             "/api/Values/LoginByPwd",
             {
                 mobile: this.phoneNumber,
-                pwd: this.password,
+                pwd: this.password
             }
         );
     }

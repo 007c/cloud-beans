@@ -7,7 +7,7 @@
   >
     <v-col v-for="(item, index) in barItems" :key="index">
       <v-icon color="primary">{{item.icon}}</v-icon>
-      <span class="text-truncate ml-1">{{item.label || "--"}}</span>
+      <span class="text-truncate ml-1">{{item.label || "--"}}{{item.postFix || ''}}</span>
     </v-col>
     <v-col cols="2">
       <v-btn class="pa-0" to="/grade/edit" text color="secondary">编辑</v-btn>
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 
 interface Slider {
     imgUrl: string;
@@ -26,6 +26,7 @@ interface Slider {
 interface BarItem {
     icon: string;
     label?: string | number | null;
+    postFix?: string;
 }
 
 import { StudentInfo, Subject } from "@/store/use-state";
@@ -36,23 +37,43 @@ import { StudentInfo, Subject } from "@/store/use-state";
 export default class extends Vue {
     private barItems: BarItem[] = [];
     private created() {
+        this.initLabelInfo();
+    }
+    get areaList(): AreaTree[] {
+        return this.$store.getters.areaList;
+    }
+    get areaMap(): Dict<string> {
+        const map: Dict<string> = {};
+        for (const item of this.areaList) {
+            map[item.value] = item.label;
+        }
+        return map;
+    }
+    @Watch("studentInfo", { deep: true })
+    @Watch("areaList")
+    private initLabelInfo() {
         const { studentInfo } = this;
         this.barItems = [
             {
                 icon: "location_on",
-                label: studentInfo.province
+                label: this.areaMap[studentInfo.provinceCode!]
             },
             {
                 icon: "subject",
-                label: studentInfo.subject != null ? Subject[studentInfo.subject] : null
+                label:
+                    studentInfo.subject != null
+                        ? Subject[studentInfo.subject]
+                        : null
             },
             {
                 icon: "book",
-                label: studentInfo.grade
+                label: studentInfo.grade || "--",
+                postFix: "分"
             },
             {
                 icon: "people",
-                label: studentInfo.rank || "-- " + " 名"
+                label: studentInfo.rank || "--",
+                postFix: "名"
             }
         ];
     }

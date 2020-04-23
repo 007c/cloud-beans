@@ -86,6 +86,10 @@ export default {
     },
     methods: {
         initListData() {
+            if (this.list.length === 0) {
+                this.listData = [];
+                return;
+            }
             // 判断是单列
             if (!this.isMulti) {
                 this.listData =

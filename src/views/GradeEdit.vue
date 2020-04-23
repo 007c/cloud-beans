@@ -15,7 +15,7 @@
         <h1 class="primary--text subtitle-1 text-center font-weight-bold">成绩编辑</h1>
       </v-col>
       <v-col cols="2"></v-col>
-    </v-row> -->
+    </v-row>-->
     <header-bar title="成绩编辑"></header-bar>
     <v-divider></v-divider>
     <v-form class="mt-4 pl-2" ref="gradeForm">
@@ -45,6 +45,30 @@
           ></Picker>
         </v-col>
       </v-row>
+      <v-row align="center" class="body-1">
+        <v-col cols="3" class="pr-0">
+          <v-icon>location_on</v-icon>
+          <span class="ml-1">高中</span>
+        </v-col>
+        <v-col class="pr-4">
+          <v-text-field
+            v-model="highSchoolText"
+            dense
+            hide-details
+            readonly
+            outlined
+            tile
+            @click="showHighSchoolPicker = true"
+          ></v-text-field>
+          <Picker
+            :defaultValue="defaultHighSchool"
+            @onChange="onSchoolChange"
+            @update:show="showHighSchoolPicker=false"
+            :list="highSchoolList"
+            :show="showHighSchoolPicker"
+          ></Picker>
+        </v-col>
+      </v-row>
       <v-row align="center">
         <v-col class="pr-0" cols="3">
           <v-icon>subject</v-icon>
@@ -52,8 +76,8 @@
         </v-col>
         <v-col class="pr-4">
           <v-radio-group v-model="subject" :column="false">
-            <v-radio :value="0" label="文科"></v-radio>
-            <v-radio class="ml-8" :value="1" label="理科"></v-radio>
+            <v-radio :value="1" label="文科"></v-radio>
+            <v-radio class="ml-8" :value="2" label="理科"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -90,56 +114,113 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
-import { UPDATE_STUDENT_INFO } from "@/store/mutation-types";
-import { StudentInfo, Subject } from "../store/use-state";
+import { UPDATE_STUDENT_INFO, UPDATE_USER_INFO } from "@/store/mutation-types";
+import { StudentInfo, Subject, UserInfo } from "../store/use-state";
 
 @Component({
     name: "GradeEdit"
 })
 export default class extends Vue {
     private showAreaPicker: boolean = false;
+    private showHighSchoolPicker: boolean = false;
     private defaultValue = [1, 3];
-    private areaText: string = "四川成都";
-    private areaList: AreaTree[] = [
-        {
-            label: "四川",
-            value: 1,
-            children: [
-                {
-                    label: "成都",
-                    value: 2
-                },
-                {
-                    label: "绵阳",
-                    value: 3
-                }
-            ]
-        }
-    ];
-
+    private areaText: string = "";
+    private highSchoolText: string = "";
     private province: string = "";
     private subject: Subject = Subject.文科;
-
+    private defaultHighSchool: number = 0;
     private grade: string = "";
 
     private rank: string = "";
 
+    private highSchoolList: AreaTree[] = [];
+
     private created() {
         this.initForm();
+    }
+
+    get areaList(): AreaTree[] {
+        return this.$store.getters.areaList;
+    }
+    get areaMap(): Dict<string> {
+        const map: Dict<string> = {};
+        for (const item of this.areaList) {
+            map[item.value] = item.label;
+        }
+        return map;
+    }
+    get isLogin() {
+        return this.$store.getters.isLogin;
     }
 
     get studentInfo(): StudentInfo {
         return this.$store.state.userState.studentInfo;
     }
 
+    get userInfo(): UserInfo {
+        return this.$store.state.userState.userInfo;
+    }
+
+    @Watch("studentInfo", { deep: true })
+    @Watch("areaList")
     private initForm() {
-        const { province, grade, subject, source, rank } = this.studentInfo;
-        this.areaText = source || "";
+        const {
+            province,
+            grade,
+            subject,
+            rank,
+            provinceCode,
+            highSchoolId
+        } = this.studentInfo;
+        this.areaText = this.areaMap[provinceCode!]; //source || "";
         this.subject = subject || 0;
         this.grade = grade as string;
         this.rank = rank as string;
+        this.defaultValue = [provinceCode!];
+        this.defaultHighSchool = highSchoolId!;
+        this.getHighSchoolByArea(provinceCode!);
+    }
+
+    private async getHighSchoolByArea(areaCode: number) {
+        const rsp = await this.$http.get<
+            ResponseModel<
+                Array<{
+                    firstArea: string;
+                    firstAreaCode: number;
+                    fullName: string;
+                    schoolID: number;
+                    secondArea: string;
+                    secondAreaCode: number;
+                    thridArea: string;
+                    thridAreaCode: number;
+                }>
+            >
+        >("/api/HighSchools/GetHighSchools", {
+            params: {
+                areaCode
+            }
+        });
+
+        const { data } = rsp.data;
+
+        this.highSchoolList = data.map(
+            (item): AreaTree => {
+                if (item.schoolID === this.defaultHighSchool) {
+                    this.highSchoolText = item.fullName;
+                }
+                return {
+                    label: item.fullName,
+                    value: item.schoolID
+                };
+            }
+        );
+    }
+
+    private onSchoolChange([item]: AreaTree[]) {
+        this.defaultHighSchool = item.value;
+        this.highSchoolText = item.label;
     }
 
     private onAreaChange(res: AreaTree[], isEnsure: boolean) {
@@ -149,6 +230,12 @@ export default class extends Vue {
         this.defaultValue = res.map((item) => item.value);
         this.areaText = res.map((item) => item.label).join("");
         this.province = res[0].label;
+        this.defaultHighSchool = -1;
+        this.highSchoolText = "";
+        const city = res[res.length - 1];
+        if (city) {
+            this.getHighSchoolByArea(city.value);
+        }
     }
 
     private validateGrade(grade: string): boolean | string {
@@ -170,20 +257,39 @@ export default class extends Vue {
             return;
         }
 
-        await new Promise((resolve) => {
-            setTimeout(resolve, 2000);
-        });
+        const { originalInfo } = this.userInfo;
+
+        const gradeModel: GradeInfoModel = {
+            ...originalInfo!,
+            rank: parseInt(this.rank, 10),
+            score: parseInt(this.grade, 10),
+            divisionTypeID: this.subject,
+            divisionType: Subject[this.subject],
+            provinceCode: this.defaultValue[0],
+            highSchoolID: this.defaultHighSchool
+        };
 
         const studentInfo: StudentInfo = {
             rank: this.rank,
             grade: this.grade,
             source: this.areaText,
-            province: this.province,
-            subject: this.subject
+            subject: this.subject,
+            highSchoolId: this.defaultHighSchool,
+            provinceCode: this.defaultValue[0]
         };
 
-        this.$store.commit(UPDATE_STUDENT_INFO, studentInfo);
-        this.$router.push("/choice");
+        const userInfo: UserInfo = {
+            originalInfo: gradeModel
+        };
+
+        try {
+            this.$http.put("/api/UserScoreRank/Update", gradeModel);
+            this.$store.commit(UPDATE_STUDENT_INFO, studentInfo);
+            this.$store.commit(UPDATE_USER_INFO, userInfo);
+            this.$router.push("/choice");
+        } catch (ex) {
+            console.log("ex: ", ex);
+        }
     }
 }
 </script>

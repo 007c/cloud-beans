@@ -33,3 +33,17 @@ declare interface ResponseModel<T> {
 declare interface Dict<T> {
   [prop: string]: T;
 }
+
+declare interface GradeInfoModel {
+  divisionTypeID: number;
+  divisionType: string;
+  highSchoolID: number;
+  id: string;
+  logoUrl: string;
+  mobile: string;
+  provinceCode: number;
+  rank: number;
+  score: number;
+  userID: string;
+  year: number;
+}

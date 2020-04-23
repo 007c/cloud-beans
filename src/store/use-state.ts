@@ -1,6 +1,7 @@
 import { Module } from "vuex";
 import { UPDATE_USER_INFO, SET_USER_TOKEN, UPDATE_STUDENT_INFO } from "./mutation-types";
-import { LOGIN_OUT } from './actions';
+import { LOGIN_OUT, GET_USER_BASE_INFO } from './actions';
+import axios from "axios";
 
 export interface UserState {
     userInfo: UserInfo;
@@ -15,11 +16,13 @@ export interface StudentInfo {
     source?: string;
     province?: string;
     subject?: Subject | null;
+    provinceCode?: number;
+    highSchoolId?: number;
 }
 
 export enum Subject {
-    "文科",
-    "理科"
+    "文科" = 1,
+    "理科" = 2
 }
 
 export interface UserInfo {
@@ -28,6 +31,8 @@ export interface UserInfo {
     avatar?: string;
     phoneNumber?: string;
     role?: string;
+    id?: string;
+    originalInfo?: GradeInfoModel | null
 }
 
 const getIntialState = function (): UserState {
@@ -39,14 +44,18 @@ const getIntialState = function (): UserState {
             nickName: '',
             avatar: '',
             phoneNumber: '',
-            role: ''
+            role: '',
+            id: '',
+            originalInfo: null
         },
         studentInfo: {
             grade: "",
             rank: "",
             source: '',
             province: "",
-            subject: null
+            subject: null,
+            provinceCode: undefined,
+            highSchoolId: undefined
         },
         isLogin: false,
         token: ""
@@ -86,6 +95,28 @@ const userState: Module<UserState, any> = {
             localStorage.removeItem("user_token");
             localStorage.removeItem("expired_at");
             commit(SET_USER_TOKEN, "");
+        },
+        async [GET_USER_BASE_INFO]({ commit }) {
+            const rsp = await axios.get<ResponseModel<GradeInfoModel>>(
+                "/api/UserScoreRank/GetModel"
+            );
+
+            const { data } = rsp.data;
+            const studentInfo: StudentInfo = {
+                grade: data.score,
+                rank: data.rank,
+                provinceCode: data.provinceCode,
+                subject: data.divisionTypeID,
+                highSchoolId: data.highSchoolID
+            };
+            const userInfo: UserInfo = {
+                avatar: data.logoUrl,
+                phoneNumber: data.mobile,
+                id: data.userID,
+                originalInfo: data
+            };
+            commit(UPDATE_STUDENT_INFO, studentInfo);
+            commit(UPDATE_USER_INFO, userInfo);
         }
     },
 

@@ -154,7 +154,7 @@ export default class extends Vue {
 
     private defaultValue: number[] = [];
 
-    private areaText: string = "";
+    private areaText: string = "全部";
 
     private areaCode: string = "";
 
@@ -240,6 +240,7 @@ export default class extends Vue {
             return;
         }
         this.defaultValue = res.map((item) => item.value);
+        
         this.areaText = res.map((item) => item.label).join("");
         this.areaCode = res[res.length - 1].code!;
         this.searchList();

@@ -12,7 +12,7 @@ export const getDepth = (function () {
             return depth;
         }
 
-        return get(treeNode.children[0]) + 1;
+        return get(treeNode.children) + 1;
     }
 })();
 

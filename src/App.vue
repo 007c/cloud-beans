@@ -34,7 +34,7 @@ p {
   <v-app v-touch="{up: onTouchUp}">
     <v-content>
       <keep-alive include="universitySearch">
-          <router-view></router-view>
+        <router-view></router-view>
       </keep-alive>
     </v-content>
     <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
@@ -235,6 +235,18 @@ export default Vue.extend({
                 "/api/Areas/GetAreaTree2"
             );
             const treeData = this.transformTree(JSON.parse(rsp.data.data));
+            treeData.unshift({
+                label: "全部",
+                code: "",
+                value: 0,
+                children: [
+                    {
+                        label: "",
+                        code: "",
+                        value: 0,
+                    }
+                ]
+            });
             this.$store.commit(SET_AREE_TREE, treeData);
         },
 

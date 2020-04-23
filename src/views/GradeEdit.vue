@@ -183,6 +183,7 @@ export default class extends Vue {
         this.getHighSchoolByArea(provinceCode!);
     }
 
+    @withLoading()
     private async getHighSchoolByArea(areaCode: number) {
         const rsp = await this.$http.get<
             ResponseModel<
@@ -223,18 +224,23 @@ export default class extends Vue {
         this.highSchoolText = item.label;
     }
 
-    private onAreaChange(res: AreaTree[], isEnsure: boolean) {
+    private async onAreaChange(res: AreaTree[], isEnsure: boolean) {
         if (!isEnsure) {
             return;
         }
         this.defaultValue = res.map((item) => item.value);
         this.areaText = res.map((item) => item.label).join("");
         this.province = res[0].label;
-        this.defaultHighSchool = -1;
-        this.highSchoolText = "";
         const city = res[res.length - 1];
+        this.highSchoolText = "";
+
         if (city) {
-            this.getHighSchoolByArea(city.value);
+            await this.getHighSchoolByArea(city.value);
+            const { highSchoolList } = this;
+            if (highSchoolList[0]) {
+                this.defaultHighSchool = highSchoolList[0].value;
+                this.highSchoolText = highSchoolList[0].label;
+            }
         }
     }
 

@@ -82,7 +82,9 @@ import {
     SET_UNIVERSITY_TYPES,
     SET_UNIVERSITY_LEVELS,
     SET_AREE_TREE,
-    SET_SYSTEM_SUPPORTED_MESSAGES
+    SET_SYSTEM_SUPPORTED_MESSAGES,
+    SET_JUNIOR_TAGS,
+    SET_UNDERGRADUATE_TAGS
 } from "@/store/mutation-types";
 import { getReslover, getRejecter } from "@/loginGuideController";
 import { DataModel } from "./store/cache-data";
@@ -205,11 +207,14 @@ export default Vue.extend({
             this.$store.commit(SET_SYSTEM_SUPPORTED_MESSAGES, rsp.data.data);
         },
         async getUniversityTags() {
-            const rsp: AxiosResponse<ResponseModel<
-                DataModel[]
-            >> = await this.$http.get("/api/CommTypes/CommTypes5");
-            rsp.data.data.shift();
-            this.$store.commit(SET_UNIVERSITY_TAGS, rsp.data.data);
+            const [juniorRsp, regularRsp]: Array<AxiosResponse<
+                ResponseModel<DataModel[]>
+            >> = await Promise.all([
+                this.$http.get("/api/CommTypes/CommTypes9"),
+                this.$http.get("/api/CommTypes/CommTypes11")
+            ]);
+            this.$store.commit(SET_UNDERGRADUATE_TAGS, regularRsp.data.data);
+            this.$store.commit(SET_JUNIOR_TAGS, juniorRsp.data.data);
         },
         async getUniversityTypes() {
             const rsp: AxiosResponse<ResponseModel<
@@ -239,7 +244,8 @@ export default Vue.extend({
             for (const item of treeData) {
                 const treeItem: AreaTree = {
                     label: item.text,
-                    value: item.id
+                    value: item.id,
+                    code: `${item.id}|${item.text}`
                 };
 
                 if (item.children) {

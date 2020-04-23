@@ -71,7 +71,7 @@
           item-text="text"
           v-model="universityLevel"
           item-value="value"
-          @change="searchList"
+          @change="onUniLevelChange"
         ></v-select>
       </v-col>
       <v-col cols="12">
@@ -156,11 +156,13 @@ export default class extends Vue {
 
     private areaText: string = "";
 
-    private universityType = 0;
+    private areaCode: string = "";
 
-    private universityLevel = 0;
+    private universityType = "0|不限";
 
-    private universityTag: number[] = [];
+    private universityLevel = "0|不限";
+
+    private universityTag: string[] = [];
 
     private listData: ListItem[] = [];
 
@@ -170,8 +172,25 @@ export default class extends Vue {
 
     private shoudShowNoDataTip = false;
 
-    get universityTags(): Array<SelectOption<number>> {
-        return this.$store.getters.universityTags;
+    get universityTags(): Array<SelectOption<string>> {
+        // level to tags map
+        const {
+            universityTags,
+            juniorTas,
+            undergraduateTags
+        } = this.$store.getters;
+        const uniTagsMap: Dict<Array<SelectOption<string>>> = {
+            0: universityTags,
+            1: juniorTas,
+            2: undergraduateTags
+        };
+        const uniLevelCode = this.universityLevel.split("|")[0];
+        return uniTagsMap[uniLevelCode];
+    }
+
+    private onUniLevelChange() {
+        this.universityTag = [];
+        this.searchList();
     }
 
     get icon() {
@@ -222,11 +241,23 @@ export default class extends Vue {
         }
         this.defaultValue = res.map((item) => item.value);
         this.areaText = res.map((item) => item.label).join("");
+        this.areaCode = res[res.length - 1].code!;
         this.searchList();
     }
 
     @withLoading()
     private async getListData(mode: "push" | "reload" = "reload") {
+        const labels = this.universityTag.map((item) => {
+            const values = item.split("|");
+            return {
+                value: parseInt(values[0], 10),
+                text: values[1]
+            };
+        });
+
+        labels.sort((a, b) => a.value - b.value);
+
+        const tags = labels.map((item) => `${item.value}|${item.text}`);
         const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
             "/api/Universitys/GetPageList",
             {
@@ -235,8 +266,8 @@ export default class extends Vue {
                     PageSize: this.pageSize,
                     FullName: this.universityName,
                     EduType: this.universityType,
-                    Labels: this.universityTag.join(","),
-                    AreaCode: this.defaultValue[this.defaultValue.length - 1]
+                    Labels: tags.join(","),
+                    AreaCode: this.areaCode
                 }
             }
         );

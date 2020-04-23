@@ -68,7 +68,6 @@ export default class extends Vue {
         };
 
         window.addEventListener("scroll", scrollHandler);
-        this.badges.message = 5;
     }
 
     private beforeDestroy() {
@@ -78,7 +77,7 @@ export default class extends Vue {
     private shouldShowBadges(menu: Menu): boolean {
         return (
             menu.badgesKey !== undefined &&
-            this.badges[menu.badgesKey] !== 0 &&
+            this.badges[menu.badgesKey] > 0 &&
             this.isLogin
         );
     }

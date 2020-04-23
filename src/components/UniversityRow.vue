@@ -1,14 +1,14 @@
 <template>
-  <v-list-item class="pa-0 mb-2">
+  <v-list-item class="pa-0 mb-2" @click="goDetail(item.schoolID)">
     <v-card width="100%" class="d-flex pl-2 pr-2">
       <div class="d-flex align-center mr-3">
         <v-list-item-avatar color="secondary" size="60">
-          <v-img :src="item.logo" v-if="item.logo"></v-img>
-          <span v-else class="white--text">{{item.fullName.substring(0,1)}}</span>
+          <v-img :alt="item.fullName.substring(0,1)" :src="'./static/logo/' + item.fullName + '.jpg'"></v-img>
+          <!-- <span class="white--text">{{item.fullName.substring(0,1)}}</span> -->
         </v-list-item-avatar>
       </div>
       <v-list-item-content>
-        <v-list-item-title :to="'/university/detail/' + item.id" class="d-flex justify-space-between align-center">
+        <v-list-item-title class="d-flex justify-space-between align-center">
           <span>{{item.fullName}}</span>
           <advisory-btn @click.native.stop :typeCode="1"></advisory-btn>
           <!-- <span class="body-2">{{item.provinceName}}</span> -->
@@ -60,6 +60,11 @@ export interface ListItem {
     name: "UniversityRow"
 })
 export default class extends Vue {
+    private publicPath: string = process.env.BASE_URL;
+
     @Prop() private item!: ListItem;
+    private goDetail(id: number) {
+        this.$router.push(`/university/detail/${id}`);
+    }
 }
 </script>

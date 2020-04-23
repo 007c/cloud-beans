@@ -6,16 +6,13 @@ export const eventBus = function () {
 
 // 递归查找深度
 export const getDepth = (function () {
-    let i = 1;
-    return function get(obj) {
-        if (!obj || !obj.children) {
-            // 每次执行完 初始化
-            const j = i;
-            i = 1;
-            return j;
+    let depth = 0;
+    return function get(treeNode) {
+        if (!treeNode) {
+            return depth;
         }
-        i++;
-        return get(obj.children[0])
+
+        return get(treeNode.children[0]) + 1;
     }
 })();
 

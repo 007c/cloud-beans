@@ -77,23 +77,33 @@ export default {
         };
     },
     created() {
-        // 判断是单列
-        if (!this.isMulti) {
-            this.listData =
-                this.list[0].constructor === Object
-                    ? [this.list]
-                    : [util.normalizeData(this.list)];
-        } else if (this.isMulti && !this.isRelate) {
-            this.listData =
-                this.list[0][0].constructor === Object
-                    ? this.list
-                    : util.normalizeData(this.list);
-        } else {
-            const def = this.defaultVal.slice();
-            this.listData = [this.list].concat(util.getDefault(this.list, def));
+        this.initListData();
+    },
+    watch: {
+        list() {
+            this.initListData();
         }
     },
     methods: {
+        initListData() {
+            // 判断是单列
+            if (!this.isMulti) {
+                this.listData =
+                    this.list[0].constructor === Object
+                        ? [this.list]
+                        : [util.normalizeData(this.list)];
+            } else if (this.isMulti && !this.isRelate) {
+                this.listData =
+                    this.list[0][0].constructor === Object
+                        ? this.list
+                        : util.normalizeData(this.list);
+            } else {
+                const def = this.defaultVal.slice();
+                this.listData = [this.list].concat(
+                    util.getDefault(this.list, def)
+                );
+            }
+        },
         onChange(col, item, index, isInit) {
             if (!item) {
                 return;
@@ -102,8 +112,7 @@ export default {
                 this.res.splice(col + 1);
             }
             this.res[col] = {
-                label: item.label,
-                value: item.value
+                ...item
             };
             // 联动数据并且是非首次渲染的数据
             if (this.isMulti && this.isRelate && !isInit) {

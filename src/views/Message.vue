@@ -246,9 +246,9 @@ export default class extends Vue {
             moment(new Date()).format("YYYYMMDD") ===
             moment(timeString).format("YYYYMMDD")
         ) {
-            return moment(timeString).format("HH:mm:SS");
+            return moment(timeString).format("HH:mm:ss");
         }
-        return moment(timeString).format("YYYY-MM-DD hh:MM:ss");
+        return moment(timeString).format("YYYY-MM-DD HH:mm:ss");
     }
 
     private onTipClick() {

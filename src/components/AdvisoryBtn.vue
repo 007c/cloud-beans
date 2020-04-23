@@ -1,5 +1,5 @@
 <template>
-  <v-btn @click="gotoMessage" color="primary" small text>专家咨询</v-btn>
+  <v-btn @click.stop="gotoMessage" color="primary" small text>专家咨询</v-btn>
 </template>
 
 <script lang="ts">

@@ -4,7 +4,9 @@ import {
     SET_UNIVERSITY_TAGS,
     SET_UNIVERSITY_TYPES,
     SET_AREE_TREE,
-    SET_SYSTEM_SUPPORTED_MESSAGES
+    SET_SYSTEM_SUPPORTED_MESSAGES,
+    SET_JUNIOR_TAGS,
+    SET_UNDERGRADUATE_TAGS
 } from './mutation-types';
 
 export interface DataModel {
@@ -26,6 +28,8 @@ export interface CacheDataState {
     universityTagsData: DataModel[];
     areaTree: AreaTree[];
     supportedMessages: DataModel[];
+    juniorTagsData: DataModel[];
+    undergraduateTagsData: DataModel[];
 }
 
 const mapToSelectOptions = function (dataModel: DataModel[]): Array<SelectOption<string>> {
@@ -43,7 +47,9 @@ const cacheDataState: Module<CacheDataState, any> = {
         universityLevelsData: [],
         universityTagsData: [],
         areaTree: [],
-        supportedMessages: []
+        supportedMessages: [],
+        juniorTagsData: [],
+        undergraduateTagsData: [],
     },
 
     mutations: {
@@ -61,6 +67,12 @@ const cacheDataState: Module<CacheDataState, any> = {
         },
         [SET_SYSTEM_SUPPORTED_MESSAGES](state, payload: DataModel[]) {
             state.supportedMessages = payload;
+        },
+        [SET_JUNIOR_TAGS](state, payload: DataModel[]) {
+            state.juniorTagsData = payload;
+        },
+        [SET_UNDERGRADUATE_TAGS](state, payload) {
+            state.undergraduateTagsData = payload;
         }
     },
 
@@ -72,7 +84,13 @@ const cacheDataState: Module<CacheDataState, any> = {
             return mapToSelectOptions(state.universityLevelsData);
         },
         universityTags(state): Array<SelectOption<string>> {
-            return mapToSelectOptions(state.universityTagsData);
+            return mapToSelectOptions(state.undergraduateTagsData).concat(mapToSelectOptions(state.juniorTagsData));
+        },
+        juniorTas(state) {
+            return mapToSelectOptions(state.juniorTagsData);
+        },
+        undergraduateTags(state) {
+            return mapToSelectOptions(state.undergraduateTagsData);
         },
         areaList(state): AreaTree[] {
             return state.areaTree;

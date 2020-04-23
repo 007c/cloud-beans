@@ -33,7 +33,9 @@ p {
 <template>
   <v-app v-touch="{up: onTouchUp}">
     <v-content>
-      <router-view></router-view>
+      <keep-alive include="universitySearch">
+          <router-view></router-view>
+      </keep-alive>
     </v-content>
     <div class="justify-center loader-content custom-v-dialog" v-show="shoudShowLoading">
       <v-progress-circular indeterminate color="primary" class="mb-0"></v-progress-circular>

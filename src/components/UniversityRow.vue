@@ -3,8 +3,13 @@
     <v-card width="100%" class="d-flex pl-2 pr-2">
       <div class="d-flex align-center mr-3">
         <v-list-item-avatar color="secondary" size="60">
-          <v-img :alt="item.fullName.substring(0,1)" :src="'./static/logo/' + item.fullName + '.jpg'"></v-img>
-          <!-- <span class="white--text">{{item.fullName.substring(0,1)}}</span> -->
+          <v-img
+            v-if="item.hasLogo"
+            @error="item.hasLogo=false"
+            :alt="item.fullName.substring(0,1)"
+            :src="'./static/logo/' + item.fullName + '.jpg'"
+          ></v-img>
+          <span v-else class="white--text">{{item.fullName.substring(0,1)}}</span>
         </v-list-item-avatar>
       </div>
       <v-list-item-content>
@@ -55,6 +60,7 @@ export interface ListItem {
     // "floorArea": 5886,
     // "belongTo": "教育部",
     id: string;
+    hasLogo: boolean;
 }
 @Component({
     name: "UniversityRow"

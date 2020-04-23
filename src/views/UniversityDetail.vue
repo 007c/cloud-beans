@@ -32,8 +32,12 @@
           <v-row>
             <v-col class="d-flex align-center justify-center pb-0" cols="3">
               <v-avatar color="teal" class="mr-2" size="60">
-                <v-img :src="'./static/logo/' + universityDetail.fullName + '.jpg'"></v-img>
-                <!-- <span v-else class="white--text">西</span> -->
+                <v-img
+                  v-if="universityDetail.hasLogo"
+                  @error="universityDetail.hasLogo=false"
+                  :src="'./static/logo/' + universityDetail.fullName + '.jpg'"
+                ></v-img>
+                <span v-else class="white--text">西</span>
               </v-avatar>
             </v-col>
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">
@@ -91,9 +95,6 @@ export default class extends Vue {
 
     private description: string = "";
 
-    private universityLogo: string =
-        "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585904564715&di=bfc1df6022e4a5c0bbf7240d76a430d3&imgtype=0&src=http%3A%2F%2Fimg.gaosan.com%2Fupload%2F2017-5%2F52ddc53c4b0cc.jpg";
-
     private tabs: string[] = ["院校简介", "录取数据", "招生简章"];
 
     private created() {
@@ -114,6 +115,7 @@ export default class extends Vue {
         );
 
         const { data } = rsp.data;
+        data.hasLogo = true;
         this.universityDetail = data;
         this.loadDescription(data.fullName);
     }
@@ -123,7 +125,7 @@ export default class extends Vue {
             const rsp = await loadUniversityDesc(universityName);
             this.description = rsp.data;
         } catch (ex) {
-            this.description = "";
+            this.description = "暂无";
         }
     }
 

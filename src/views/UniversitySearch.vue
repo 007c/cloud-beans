@@ -273,6 +273,9 @@ export default class extends Vue {
         );
 
         const { data } = rsp.data;
+        data.forEach((item) => {
+          item.hasLogo = true;
+        })
         if (data.length < this.pageSize) {
             this.shoudShowNoDataTip = true;
         } else {

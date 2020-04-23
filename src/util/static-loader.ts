@@ -2,7 +2,7 @@ import axios from "axios";
 const axiosInstance =  axios.create()
 
 export const loadUniversityDesc = async function (universityName: string) {
-    return await axiosInstance.get<string>(`./static/学校简介/${universityName}.txt`)
+    return await axiosInstance.get<string>(`./static/学校介绍/${universityName}.txt`)
 }
 
 export const loadUniversityLogo = async function (universityName: string) {

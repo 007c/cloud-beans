@@ -187,8 +187,8 @@ export default class extends Vue {
     private messages: Message[] = [];
     private async created() {
         if (this.isLogin) {
-            this.parseRouteMessage();
             await this.getAllMessages();
+            this.parseRouteMessage();
             scrollHander = createDebounce(this.updateUnReadMessage, 1000, 6000);
             this.onListScroll();
         } else {
@@ -206,7 +206,7 @@ export default class extends Vue {
 
     private async sendMessageToPlatform(typeCode: MessageTypeCode) {
         return await this.$http.post<ResponseModel<string>>(
-            "/api/Messages/SendDeadultToPlat",
+            "/api/Messages/SendDefaultToPlat",
             {
                 typeCode,
                 msg: this.message

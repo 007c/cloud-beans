@@ -256,7 +256,6 @@ export default class extends Vue {
         });
 
         labels.sort((a, b) => a.value - b.value);
-
         const tags = labels.map((item) => `${item.value}|${item.text}`);
         const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
             "/api/Universitys/GetPageList",
@@ -265,7 +264,8 @@ export default class extends Vue {
                     PageIndex: this.pageIndex,
                     PageSize: this.pageSize,
                     FullName: this.universityName,
-                    EduType: this.universityType,
+                    EduType: this.universityLevel,
+                    EduClass: this.universityType,
                     Labels: tags.join(","),
                     AreaCode: this.areaCode
                 }

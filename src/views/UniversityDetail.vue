@@ -1,23 +1,6 @@
 <template>
   <v-container v-if="universityDetail" class="pt-0">
     <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
-      <!-- <v-row no-gutters>
-        <v-col cols="2">
-          <v-btn @click="$router.go(-1)" icon color="primary">
-            <v-icon>arrow_back</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <h1
-            class="primary--text subtitle-1 text-center font-weight-bold"
-          >{{universityName}}</h1>
-        </v-col>
-        <v-col cols="2">
-          <v-btn @click="followUniversity" icon color="primary">
-            <v-icon>{{!follwed ? 'favorite_border' : 'favorite'}}</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>-->
       <header-bar
         :followed="followed"
         @follow="followUniversity"
@@ -31,13 +14,13 @@
         <v-card flat>
           <v-row>
             <v-col class="d-flex align-center justify-center pb-0" cols="3">
-              <v-avatar color="teal" class="mr-2" size="60">
+              <v-avatar color="secondary" class="mr-2" size="60">
                 <v-img
                   v-if="universityDetail.hasLogo"
                   @error="universityDetail.hasLogo=false"
                   :src="'./static/logo/' + universityDetail.fullName + '.jpg'"
                 ></v-img>
-                <span v-else class="white--text">西</span>
+                <span v-else class="white--text">{{universityDetail.fullName.substring(0, 1)}}</span>
               </v-avatar>
             </v-col>
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">

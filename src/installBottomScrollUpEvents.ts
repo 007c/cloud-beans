@@ -1,10 +1,20 @@
 import eventBus from "./event-bus";
 
-window.addEventListener('scroll', function () {
+let isUserTouch = false;
+
+window.addEventListener("touchstart", () => {
+    isUserTouch = true;
+})
+
+window.addEventListener("touchend", () => {
+    isUserTouch = false
+})
+
+window.addEventListener('scroll', function (event: Event) {
     const scrollHeight = document.documentElement.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;
     const scrollY = window.scrollY;
-    if (scrollHeight - clientHeight <= scrollY) {
+    if (scrollHeight - clientHeight <= scrollY && isUserTouch) {
         eventBus.$emit("bottomScrollUp");
     }
 })

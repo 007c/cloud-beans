@@ -84,6 +84,16 @@ export default class extends Vue {
         const route = this.$route;
         this.universityId = parseInt(route.params.id, 10);
         this.getUniversityDetail();
+        this.getUniversityFollowedStatus();
+    }
+
+    @withLoading()
+    private async getUniversityFollowedStatus() {
+        const rsp = await this.$http.get<ResponseModel<string>>(
+            "/api/UniversityCollections/JudgeCollected"
+        );
+
+        this.followed = JSON.parse(rsp.data.data);
     }
 
     @withLoading()
@@ -114,12 +124,22 @@ export default class extends Vue {
 
     @withLoading()
     private async followUniversity() {
-        await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.followed = !this.followed;
-                resolve();
-            }, 1000);
-        });
+        if (!this.followed) {
+            await this.$http.post("/api/UniversityCollections/SetCollect", {
+                schoolid: this.universityId
+            });
+        } else {
+            await this.$http.delete(
+                "/api/UniversityCollections/CancleCollect",
+                {
+                    data: {
+                        schoolid: this.universityId
+                    }
+                }
+            );
+        }
+
+        this.followed = !this.followed;
     }
 }
 </script>

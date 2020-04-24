@@ -31,8 +31,8 @@ import { LOGIN_OUT } from "../store/actions";
 })
 export default class extends Vue {
     private loginOut() {
-        this.$store.dispatch(LOGIN_OUT);
         this.$router.push("/home");
+        this.$store.dispatch(LOGIN_OUT);
     }
 }
 </script>

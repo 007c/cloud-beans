@@ -72,9 +72,6 @@ export const personMenu: Menu[] = [
     name: "系统设置",
     path: "/systemSetting",
     component: () => import("../views/SystemSetting.vue"),
-    meta: {
-      requireLogin: true
-    }
   }
 ]
 
@@ -172,6 +169,9 @@ export const routes = [
         path: "/password/reset",
         name: "密码设置",
         component: () => import("../views/ResetPassword.vue"),
+        meta: {
+          requireLogin: true
+        }
       }
     ]
   },

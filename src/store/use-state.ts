@@ -95,6 +95,7 @@ const userState: Module<UserState, any> = {
             localStorage.removeItem("user_token");
             localStorage.removeItem("expired_at");
             commit(SET_USER_TOKEN, "");
+            location.reload();
         },
         async [GET_USER_BASE_INFO]({ commit }) {
             const rsp = await axios.get<ResponseModel<GradeInfoModel>>(

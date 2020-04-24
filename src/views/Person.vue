@@ -15,7 +15,7 @@
         <v-row class="body-2">
           <v-col
             cols="10"
-          >{{studentInfo.province || '--'}} | {{ mapSubject(studentInfo.subject) || '--'}} | {{studentInfo.grade|| '--'}} 分| {{studentInfo.rank || '--'}}名</v-col>
+          >{{areaMap[studentInfo.provinceCode] || '--'}} | {{ mapSubject(studentInfo.subject) || '--'}} | {{studentInfo.grade|| '--'}} 分| {{studentInfo.rank || '--'}}名</v-col>
           <v-col class="px-0">
             <v-btn to="/grade/edit" x-small icon>
               <v-icon>edit</v-icon>
@@ -56,6 +56,16 @@ import { StudentInfo, Subject } from "../store/use-state";
 })
 export default class extends Vue {
     private menuList: Menu[] = personMenu;
+    get areaList(): AreaTree[] {
+        return this.$store.getters.areaList;
+    }
+    get areaMap(): Dict<string> {
+        const map: Dict<string> = {};
+        for (const item of this.areaList) {
+            map[item.value] = item.label;
+        }
+        return map;
+    }
     get studentInfo(): StudentInfo {
         return this.$store.state.userState.studentInfo;
     }

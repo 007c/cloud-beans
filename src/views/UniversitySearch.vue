@@ -240,7 +240,7 @@ export default class extends Vue {
             return;
         }
         this.defaultValue = res.map((item) => item.value);
-        
+
         this.areaText = res.map((item) => item.label).join("");
         this.areaCode = res[res.length - 1].code!;
         this.searchList();
@@ -275,8 +275,8 @@ export default class extends Vue {
 
         const { data } = rsp.data;
         data.forEach((item) => {
-          item.hasLogo = true;
-        })
+            item.hasLogo = true;
+        });
         if (data.length < this.pageSize) {
             this.shoudShowNoDataTip = true;
         } else {

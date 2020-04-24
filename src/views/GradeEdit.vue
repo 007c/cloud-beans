@@ -174,7 +174,7 @@ export default class extends Vue {
             provinceCode,
             highSchoolId
         } = this.studentInfo;
-        this.areaText = this.areaMap[provinceCode!]; //source || "";
+        this.areaText = this.areaMap[provinceCode!]; // source || "";
         this.subject = subject || 0;
         this.grade = grade as string;
         this.rank = rank as string;
@@ -294,7 +294,7 @@ export default class extends Vue {
             this.$store.commit(UPDATE_USER_INFO, userInfo);
             this.$router.push("/choice");
         } catch (ex) {
-            console.log("ex: ", ex);
+            // console.log("ex: ", ex);
         }
     }
 }

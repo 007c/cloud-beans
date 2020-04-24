@@ -1,6 +1,9 @@
 <template>
   <v-container class="pa-0">
-    <v-subheader v-if="isLoaded && followedUniversities.length === 0">暂无数据</v-subheader>
+    <v-list>
+      <university-row v-for="item in followedUniversities" :key="item.schoolID" :item="item"></university-row>
+    </v-list>
+    <v-subheader v-if="isLoaded && followedUniversities.length < PageSize">没有更多数据了</v-subheader>
   </v-container>
 </template>
 
@@ -9,11 +12,15 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import UniversityRow, { ListItem } from "../components/UniversityRow.vue";
 import { withLoading } from "@/decorators/with-loading";
 @Component({
-    components: {}
+    components: {
+        UniversityRow
+    }
 })
 export default class extends Vue {
     private followedUniversities: ListItem[] = [];
     private isLoaded: boolean = false;
+
+    private PageSize: number = 100;
 
     private created() {
         this.getFollowedUniversities();
@@ -21,9 +28,17 @@ export default class extends Vue {
 
     @withLoading()
     private async getFollowedUniversities() {
-        await new Promise((resolve) => {
-            setTimeout(resolve, 2000);
-        });
+        const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
+            "/api/Universitys/GetCollectPageList",
+            {
+                params: {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    Where: ""
+                }
+            }
+        );
+        this.followedUniversities = rsp.data.data;
         this.isLoaded = true;
     }
 }

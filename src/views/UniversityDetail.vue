@@ -90,7 +90,12 @@ export default class extends Vue {
     @withLoading()
     private async getUniversityFollowedStatus() {
         const rsp = await this.$http.get<ResponseModel<string>>(
-            "/api/UniversityCollections/JudgeCollected"
+            "/api/UniversityCollections/JudgeCollected",
+            {
+                params: {
+                    schoolid: this.universityId
+                }
+            }
         );
 
         this.followed = JSON.parse(rsp.data.data);

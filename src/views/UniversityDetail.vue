@@ -130,16 +130,23 @@ export default class extends Vue {
     @withLoading()
     private async followUniversity() {
         if (!this.followed) {
-            await this.$http.post("/api/UniversityCollections/SetCollect", this.universityId, {
-              headers: {
-                "content-type": "application/json-patch+json"
-              }
-            });
+            await this.$http.post(
+                "/api/UniversityCollections/SetCollect",
+                this.universityId,
+                {
+                    headers: {
+                        "content-type": "application/json-patch+json"
+                    }
+                }
+            );
         } else {
             await this.$http.delete(
                 "/api/UniversityCollections/CancleCollect",
                 {
-                    data: this.universityId
+                    data: this.universityId,
+                    headers: {
+                        "content-type": "application/json-patch+json"
+                    }
                 }
             );
         }

@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 export interface ListItem {
     // logo: string;
     // university: string;
@@ -71,6 +71,12 @@ export default class extends Vue {
     private publicPath: string = process.env.BASE_URL;
 
     @Prop() private item!: ListItem;
+
+    @Watch("item", { immediate: true })
+    private preWashItem() {
+        this.item.hasLogo = true;
+    }
+
     private goDetail(id: number) {
         this.$router.push(`/university/detail/${id}`);
     }

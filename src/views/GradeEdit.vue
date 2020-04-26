@@ -38,7 +38,7 @@
             :defaultValue="defaultValue"
             @onChange="onAreaChange"
             @update:show="showAreaPicker=false"
-            :list="areaList"
+            :list="supportAreaList"
             :isRelate="true"
             :isMulti="true"
             :show="showAreaPicker"
@@ -143,6 +143,9 @@ export default class extends Vue {
 
     get areaList(): AreaTree[] {
         return this.$store.getters.areaList;
+    }
+    get supportAreaList(): AreaTree[] {
+        return this.areaList.filter((item) => item.value === 510000);
     }
     get areaMap(): Dict<string> {
         const map: Dict<string> = {};

@@ -35,7 +35,7 @@ export interface UserInfo {
     originalInfo?: GradeInfoModel | null
 }
 
-const getIntialState = function (): UserState {
+export const getIntialState = function (): UserState {
     const userToken = localStorage.getItem("user_token");
     const expiredAt = localStorage.getItem("expired_at");
     const initialState: UserState = {
@@ -91,11 +91,13 @@ const userState: Module<UserState, any> = {
     },
 
     actions: {
-        [LOGIN_OUT]({ commit }) {
+        [LOGIN_OUT]({ commit, state }) {
             localStorage.removeItem("user_token");
             localStorage.removeItem("expired_at");
             commit(SET_USER_TOKEN, "");
-            location.reload();
+            const intialState = getIntialState();
+            state.studentInfo = intialState.studentInfo;
+            state.userInfo = intialState.userInfo;
         },
         async [GET_USER_BASE_INFO]({ commit }) {
             const rsp = await axios.get<ResponseModel<GradeInfoModel>>(

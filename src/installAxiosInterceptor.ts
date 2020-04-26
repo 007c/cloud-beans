@@ -1,7 +1,7 @@
 import { AxiosStatic } from 'axios';
 import router from "@/router";
 import store from "@/store";
-import { UPDATE_APP_MESSAGE, SET_USER_TOKEN } from './store/mutation-types';
+import { UPDATE_APP_MESSAGE } from './store/mutation-types';
 import { LOGIN_OUT } from './store/actions';
 
 const showDebugErrorMsg = function (error: any) {

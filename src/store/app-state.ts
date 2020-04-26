@@ -69,6 +69,7 @@ const appState: Module<AppState, any> = {
             if (debug && process.env.NODE_ENV === "production") {
                 state.shouldShowErrorMsg = false;
             }
+
             if (timeout > 0) {
                 clearTimeout(timerId);
                 timerId = setTimeout(() => {

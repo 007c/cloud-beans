@@ -56,46 +56,54 @@ export default {
         };
     },
     mounted() {
-        this.$scrollable = this.$refs["content"];
-        this.col = parseInt(this.$refs["group"].dataset.col || 1, 10);
-        // 首次触发选中事件
-        // 如果有缓存的选项，则用缓存的选项，否则使用第一项。
-        let index = 0;
-        const defaultValue = this.defaultValue;
-        if (defaultValue !== null) {
-            const values = this.items.map((item) => {
-                return item.value;
-            });
-            index = values.findIndex((i) => i === defaultValue);
-            // 默认值如果和值匹配上 则滚动到默认值，否则如果是数字则判断为索引
-            index =
-                index >= 0
-                    ? index
-                    : defaultValue === +defaultValue
-                    ? defaultValue
-                    : 0;
-            this.translate = (this.offset - index) * this.height;
-        } else {
-            this.translate = util.getDefaultTranslate(
-                this.offset,
-                this.height,
-                this.items
-            );
+        this.initGroup();
+    },
+    watch: {
+        defaultValue() {
+            this.initGroup();
         }
-        this.emitChange(this.items[index], index);
-        this.setTranslate(this.translate);
-
-        this.userEvent.$on("changeDefaultItem", (res) => {
-            if (res.includes(this.col)) {
-                this.translate = this.offset * this.height;
-                this.setTranslate(this.translate);
-                this.$nextTick(() => {
-                    this.emitChange(this.items[0], 0);
-                });
-            }
-        });
     },
     methods: {
+        initGroup() {
+            this.$scrollable = this.$refs["content"];
+            this.col = parseInt(this.$refs["group"].dataset.col || 1, 10);
+            // 首次触发选中事件
+            // 如果有缓存的选项，则用缓存的选项，否则使用第一项。
+            let index = 0;
+            const defaultValue = this.defaultValue;
+            if (defaultValue !== null) {
+                const values = this.items.map((item) => {
+                    return item.value;
+                });
+                index = values.findIndex((i) => i === defaultValue);
+                // 默认值如果和值匹配上 则滚动到默认值，否则如果是数字则判断为索引
+                index =
+                    index >= 0
+                        ? index
+                        : defaultValue === +defaultValue
+                        ? defaultValue
+                        : 0;
+                this.translate = (this.offset - index) * this.height;
+            } else {
+                this.translate = util.getDefaultTranslate(
+                    this.offset,
+                    this.height,
+                    this.items
+                );
+            }
+            this.emitChange(this.items[index], index);
+            this.setTranslate(this.translate);
+
+            this.userEvent.$on("changeDefaultItem", (res) => {
+                if (res.includes(this.col)) {
+                    this.translate = this.offset * this.height;
+                    this.setTranslate(this.translate);
+                    this.$nextTick(() => {
+                        this.emitChange(this.items[0], 0);
+                    });
+                }
+            });
+        },
         emitChange(arg1, arg2, arg3 = true) {
             this.$emit("onChange", this.col, arg1, arg2, arg3);
         },

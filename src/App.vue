@@ -88,7 +88,7 @@ import {
     SET_JUNIOR_TAGS,
     SET_UNDERGRADUATE_TAGS
 } from "@/store/mutation-types";
-import { getReslover, getRejecter } from "@/loginGuideController";
+import { reslove, reject } from "@/loginGuideController";
 import { DataModel } from "./store/cache-data";
 import { GET_USER_BASE_INFO } from "./store/actions";
 interface TreeData {
@@ -128,11 +128,11 @@ export default Vue.extend({
     },
     methods: {
         resloveLogin() {
-            getReslover()();
+            reslove();
             this.$store.commit(SET_APP_LOGIN_GUIDE_STATUS, false);
         },
         cancelLogin() {
-            getRejecter()();
+            reject();
             this.$store.commit(SET_APP_LOGIN_GUIDE_STATUS, false);
         },
         closeErrorMsg() {

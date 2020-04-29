@@ -42,7 +42,7 @@ export default class extends Vue {
     }
 
     @Watch("isLogin", { immediate: true })
-    async getUserBaseInfo() {
+    private async getUserBaseInfo() {
         if (this.isLogin && !this.userInfo.id) {
             await this.$store.dispatch(GET_USER_BASE_INFO);
         }

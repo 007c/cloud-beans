@@ -43,9 +43,6 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 })
 export default class extends Vue {
     @Prop() private item!: ListItem;
-    private log(text: String) {
-        console.log(text);
-    }
     private normalizeLabels(labels: string): string[] {
         return labels.split(",").slice(0, 3);
     }

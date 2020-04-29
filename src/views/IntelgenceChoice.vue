@@ -150,6 +150,7 @@ import StudentInfoBar from "@/components/StudentInfoBar.vue";
 import UniversityRowBase, {
     ListItem
 } from "../components/UniversityRowBase.vue";
+import { Route } from "vue-router";
 
 const findTreePath = function(tree: AreaTree[], nodeValue: number) {
     const path: AreaTree[] = [];
@@ -185,6 +186,17 @@ const findTreePath = function(tree: AreaTree[], nodeValue: number) {
     },
     computed: {
         ...mapGetters(["universityTypes", "universityLevels", "areaList"])
+    },
+    beforeRouteEnter(
+        to: Route,
+        from: Route,
+        next: (fn: (vm: any) => void) => void
+    ) {
+        next((vm) => {
+            if (!vm.studentInfo.grade) {
+                vm.$router.replace("/grade/edit");
+            }
+        });
     }
 })
 export default class extends Vue {

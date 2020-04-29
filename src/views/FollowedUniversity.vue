@@ -9,8 +9,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import UniversityRow, { ListItem } from "../components/UniversityRow.vue";
+import UniversityRow from "../components/UniversityRow.vue";
 import { withLoading } from "@/decorators/with-loading";
+import { ListItem } from '../components/UniversityRowBase.vue';
 @Component({
     components: {
         UniversityRow

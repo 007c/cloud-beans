@@ -10,7 +10,7 @@
         <h1 class="primary--text subtitle-1 text-center font-weight-bold">智能择校</h1>
       </v-col>
       <v-col cols="3">
-        <v-select class="caption" dense hide-details v-model="choiceMode" :items="choiceItems"></v-select>
+        <!-- <v-select class="caption" dense hide-details v-model="choiceMode" :items="choiceItems"></v-select> -->
       </v-col>
     </v-row>
     <v-divider></v-divider>
@@ -36,8 +36,8 @@
           @update:show="showAreaPicker=false"
           :list="areaList"
           :isRelate="true"
-          :isMulti="true"
           :show="showAreaPicker"
+          :isMulti="true"
         ></Picker>
       </v-col>
       <v-col>
@@ -50,6 +50,7 @@
           item-text="text"
           v-model="universityType"
           item-value="value"
+          @change="searchList"
         ></v-select>
       </v-col>
       <v-col>
@@ -62,6 +63,7 @@
           item-text="text"
           v-model="universityLevel"
           item-value="value"
+          @change="onUniLevelChange"
         ></v-select>
       </v-col>
       <v-col cols="12">
@@ -75,106 +77,214 @@
           item-text="text"
           v-model="universityTag"
           item-value="value"
-        ></v-select>
+          @change="searchList"
+        >
+          <template v-slot:prepend-item>
+            <v-list-item ripple @click="toggle">
+              <v-list-item-action>
+                <v-icon :color="isAllTagsSelected ? 'primary' : ''">{{ icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>全选</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+          </template>
+        </v-select>
       </v-col>
     </v-row>
     <v-list>
-      <v-list-item class="pa-0 mb-2" v-for="(item, index) in listData" :key="index">
-        <v-card :to="'/university/detail/' + item.id" width="100%" class="d-flex pl-2 pr-2">
-          <div class="d-flex align-center mr-3">
-            <v-list-item-avatar color="secondary" size="60">
-              <v-img :src="item.logo" v-if="item.logo"></v-img>
-              <span v-else class="white--text">{{item.university.substring(0,1)}}</span>
-            </v-list-item-avatar>
-          </div>
+      <!-- <university-row :item="item" v-for="item in listData" :key="item.id"></university-row> -->
+      <university-row-base :item="item" v-for="item in listData" :key="item.id">
+        <template v-slot:default="scope">
           <v-list-item-content>
             <v-row align="center">
-              <v-col class="pt-0 pb-0">
-                <v-list-item-title>{{item.university}}</v-list-item-title>
+              <v-col cols="5" class="pt-0 pb-0">
+                <v-list-item-title class="text-truncate">{{scope.item.fullName}}</v-list-item-title>
               </v-col>
-              <v-col class="pt-0 pb-0">
-                <span class="body-2 mr-2">四川</span>
-                <span class="body-1" :class="getFontClass(item.eage)">保底</span>
+              <v-col cols="7" class="pt-0 pb-0">
+                <span class="body-2 mr-2">{{scope.item.provinceName}}</span>
+                <span
+                  class="body-1"
+                  :class="getFontClass(item.probabilityTypeID)"
+                >{{scope.item.probabilityType}} {{(scope.item.probability * 100).toFixed(1) + "%"}}</span>
               </v-col>
             </v-row>
             <v-list-item-content class="pa-0">
               <v-row no-gutters class="caption">
-                <v-col class cols="4" sm="3">综合类</v-col>
-                <v-col class cols="8" sm="4">211 985 双一流</v-col>
-                <v-col class cols="12" sm="5">2019年分数线：665</v-col>
+                <v-col class cols="4" sm="3">{{normalizeLabels(scope.item.labels)[1]}}</v-col>
+                <v-col class cols="8" sm="4">
+                  <v-btn
+                    outlined
+                    color="primary"
+                    class="mx-1"
+                    depressed
+                    tile
+                    x-small
+                    v-for="text in normalizeLabels(scope.item.labels)"
+                    :key="text"
+                  >{{text}}</v-btn>
+                </v-col>
+                <v-col class cols="12" sm="5">2019年分数线：<span class="blue--text text--darken-2">{{scope.item.lineValue}}</span></v-col>
               </v-row>
             </v-list-item-content>
           </v-list-item-content>
-        </v-card>
-      </v-list-item>
+        </template>
+      </university-row-base>
     </v-list>
+    <v-subheader v-show="shoudShowNoDataTip" class="justify-center">没有更多数据了</v-subheader>
   </v-container>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import studentInfoBar from "@/components/StudentInfoBar.vue";
 import eventBus from "../event-bus";
 import { mapGetters } from "vuex";
+import { withLoading } from "@/decorators/with-loading";
+import UniversityRow from "../components/UniversityRow.vue";
+import { StudentInfo } from "../store/use-state";
+import StudentInfoBar from "@/components/StudentInfoBar.vue";
+import UniversityRowBase, {
+    ListItem
+} from "../components/UniversityRowBase.vue";
 
-interface ListItem {
-    logo: string;
-    university: string;
-    id: number;
-}
+const findTreePath = function(tree: AreaTree[], nodeValue: number) {
+    const path: AreaTree[] = [];
+    function find(treeNode: AreaTree[] | undefined) {
+        if (!treeNode) {
+            return false;
+        }
+
+        for (const item of treeNode) {
+            const ret = find(item.children);
+            if (item.value === nodeValue) {
+                path.push(item);
+                return true;
+            }
+            if (ret || item.value === nodeValue) {
+                path.push(item);
+            }
+        }
+
+        return false;
+    }
+
+    find(tree);
+    return path;
+};
 
 @Component({
     name: "universitySearch",
     components: {
-        studentInfoBar
+        UniversityRow,
+        StudentInfoBar,
+        UniversityRowBase
     },
     computed: {
-        ...mapGetters(["universityTypes", "universityLevels", "universityTags", "areaList"])
+        ...mapGetters(["universityTypes", "universityLevels", "areaList"])
     }
 })
 export default class extends Vue {
     private universityName: string = "";
     private showAreaPicker: boolean = false;
 
-    private defaultValue = [1, 3];
+    private defaultValue: number[] = [];
 
-    private areaText: string = "";
+    private areaText: string = "全部";
 
-    private choiceItems: Array<SelectOption<number>> = [
-        {
-            text: "分数择校",
-            value: 0
-        },
-        {
-            text: "位次择校",
-            value: 1
-        }
-    ];
+    private areaCode: string = "";
 
-    private choiceMode: number = 0;
+    private universityType = "0|不限";
 
-    private universityType = 0;
+    private universityLevel = "0|不限";
 
-    private universityLevel = 0;
-
-    private universityTag = 0;
+    private universityTag: string[] = [];
 
     private listData: ListItem[] = [];
 
-    private created() {
-        this.getListData();
-        eventBus.$on("bottomTouchUp", this.onBottomTouchUp);
+    private pageIndex: number = 1;
+
+    private pageSize: number = 10;
+
+    private shoudShowNoDataTip = false;
+    get universityTags(): Array<SelectOption<string>> {
+        // level to tags map
+        const {
+            universityTags,
+            juniorTas,
+            undergraduateTags
+        } = this.$store.getters;
+        const uniTagsMap: Dict<Array<SelectOption<string>>> = {
+            0: universityTags,
+            1: juniorTas,
+            2: undergraduateTags
+        };
+        const uniLevelCode = this.universityLevel.split("|")[0];
+        return uniTagsMap[uniLevelCode];
     }
 
-    private getFontClass(eage: number) {
-        return "blue--text";
+    private onUniLevelChange() {
+        this.universityTag = [];
+        this.searchList();
+    }
+
+    get studentInfo(): StudentInfo {
+        return this.$store.state.userState.studentInfo;
+    }
+
+    get icon() {
+        if (this.isAllTagsSelected) {
+            return "check_box";
+        }
+        // if (this.universityTag.length > 0) return "indeterminate_check_box";
+        return "check_box_outline_blank";
+    }
+
+    get isAllTagsSelected() {
+        return this.universityTag.length === this.universityTags.length;
+    }
+
+    private toggle() {
+        if (this.isAllTagsSelected) {
+            this.universityTag = [];
+        } else {
+            this.universityTag = this.universityTags.map((item) => item.value);
+        }
+
+        this.searchList();
+    }
+
+    private normalizeLabels(labels: string): string[] {
+        return labels.split(",").slice(0, 4);
+    }
+
+    private created() {
+        this.getListData();
+        eventBus.$on("bottomScrollUp", this.onBottomTouchUp);
     }
 
     private beforeDestroy() {
-        eventBus.$off("bottomTouchUp", this.onBottomTouchUp);
+        eventBus.$off("bottomScrollUp", this.onBottomTouchUp);
+    }
+
+    private getFontClass(priorId: number) {
+        const priorToTextClassMap: Dict<string> = {
+            1: "green--text",
+            2: "blue--text",
+            3: "red--text"
+        };
+
+        return priorToTextClassMap[priorId] || "text--grey";
+    }
+
+    private searchList() {
+        this.pageIndex = 1;
+        this.getListData();
     }
 
     private onBottomTouchUp() {
         // console.log("bottom touch up")
+        this.pageIndex++;
+        this.getListData("push");
     }
 
     private onAreaChange(res: AreaTree[], isEnsure: boolean) {
@@ -182,22 +292,52 @@ export default class extends Vue {
             return;
         }
         this.defaultValue = res.map((item) => item.value);
+
         this.areaText = res.map((item) => item.label).join("");
+        this.areaCode = res[res.length - 1].code!;
+        this.searchList();
     }
 
-    private async getListData() {
-        this.listData = [
+    @withLoading()
+    private async getListData(mode: "push" | "reload" = "reload") {
+        const labels = this.universityTag.map((item) => {
+            const values = item.split("|");
+            return {
+                value: parseInt(values[0], 10),
+                text: values[1]
+            };
+        });
+
+        labels.sort((a, b) => a.value - b.value);
+        const tags = labels.map((item) => `${item.value}|${item.text}`);
+        const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
+            "/api/Universitys/GetSuggetPageList",
             {
-                logo: "",
-                university: "西南大学",
-                id: 0
-            },
-            {
-                logo: "",
-                university: "北京大学",
-                id: 1
+                params: {
+                    Score: this.studentInfo.grade,
+                    PageIndex: this.pageIndex,
+                    PageSize: this.pageSize,
+                    FullName: this.universityName,
+                    EduType: this.universityLevel,
+                    EduClass: this.universityType,
+                    Labels: tags.join(","),
+                    AreaCode: this.areaCode
+                }
             }
-        ];
+        );
+
+        const { data } = rsp.data;
+        if (data.length < this.pageSize) {
+            this.shoudShowNoDataTip = true;
+        } else {
+            this.shoudShowNoDataTip = false;
+        }
+
+        if (mode === "push") {
+            this.listData.push(...data);
+        } else {
+            this.listData = data;
+        }
     }
 }
 </script>

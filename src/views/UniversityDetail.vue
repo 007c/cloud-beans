@@ -24,7 +24,10 @@
               </v-avatar>
             </v-col>
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">
-              <p class="mb-0">院校类型：{{universityDetail.eduTypeName}}</p>
+              <p class="mb-0">
+                院校类型：{{universityDetail.eduTypeName}}
+                <advisory-btn @click.native.stop :typeCode="1" class="ml-2 mt-n1"></advisory-btn>
+              </p>
               <p class="mb-0">院校标签：{{universityDetail.labels}}</p>
               <p class="mb-0 row no-gutters">
                 <span
@@ -61,8 +64,8 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 import MatriculateData from "./MatriculateData.vue";
 import RecruitInfo from "./RecruitInfo.vue";
-import { ListItem } from "../components/UniversityRow.vue";
 import { loadUniversityDesc } from "@/util/static-loader";
+import { ListItem } from "../components/UniversityRowBase.vue";
 
 @Component({
     name: "UniversityDetail",

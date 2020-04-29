@@ -112,7 +112,8 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import eventBus from "../event-bus";
 import { mapGetters } from "vuex";
 import { withLoading } from "@/decorators/with-loading";
-import UniversityRow, { ListItem } from "../components/UniversityRow.vue";
+import UniversityRow from "../components/UniversityRow.vue";
+import { ListItem } from "../components/UniversityRowBase.vue";
 
 const findTreePath = function(tree: AreaTree[], nodeValue: number) {
     const path: AreaTree[] = [];

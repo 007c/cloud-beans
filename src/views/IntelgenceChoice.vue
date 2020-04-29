@@ -262,8 +262,11 @@ export default class extends Vue {
     }
 
     private created() {
-        this.getListData();
         eventBus.$on("bottomScrollUp", this.onBottomTouchUp);
+    }
+
+    private activated() {
+        this.getListData();
     }
 
     private beforeDestroy() {
@@ -303,7 +306,6 @@ export default class extends Vue {
     }
 
     @withLoading()
-    @Watch("studentInfo", { deep: true })
     private async getListData(mode: "push" | "reload" = "reload") {
         const labels = this.universityTag.map((item) => {
             const values = item.split("|");

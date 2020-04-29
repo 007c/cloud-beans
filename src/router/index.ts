@@ -97,8 +97,9 @@ export const mainMenus: Menu[] = [
   {
     icon: "flight_takeoff",
     name: "智能择校",
-    path: "/choice",
-    component: () => import("../views/IntelgenceChoice.vue"),
+    path: "/grade/edit",
+    // component: () => import("../views/IntelgenceChoice.vue"),
+    component: () => import("../views/GradeEdit.vue"),
     meta: {
       requireLogin: true
     }
@@ -148,9 +149,9 @@ export const routes = [
     component: () => import("../views/Search.vue")
   },
   {
-    path: "/grade/edit",
-    name: "GradeEdit",
-    component: () => import("../views/GradeEdit.vue"),
+    path: "/choice",
+    name: "Choice",
+    component: () => import("../views/IntelgenceChoice.vue"),
     meta: {
       requireLogin: true
     }

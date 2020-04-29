@@ -11,12 +11,12 @@
         </v-list-item-title>
         <v-list-item-content class="pa-0">
           <v-row no-gutters class="caption">
-            <v-col class cols="4" sm="3">{{scope.item.provinceName}}</v-col>
-            <v-col class cols="8" sm="4">
+            <v-col  class="text-truncate" cols="2" sm="3">{{scope.item.provinceName}}</v-col>
+            <v-col class cols="10" sm="4">
               <v-btn
                 outlined
                 color="primary"
-                class="mx-1"
+                class="mx-1 mb-1"
                 depressed
                 tile
                 x-small

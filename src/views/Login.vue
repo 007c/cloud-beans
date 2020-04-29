@@ -113,7 +113,6 @@ import {
 } from "@/store/mutation-types";
 import { UserInfo, StudentInfo } from "@/store/use-state";
 import { AxiosResponse } from "axios";
-import { GET_USER_BASE_INFO } from "../store/actions";
 let remainTimeTimer: number | undefined;
 @Component({
     name: "Login"
@@ -156,7 +155,6 @@ export default class extends Vue {
                 (+new Date() + 60 * 1000 * 60).toString()
             );
             const toPath = (this.$route.query.redirect as string) || "/home";
-            this.$store.dispatch(GET_USER_BASE_INFO);
             this.$router.push(toPath);
         } catch (ex) {
             this.$store.commit(UPDATE_APP_MESSAGE, {

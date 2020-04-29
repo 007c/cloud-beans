@@ -102,7 +102,7 @@
               <v-col cols="5" class="pt-0 pb-0">
                 <v-list-item-title class="text-truncate">{{scope.item.fullName}}</v-list-item-title>
               </v-col>
-              <v-col cols="7" class="pt-0 pb-0">
+              <v-col cols="7" class="pa-0">
                 <span class="body-2 mr-2">{{scope.item.provinceName}}</span>
                 <span
                   class="body-1"
@@ -112,12 +112,12 @@
             </v-row>
             <v-list-item-content class="pa-0">
               <v-row no-gutters class="caption">
-                <v-col class cols="4" sm="3">{{normalizeLabels(scope.item.labels)[1]}}</v-col>
-                <v-col class cols="8" sm="4">
+                <v-col class cols="3" sm="3">{{normalizeLabels(scope.item.labels)[1]}}</v-col>
+                <v-col class cols="9" sm="4">
                   <v-btn
                     outlined
                     color="primary"
-                    class="mx-1"
+                    class="mx-1 mb-1"
                     depressed
                     tile
                     x-small
@@ -125,7 +125,11 @@
                     :key="text"
                   >{{text}}</v-btn>
                 </v-col>
-                <v-col class cols="12" sm="5">2019年分数线：<span class="blue--text text--darken-2">{{scope.item.lineValue}}</span></v-col>
+                <v-col class cols="12" sm="5">
+                  2019年分数线：
+                  <span class="blue--text text--darken-2">{{scope.item.lineValue}}</span>
+                  <span class="ml-2">{{scope.item.batch}}</span>
+                </v-col>
               </v-row>
             </v-list-item-content>
           </v-list-item-content>
@@ -136,7 +140,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import eventBus from "../event-bus";
 import { mapGetters } from "vuex";
 import { withLoading } from "@/decorators/with-loading";
@@ -299,6 +303,7 @@ export default class extends Vue {
     }
 
     @withLoading()
+    @Watch("studentInfo", { deep: true })
     private async getListData(mode: "push" | "reload" = "reload") {
         const labels = this.universityTag.map((item) => {
             const values = item.split("|");

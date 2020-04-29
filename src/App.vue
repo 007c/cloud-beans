@@ -90,7 +90,6 @@ import {
 } from "@/store/mutation-types";
 import { reslove, reject } from "@/loginGuideController";
 import { DataModel } from "./store/cache-data";
-import { GET_USER_BASE_INFO } from "./store/actions";
 interface TreeData {
     text: string;
     id: number;
@@ -273,11 +272,6 @@ export default Vue.extend({
                 tree.push(treeItem);
             }
             return tree;
-        }
-    },
-    created() {
-        if (this.isLogin) {
-            this.$store.dispatch(GET_USER_BASE_INFO);
         }
     },
     async mounted() {

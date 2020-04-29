@@ -1,5 +1,5 @@
 <template>
-  <v-btn @click.stop="gotoMessage" color="primary" small text>
+  <v-btn class="pa-0" @click.stop="gotoMessage" color="primary" small text>
       <v-icon class="mr-1 align-top" size="small">textsms</v-icon>
       专家咨询
   </v-btn>

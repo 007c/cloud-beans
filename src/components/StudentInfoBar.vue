@@ -29,16 +29,25 @@ interface BarItem {
     postFix?: string;
 }
 
-import { StudentInfo, Subject } from "@/store/use-state";
+import { StudentInfo, Subject, UserInfo } from "@/store/use-state";
+import { GET_USER_BASE_INFO } from "../store/actions";
 
 @Component({
     name: "StudentInfoBar"
 })
 export default class extends Vue {
     private barItems: BarItem[] = [];
-    private created() {
+    private async created() {
         this.initLabelInfo();
     }
+
+    @Watch("isLogin", { immediate: true })
+    async getUserBaseInfo() {
+        if (this.isLogin && !this.userInfo.id) {
+            await this.$store.dispatch(GET_USER_BASE_INFO);
+        }
+    }
+
     get areaList(): AreaTree[] {
         return this.$store.getters.areaList;
     }
@@ -77,12 +86,15 @@ export default class extends Vue {
             }
         ];
     }
+    get userInfo(): UserInfo {
+        return this.$store.state.userState.userInfo;
+    }
     get studentInfo(): StudentInfo {
         return this.$store.state.userState.studentInfo;
     }
 
     get isLogin(): boolean {
-        return this.$store.state.userState.isLogin;
+        return this.$store.getters.isLogin;
     }
 }
 </script>

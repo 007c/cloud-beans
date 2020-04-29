@@ -98,7 +98,10 @@ export const mainMenus: Menu[] = [
     icon: "flight_takeoff",
     name: "智能择校",
     path: "/choice",
-    component: () => import("../views/IntelgenceChoice.vue")
+    component: () => import("../views/IntelgenceChoice.vue"),
+    meta: {
+      requireLogin: true
+    }
   }
 ];
 

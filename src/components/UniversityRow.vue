@@ -16,7 +16,7 @@
               <v-btn
                 outlined
                 color="primary"
-                class="mx-1 mb-1"
+                class="ml-1 mb-1"
                 depressed
                 tile
                 x-small

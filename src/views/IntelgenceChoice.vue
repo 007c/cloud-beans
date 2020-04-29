@@ -117,7 +117,7 @@
                   <v-btn
                     outlined
                     color="primary"
-                    class="mx-1 mb-1"
+                    class="ml-1 mb-1"
                     depressed
                     tile
                     x-small
@@ -278,7 +278,7 @@ export default class extends Vue {
     }
 
     private activated() {
-        this.getListData();
+        this.searchList();
     }
 
     private beforeDestroy() {

@@ -3,12 +3,7 @@
     <v-card width="100%" class="d-flex pl-2 pr-2">
       <div class="d-flex align-center mr-3">
         <v-list-item-avatar color="secondary" size="60">
-          <v-img
-            v-if="item.hasLogo"
-            @error="item.hasLogo=false"
-            :alt="item.fullName.substring(0,1)"
-            :src="'./static/logo/' + item.fullName + '.jpg'"
-          ></v-img>
+          <v-img v-if="hasLogo" :alt="item.fullName.substring(0,1)" :src="logoUrl"></v-img>
           <span v-else class="white--text">{{item.fullName.substring(0,1)}}</span>
         </v-list-item-avatar>
       </div>
@@ -19,6 +14,8 @@
 
 <script lang="tsx">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { loadUniversityLogo } from "../util/static-loader";
+import { AxiosResponse } from "axios";
 export interface ListItem {
     // logo: string;
     // university: string;
@@ -55,15 +52,30 @@ export interface ListItem {
 export default class extends Vue {
     private publicPath: string = process.env.BASE_URL;
 
+    private logoUrl: string = "";
+
+    private hasLogo: boolean = false;
+
     @Prop() private item!: ListItem;
 
-    @Watch("item", { immediate: true })
-    private preWashItem() {
-        this.item.hasLogo = true;
+    private created() {
+        this.getLogoImg();
     }
 
     private goDetail(id: number) {
         this.$router.push(`/university/detail/${id}`);
+    }
+
+    private async getLogoImg() {
+        try {
+            const rsp: AxiosResponse<Blob> = await loadUniversityLogo(
+                this.item.fullName
+            );
+            this.logoUrl = URL.createObjectURL(rsp.data);
+            this.hasLogo = true;
+        } catch (ex) {
+            this.hasLogo = false;
+        }
     }
 }
 </script>

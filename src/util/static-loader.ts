@@ -6,5 +6,10 @@ export const loadUniversityDesc = async function (universityName: string) {
 }
 
 export const loadUniversityLogo = async function (universityName: string) {
-    return await axiosInstance.get(`./static/logo/${universityName}.jpg`)
+    return await axiosInstance.get(`./static/logo/${universityName}.jpg`, {
+        headers: {
+            "Accept": "image/jpeg"
+        },
+        responseType: "blob"
+    })
 }

@@ -143,6 +143,14 @@ export const routes = [
     component: () => import("../views/Register.vue")
   },
   {
+    path: "/password/reset",
+    name: "密码设置",
+    component: () => import("../views/PasswordReset.vue"),
+    // meta: {
+    //   requireLogin: true
+    // }
+  },
+  {
     path: "/search",
     name: "Search",
     component: () => import("../views/Search.vue")
@@ -168,14 +176,6 @@ export const routes = [
     component: () => import("@/components/PersonalCenterLayout.vue"),
     children: [
       ...personMenu,
-      {
-        path: "/password/reset",
-        name: "密码设置",
-        component: () => import("../views/ResetPassword.vue"),
-        meta: {
-          requireLogin: true
-        }
-      }
     ]
   },
   bottomMenus[2]
@@ -183,7 +183,7 @@ export const routes = [
 
 
 const router = new VueRouter({
-  routes: [...routes, ...bottomMenus, ...mainMenus] as RouteConfig[],
+  routes: [...routes, ...mainMenus] as RouteConfig[],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

@@ -67,7 +67,7 @@
         </v-col>
       </v-row>
       <v-row class="justify-end mt-n6" no-gutters>
-        <v-btn v-if="loginType===1" @click="loginType=2" text color="primary">验证码登录</v-btn>
+        <v-btn v-if="loginType===1" @click="$router.push('/password/reset')" text color="primary">忘记密码?</v-btn>
         <v-btn v-if="loginType===2" @click="loginType=1" text color="primary">密码登录</v-btn>
       </v-row>
       <v-row>
@@ -87,7 +87,6 @@
           注：登录即表示同意
           <a
             class="link ml-1"
-            href="https://www.baidu.com"
             color="primary"
           >&lt;&lt;高考APP用户协议&gt;&gt;</a>
         </p>

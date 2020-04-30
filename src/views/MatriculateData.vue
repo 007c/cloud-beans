@@ -6,7 +6,7 @@
           <v-list-item-title class="grey--text text--darken-3">院校分数线</v-list-item-title>
           <v-row justify="center" align="center" class="mt-4" no-gutters>
             <v-col cols="2">
-              <span class="caption pt-2">北京</span>
+              <span class="caption pt-2">四川</span>
             </v-col>
             <v-col class="pr-2" align="center" cols="5">
               <v-select
@@ -42,7 +42,6 @@
                   <th class="text-center pa-0">最低分</th>
                   <th class="text-center pa-0">平均分</th>
                   <th class="text-center pa-0">省控线</th>
-                  <th class="text-center pa-0">录取概率</th>
                 </tr>
               </thead>
               <tbody>
@@ -52,7 +51,6 @@
                   <td>{{item.lowest}}</td>
                   <td>{{item.highest}}</td>
                   <td>{{item.line}}</td>
-                  <td>{{item.rate}}</td>
                 </tr>
               </tbody>
             </template>
@@ -66,7 +64,7 @@
           <v-list-item-title class="grey--text text--darken-3">专业分数线</v-list-item-title>
           <v-row justify="center" align="center" class="mt-4" no-gutters>
             <v-col cols="2">
-              <span class="caption pt-2">北京</span>
+              <span class="caption pt-2">四川</span>
             </v-col>
             <v-col align="center" cols="3">
               <v-select
@@ -113,7 +111,6 @@
                   <th class="text-center pa-0">最低分</th>
                   <th class="text-center pa-0">最高分</th>
                   <th class="text-center pa-0">平均分</th>
-                  <th class="text-center pa-0">录取概率</th>
                 </tr>
               </thead>
               <tbody>
@@ -122,7 +119,6 @@
                   <td>{{item.lowest}}</td>
                   <td>{{item.highest}}</td>
                   <td>{{item.average}}</td>
-                  <td>{{item.rate}}</td>
                 </tr>
               </tbody>
             </template>

@@ -52,7 +52,7 @@
           <matriculate-data></matriculate-data>
         </v-tab-item>
         <v-tab-item value="2">
-          <recruit-info></recruit-info>
+          <recruit-info :email="universityDetail.email"></recruit-info>
         </v-tab-item>
       </v-tabs>
     </v-row>

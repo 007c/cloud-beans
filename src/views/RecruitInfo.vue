@@ -5,12 +5,14 @@
     </v-row>
     <v-divider></v-divider>
     <v-row>
-      <v-col class="grey--text text--darken-1 pl-4">招生办网址： {{site}}</v-col>
+      <v-col class="grey--text text--darken-1 pl-4">学校邮箱： 
+        <a :href="'mailto:' + email">{{email}}</a>
+      </v-col>
     </v-row>
     <v-divider></v-divider>
     <v-row justify="center" align="center" class="mt-8" no-gutters>
       <v-col cols="2">
-        <span class="caption pt-2">北京</span>
+        <span class="caption pt-2">四川</span>
       </v-col>
       <v-col class="pr-2" align="center" cols="5">
         <v-select
@@ -76,6 +78,8 @@ interface TableItem {
     name: "RecruitInfo"
 })
 export default class extends Vue {
+    @Prop() private email!: string;
+
     private telphone: string = "";
     private site: string = "";
 

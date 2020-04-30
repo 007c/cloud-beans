@@ -137,7 +137,11 @@
                 </v-tooltip>
               </div>
               <v-list-item-content class="pa-0 col-8">
-                <v-simple-table class="pa-0 text-center">
+                <v-list-item-title class="ml-4">
+                  <strong class="body-2 grey--text text--darken-1">学科评估结果</strong>
+                  <span class="blue--text ml-1">A+</span>
+                </v-list-item-title>
+                <v-simple-table dense class="pa-0 text-center">
                   <template v-slot:default>
                     <thead>
                       <tr>
@@ -168,7 +172,7 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 import { yearItems } from "./selectOptions";
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 
 interface ListItem {
     university: string;
@@ -184,7 +188,7 @@ interface ListItem {
 @Component({
     name: "MajorDetail",
     computed: {
-      ...mapGetters(["universityTypes", "universityLevels"])
+        ...mapGetters(["universityTypes", "universityLevels"])
     }
 })
 export default class extends Vue {

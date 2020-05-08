@@ -86,7 +86,9 @@ import {
     SET_AREE_TREE,
     SET_SYSTEM_SUPPORTED_MESSAGES,
     SET_JUNIOR_TAGS,
-    SET_UNDERGRADUATE_TAGS
+    SET_UNDERGRADUATE_TAGS,
+    SET_GRADUATE_YEAR_OPTIONS,
+    SET_RECRUIT_BATCH_OPTIONS
 } from "@/store/mutation-types";
 import { reslove, reject } from "@/loginGuideController";
 import { DataModel } from "./store/cache-data";
@@ -204,6 +206,22 @@ export default Vue.extend({
             this.getUniversityLevels();
             this.getAreeTree();
             this.getSupportedMessages();
+            this.getGraduateYears();
+            this.getRecruitBatchs();
+        },
+        async getRecruitBatchs() {
+            const rsp = await this.$http.get<ResponseModel<DataModel[]>>(
+                "/api/CommTypes/CommTypes12"
+            );
+
+            this.$store.commit(SET_RECRUIT_BATCH_OPTIONS, rsp.data.data);
+        },
+        async getGraduateYears() {
+            const rsp = await this.$http.get<ResponseModel<DataModel[]>>(
+                "/api/CommTypes/CommTypes13"
+            );
+
+            this.$store.commit(SET_GRADUATE_YEAR_OPTIONS, rsp.data.data);
         },
         async getSupportedMessages() {
             const rsp = await this.$http.get<ResponseModel<DataModel[]>>(

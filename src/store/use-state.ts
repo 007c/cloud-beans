@@ -69,17 +69,18 @@ export const getIntialState = function (): UserState {
     return initialState;
 }
 
+
 const userState: Module<UserState, any> = {
     state: getIntialState(),
 
     mutations: {
-        [UPDATE_USER_INFO]({ userInfo }, payload: UserInfo) {
+        [UPDATE_USER_INFO]({ userInfo }, payload: Partial<UserInfo>) {
             const keys = (Object.keys(payload) as Array<keyof UserInfo>);
             for (const key of keys) {
                 userInfo[key] = payload[key] as never;
             }
         },
-        [UPDATE_STUDENT_INFO]({ studentInfo }, payload: StudentInfo) {
+        [UPDATE_STUDENT_INFO]({ studentInfo }, payload: Partial<StudentInfo>) {
             const keys = (Object.keys(payload) as Array<keyof StudentInfo>);
             for (const key of keys) {
                 studentInfo[key] = payload[key] as never;

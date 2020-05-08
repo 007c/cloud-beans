@@ -24,6 +24,7 @@ interface AreaTree {
   children?: AreaTree[];
 }
 
+
 declare interface ResponseModel<T> {
   state: number;
   msg: string | null;

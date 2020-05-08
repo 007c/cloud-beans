@@ -61,7 +61,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { createDebounce } from "../util";
-
 @Component({
     name: "Search"
 })

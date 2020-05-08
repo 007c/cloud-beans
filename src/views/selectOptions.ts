@@ -1,11 +1,13 @@
-export const subjectItems: Array<SelectOption<string>> = [
+import { Subject } from '@/store/use-state';
+
+export const subjectItems: Array<SelectOption<number>> = [
     {
         text: "理科",
-        value: "0"
+        value: Subject.理科
     },
     {
         text: "文科",
-        value: "1"
+        value: Subject.文科
     }
 ];
 

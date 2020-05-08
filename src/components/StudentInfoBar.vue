@@ -51,8 +51,8 @@ export default class extends Vue {
     get areaList(): AreaTree[] {
         return this.$store.getters.areaList;
     }
-    get areaMap(): Dict<string> {
-        const map: Dict<string> = {};
+    get areaMap(): Record<number, string> {
+        const map: Record<number, string> = {};
         for (const item of this.areaList) {
             map[item.value] = item.label;
         }

@@ -147,8 +147,8 @@ export default class extends Vue {
     get supportAreaList(): AreaTree[] {
         return this.areaList.filter((item) => item.value === 510000);
     }
-    get areaMap(): Dict<string> {
-        const map: Dict<string> = {};
+    get areaMap(): Record<number, string> {
+        const map: Record<number, string> = {};
         for (const item of this.areaList) {
             map[item.value] = item.label;
         }

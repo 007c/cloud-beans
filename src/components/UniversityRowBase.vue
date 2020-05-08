@@ -46,6 +46,7 @@ export interface ListItem {
     id: string;
     hasLogo: boolean;
 }
+
 @Component({
     name: "UniversityRow"
 })
@@ -76,6 +77,10 @@ export default class extends Vue {
         } catch (ex) {
             this.hasLogo = false;
         }
+    }
+
+    private beforeDestroy() {
+        URL.revokeObjectURL(this.logoUrl);
     }
 }
 </script>

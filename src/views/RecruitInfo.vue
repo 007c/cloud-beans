@@ -83,12 +83,12 @@ export default class extends Vue {
     private telphone: string = "";
     private site: string = "";
 
-    private subjectItems: Array<SelectOption<string>> = subjectItems;
+    private subjectItems: Array<SelectOption<number>> = subjectItems;
     private yearItems: Array<SelectOption<number>> = yearItems;
 
     private tableData: TableItem[] = [];
 
-    private universutySubject: string = "0";
+    private universutySubject: number = 1;
 
     private universityYear: number = new Date().getFullYear() - 1;
 

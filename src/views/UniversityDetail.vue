@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Provide } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 import MatriculateData from "./MatriculateData.vue";
 import RecruitInfo from "./RecruitInfo.vue";
@@ -76,7 +76,7 @@ import { ListItem } from "../components/UniversityRowBase.vue";
 })
 export default class extends Vue {
     private universityDetail: ListItem | null = null;
-    private universityId!: number;
+    @Provide("schoolId") private universityId!: number;
     private followed: boolean = false;
 
     private description: string = "";

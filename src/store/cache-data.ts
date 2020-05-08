@@ -6,7 +6,9 @@ import {
     SET_AREE_TREE,
     SET_SYSTEM_SUPPORTED_MESSAGES,
     SET_JUNIOR_TAGS,
-    SET_UNDERGRADUATE_TAGS
+    SET_UNDERGRADUATE_TAGS,
+    SET_RECRUIT_BATCH_OPTIONS,
+    SET_GRADUATE_YEAR_OPTIONS
 } from './mutation-types';
 
 export interface DataModel {
@@ -30,6 +32,8 @@ export interface CacheDataState {
     supportedMessages: DataModel[];
     juniorTagsData: DataModel[];
     undergraduateTagsData: DataModel[];
+    graduateYearsData: DataModel[];
+    recruitBatchsData: DataModel[];
 }
 
 const mapToSelectOptions = function (dataModel: DataModel[]): Array<SelectOption<string>> {
@@ -37,6 +41,15 @@ const mapToSelectOptions = function (dataModel: DataModel[]): Array<SelectOption
         return {
             text: item.typeName,
             value: item.typeCode + "|" + item.typeName
+        }
+    })
+}
+
+const mapToCodeOptions = function (dataModel: DataModel[]): Array<SelectOption<number>> {
+    return dataModel.map((item) => {
+        return {
+            text: item.typeName,
+            value: item.typeCode
         }
     })
 }
@@ -50,6 +63,8 @@ const cacheDataState: Module<CacheDataState, any> = {
         supportedMessages: [],
         juniorTagsData: [],
         undergraduateTagsData: [],
+        graduateYearsData: [],
+        recruitBatchsData: []
     },
 
     mutations: {
@@ -73,6 +88,12 @@ const cacheDataState: Module<CacheDataState, any> = {
         },
         [SET_UNDERGRADUATE_TAGS](state, payload) {
             state.undergraduateTagsData = payload;
+        },
+        [SET_RECRUIT_BATCH_OPTIONS](state, payload) {
+            state.recruitBatchsData = payload;
+        },
+        [SET_GRADUATE_YEAR_OPTIONS](state, payload) {
+            state.graduateYearsData = payload;
         }
     },
 
@@ -101,7 +122,13 @@ const cacheDataState: Module<CacheDataState, any> = {
                 ret[item.typeCode] = item.remark;
             })
             return ret;
-        }
+        },
+        yearItems(state): Array<SelectOption<number>> {
+            return mapToCodeOptions(state.graduateYearsData);
+        },
+        batchItems(state): Array<SelectOption<number>> {
+            return mapToCodeOptions(state.recruitBatchsData);
+        },
     }
 }
 

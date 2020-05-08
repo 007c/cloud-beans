@@ -76,6 +76,7 @@
                 :items="subjectItems"
                 item-text="text"
                 item-value="value"
+                 @change="getMajorTableData"
               ></v-select>
             </v-col>
             <v-col class="pl-2 pr-2" cols="4">
@@ -88,6 +89,7 @@
                 item-text="text"
                 v-model="majorYear"
                 item-value="value"
+                 @change="getMajorTableData"
               ></v-select>
             </v-col>
             <v-col cols="3">
@@ -100,6 +102,7 @@
                 item-text="text"
                 v-model="majorBatch"
                 item-value="value"
+                 @change="getMajorTableData"
               ></v-select>
             </v-col>
           </v-row>
@@ -113,12 +116,17 @@
                   <th class="text-center pa-0">平均分</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr v-for="item in majorTableData" :key="item.major">
-                  <td>{{item.major}}</td>
-                  <td>{{item.lowest}}</td>
-                  <td>{{item.highest}}</td>
-                  <td>{{item.average}}</td>
+              <tbody v-if="majorTableData.length > 0">
+                <tr v-for="item in majorTableData" :key="item.majorName">
+                  <td>{{item.majorName}}</td>
+                  <td>{{item.minScore}}</td>
+                  <td>{{item.maxScore}}</td>
+                  <td>{{item.avgScore}}</td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td colspan="4" class="caption">暂无数据</td>
                 </tr>
               </tbody>
             </template>
@@ -130,7 +138,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Inject } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 
 // interface SelectOption<T> {
@@ -148,42 +156,29 @@ interface TableItem {
 }
 
 interface MajorTableItem {
-    major: string;
-    lowest: number;
-    highest: number;
-    average: number;
-    rate: number;
+    majorName: string;
+    minScore: number;
+    maxScore: number;
+    avgScore: number;
 }
 
-
-import {subjectItems, yearItems} from "./selectOptions";
-
+import { subjectItems, yearItems } from "./selectOptions";
+import { mapGetters } from "vuex";
+import { Subject } from '@/store/use-state';
 @Component({
-    name: "MatriculateData"
+    name: "MatriculateData",
+    computed: {
+        ...mapGetters(["yearItems", "batchItems"])
+    }
 })
 export default class extends Vue {
-    private yearItems: Array<SelectOption<number>> = yearItems;
-    private subjectItems: Array<SelectOption<string>> = subjectItems;
-
-    private batchItems: Array<SelectOption<number>> = [
-        {
-            text: "本科一批",
-            value: 0
-        },
-        {
-            text: "本科二批",
-            value: 1
-        },
-        {
-            text: "专科批",
-            value: 2
-        }
-    ];
+    @Inject("schoolId") private universityId!: number;
+    private subjectItems: Array<SelectOption<number>> = subjectItems;
     private universityYear: number = new Date().getFullYear() - 1;
     private majorYear: number = new Date().getFullYear() - 1;
-    private universutySubject: string = "0";
-    private majorSubject: string = "0";
-    private majorBatch: number = 0;
+    private universutySubject: number = Subject.理科;
+    private majorSubject: number = Subject.理科;
+    private majorBatch: number = 1;
 
     private tableData: TableItem[] = [];
 
@@ -222,55 +217,21 @@ export default class extends Vue {
 
     @withLoading()
     private async getMajorTableData() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-                this.majorTableData = [
-                    {
-                        major: "电子信息技术",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    },
-                    {
-                        major: "光电信息",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    },
-                    {
-                        major: "计算机科学",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    },
-                    {
-                        major: "数学",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    },
-                    {
-                        major: "对外贸易",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    },
-                    {
-                        major: "审计学",
-                        lowest: 521,
-                        highest: 541,
-                        average: 533,
-                        rate: 0.56
-                    }
-                ];
-            }, 1000);
-        });
+        const rsp = await this.$http.get<ResponseModel<MajorTableItem[]>>(
+            "/api/Universitys/GetSchoolMajorPageList",
+            {
+                params: {
+                    SchoolID: parseInt(this.$route.params.id, 10),
+                    DivisionTypeID: this.majorSubject,
+                    Year: this.majorYear,
+                    BatchID: this.majorBatch,
+                    PageIndex: 1,
+                    PageSize: 1000,
+                }
+            }
+        );
+
+        this.majorTableData = rsp.data.data;
     }
 }
 </script>

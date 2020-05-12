@@ -15,6 +15,7 @@
                 label="学科"
                 dense
                 v-model="universutySubject"
+                @change="getUniversityTableData"
                 :items="subjectItems"
                 item-text="text"
                 item-value="value"
@@ -29,6 +30,7 @@
                 :items="yearItems"
                 item-text="text"
                 v-model="universityYear"
+                @change="getUniversityTableData"
                 item-value="value"
               ></v-select>
             </v-col>
@@ -47,10 +49,10 @@
               <tbody>
                 <tr v-for="item in tableData" :key="item.batch">
                   <td>{{item.batch}}</td>
-                  <td>{{item.type}}</td>
-                  <td>{{item.lowest}}</td>
-                  <td>{{item.highest}}</td>
-                  <td>{{item.line}}</td>
+                  <td>{{item.typeName}}</td>
+                  <td>{{item.minScore}}</td>
+                  <td>{{item.avgScore}}</td>
+                  <td>{{item.provinceLine|| "-"}}</td>
                 </tr>
               </tbody>
             </template>
@@ -76,7 +78,7 @@
                 :items="subjectItems"
                 item-text="text"
                 item-value="value"
-                 @change="getMajorTableData"
+                @change="getMajorTableData"
               ></v-select>
             </v-col>
             <v-col class="pl-2 pr-2" cols="4">
@@ -89,7 +91,7 @@
                 item-text="text"
                 v-model="majorYear"
                 item-value="value"
-                 @change="getMajorTableData"
+                @change="getMajorTableData"
               ></v-select>
             </v-col>
             <v-col cols="3">
@@ -102,7 +104,7 @@
                 item-text="text"
                 v-model="majorBatch"
                 item-value="value"
-                 @change="getMajorTableData"
+                @change="getMajorTableData"
               ></v-select>
             </v-col>
           </v-row>
@@ -147,12 +149,22 @@ import { withLoading } from "../decorators/with-loading";
 // }
 
 interface TableItem {
+    avgScore: string;
     batch: string;
-    type: string;
-    lowest: number;
-    highest: number;
-    line: number;
-    rate: number;
+    batchID: number;
+    divisionType: string;
+    divisionTypeID: number;
+    id: string;
+    maxScore: string;
+    minRank: string;
+    minScore: string;
+    provinceCode: number;
+    provinceLine: string;
+    schoolID: number;
+    schoolName: string;
+    typeID: number;
+    typeName: string;
+    year: number;
 }
 
 interface MajorTableItem {
@@ -164,7 +176,7 @@ interface MajorTableItem {
 
 import { subjectItems, yearItems } from "./selectOptions";
 import { mapGetters } from "vuex";
-import { Subject } from '@/store/use-state';
+import { Subject } from "@/store/use-state";
 @Component({
     name: "MatriculateData",
     computed: {
@@ -190,29 +202,18 @@ export default class extends Vue {
     }
     @withLoading()
     private async getUniversityTableData() {
-        return await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-                this.tableData = [
-                    {
-                        batch: "一批",
-                        type: "理科",
-                        lowest: 521,
-                        highest: 571,
-                        line: 550,
-                        rate: 0.56
-                    },
-                    {
-                        batch: "二批",
-                        type: "理科",
-                        lowest: 471,
-                        highest: 521,
-                        line: 501,
-                        rate: 0.76
-                    }
-                ];
-            }, 1000);
-        });
+        const rsp = await this.$http.get<ResponseModel<TableItem[]>>(
+            "/api/Universitys/GetSchoolLineList",
+            {
+                params: {
+                    SchoolID: parseInt(this.$route.params.id, 10),
+                    Year: this.universityYear,
+                    DivisionTypeID: this.universutySubject
+                }
+            }
+        );
+
+        this.tableData = rsp.data.data
     }
 
     @withLoading()
@@ -226,7 +227,7 @@ export default class extends Vue {
                     Year: this.majorYear,
                     BatchID: this.majorBatch,
                     PageIndex: 1,
-                    PageSize: 1000,
+                    PageSize: 1000
                 }
             }
         );

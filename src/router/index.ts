@@ -44,22 +44,35 @@ export const personMenu: Menu[] = [
     icon: "bookmark_border",
     name: "我收藏的院校",
     path: "/followed/university",
-    component: () => import("../views/FollowedUniversity.vue")
+    component: () => import("../views/FollowedUniversity.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     icon: "bookmark_border",
     name: "我收藏的专业",
-    path: "/followed/major"
+    path: "/followed/major",
+    component: () => import("../views/FollowedMajor.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     icon: "bookmark_border",
     name: "我收藏的文章",
-    path: "/followed/article"
+    path: "/followed/article",
+    meta: {
+      requireLogin: true
+    }
   },
   {
     icon: "insert_drive_file",
     name: "我的测评报告",
-    path: "/evaluation/result"
+    path: "/evaluation/result",
+    meta: {
+      requireLogin: true
+    }
   },
   {
     icon: "call",
@@ -72,6 +85,9 @@ export const personMenu: Menu[] = [
     name: "系统设置",
     path: "/systemSetting",
     component: () => import("../views/SystemSetting.vue"),
+    meta: {
+      requireLogin: true
+    }
   }
 ]
 
@@ -172,8 +188,8 @@ export const routes = [
     component: () => import("../views/Prompt.vue")
   },
   {
-    path: "/profile",
-    component: () => import("@/components/PersonalCenterLayout.vue"),
+    path: "/",
+    component: () => import("@/components/withHeaderBarLayout.vue"),
     children: [
       ...personMenu,
     ]

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pt-0">
+  <v-container id="saveContent" class="pt-0">
     <div class="pt-2" style="position: sticky; top: 0; z-index: 1; background: #fff">
       <!-- <v-row no-gutters>
         <v-col cols="2">
@@ -16,7 +16,13 @@
           </v-btn>
         </v-col>
       </v-row>-->
-      <header-bar @follow="followMajor" :followed="followed" :title="majorName" with-follow></header-bar>
+      <header-bar
+        @follow="followMajor"
+        :followed="followed"
+        :title="majorInfo.majorName"
+        with-follow
+        id="header"
+      ></header-bar>
       <v-divider></v-divider>
     </div>
     <v-row>
@@ -26,21 +32,21 @@
             <v-col class="d-flex align-center justify-center pb-0" cols="3">
               <v-avatar color="teal" class="mr-2" size="60">
                 <v-img v-if="majorLogo" :src="majorLogo"></v-img>
-                <span v-else class="white--text">{{majorName.substring(0,1)}}</span>
+                <span v-else class="white--text">{{majorInfo.majorName.substring(0,1)}}</span>
               </v-avatar>
             </v-col>
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">
               <v-row>
-                <v-col class="pa-0">专业代码： 020101</v-col>
-                <v-col class="pa-0">学历层次： 本科</v-col>
+                <v-col class="pa-0">专业代码： {{majorInfo.majorCode}}</v-col>
+                <v-col class="pa-0">学历层次： {{"--"}}</v-col>
               </v-row>
               <v-row class="font-weight-bold">
-                <v-col class="pa-0">所属学科： 020101</v-col>
-                <v-col class="pa-0">所属门类： 本科</v-col>
+                <v-col class="pa-0">所属学科： {{majorInfo.majorType}}</v-col>
+                <v-col class="pa-0">所属门类： {{majorInfo.majorClass}}</v-col>
               </v-row>
               <v-row class="font-weight-bold">
-                <v-col class="pa-0">修业年限： 020101</v-col>
-                <v-col class="pa-0">授予学位： 本科</v-col>
+                <v-col class="pa-0">修业年限： {{majorInfo.eduYear}}</v-col>
+                <v-col class="pa-0">授予学位： {{majorInfo.degree}}</v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -51,11 +57,35 @@
       <v-tab v-for="(name, index) in tabs" :key="index" :href="'#' + index">{{name}}</v-tab>
       <v-tab-item value="0">
         <v-card flat>
-          <v-card-text>
-            西南石油大学（Southwest Petroleum University）简称“西南石大”，坐落于四川省成都市，是教育部与四川省共建的世界一流学科建设高校 [1] 、国家“特色重点学科项目”建设高校、中国政府奖学金来华留学生接收院校，入选国家中西部高校基础能力建设工程、“111计划”、国家建设高水平大学公派研究生项目、国家大学生文化素质教育基地、全国高校实践育人创新创业基地、新工科研究与实践项目。
-            1958年，四川石油学院成立，隶属于原石油工业部；1970年，更名为西南石油学院；2000年，由中国石油天然气集团公司所属的部委院校划转为中央与地方共建、以四川省人民政府管理为主的普通高等学校；2002年，学校主体搬迁到成都市新都区；2004年四川省政法管理干部学院并入；2005年，学校更名为西南石油大学；2008年11月1日，中国石油天然气集团公司、中国石油化工集团公司、中国海洋石油总公司与四川省人民政府签署共建西南石油大学的协议。 [2]
-            截至2019年10月，学校建有成都、南充2个校区，校园总面积3000余亩；设有19个教学学院（部），开设72个本科专业；有5个博士后科研流动站，5个一级学科博士点，20个一级学科硕士点，12个专业学位硕士点；有教职工2556人，有全日制在校学生36942人（含非全日制统招硕士生）。 [3-5]
+          <v-card-subtitle class="pb-0 px-0">
+            <span class="font-weight-bold grey--text text--darken-1 body-1">|</span> 专业人气
+          </v-card-subtitle>
+          <v-card-text class="font-weight-bold px-0 pb-0">
+            <span class="mr-2">{{majorInfo.popular}}</span>
+            <v-icon
+              v-for="item in calculatePolular(majorInfo.popular)"
+              :key="item"
+              small
+              class="mb-1"
+              color="red"
+            >whatshot</v-icon>
           </v-card-text>
+          <v-card-subtitle class="pb-0 px-0">
+            <span class="font-weight-bold grey--text text--darken-1 body-1">|</span> 专业简介
+          </v-card-subtitle>
+          <v-card-text class="px-0 pb-0">{{majorInfo.briefIntro}}</v-card-text>
+          <v-card-subtitle class="pb-0 px-0">
+            <span class="font-weight-bold grey--text text--darken-1 body-1">|</span> 主干学科
+          </v-card-subtitle>
+          <v-card-text class="px-0 pb-0">{{majorInfo.majorContent}}</v-card-text>
+          <v-card-subtitle class="pb-0 px-0">
+            <span class="font-weight-bold grey--text text--darken-1 body-1">|</span> 就业方向
+          </v-card-subtitle>
+          <v-card-text class="px-0 pb-0">{{majorInfo.workDirection}}</v-card-text>
+          <v-card-subtitle class="pb-0 px-0">
+            <span class="font-weight-bold grey--text text--darken-1 body-1">|</span> 男女比例
+          </v-card-subtitle>
+          <v-card-text class="px-0 pb-0">{{majorInfo.genderRate}}</v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item value="1">
@@ -173,7 +203,8 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "../decorators/with-loading";
 import { yearItems } from "./selectOptions";
 import { mapGetters } from "vuex";
-
+import { MajorInfo } from "../components/MajorRow.vue";
+import html2Canvas from "html2canvas";
 interface ListItem {
     university: string;
     logo: string;
@@ -192,11 +223,28 @@ interface ListItem {
     }
 })
 export default class extends Vue {
-    private majorName: string = "经济学";
     private majorId!: number;
     private followed: boolean = false;
-
     private majorLogo: string = "";
+
+    private majorInfo: MajorInfo = {
+        majorName: "",
+        majorID: 0,
+        majorCode: "--",
+        popular: 0,
+        degree: "--",
+        eduYear: "--",
+        majorClass: "--",
+        majorType: "--",
+        extraTest: "--",
+        genderRate: "--",
+        employRate: "--",
+        labels: "--",
+        briefIntro: "暂无",
+        majorContent: "暂无",
+        workDirection: "暂无",
+        id: "--"
+    };
 
     private tabs: string[] = ["专业简介", "开设院校"];
 
@@ -245,17 +293,76 @@ export default class extends Vue {
     private created() {
         const route = this.$route;
         this.majorId = parseInt(route.params.id, 10);
+        this.getMajorFollowedInfo();
+        this.getMajorDetail();
         this.getUniversityListOfMajor();
+    }
+
+    private async getMajorFollowedInfo() {
+        const rsp = await this.$http.get<ResponseModel<string>>(
+            "/api/MajorCollections/JudgeCollected",
+            {
+                params: {
+                    schoolid: this.majorId
+                }
+            }
+        );
+
+        this.followed = JSON.parse(rsp.data.data);
+    }
+
+    private calculatePolular(popular: number): number {
+        if (popular <= 0) {
+            return 0;
+        }
+
+        const lg10 = Math.log10(popular);
+
+        return lg10 > 5 ? 5 : Math.ceil(lg10);
+    }
+
+    private async getMajorDetail() {
+        const rsp = await this.$http.get<ResponseModel<MajorInfo[]>>(
+            "/api/MajorInfos/GetMajorInfo",
+            {
+                params: {
+                    majorid: this.majorId
+                }
+            }
+        );
+
+        const [majorInfo] = rsp.data.data;
+        if (majorInfo) {
+            this.majorInfo = majorInfo;
+        }
     }
 
     @withLoading()
     private async followMajor() {
-        await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.followed = !this.followed;
-                resolve();
-            }, 1000);
-        });
+        try {
+            if (!this.followed) {
+                await this.$http.post(
+                    "/api/MajorCollections/SetCollect",
+                    this.majorId,
+                    {
+                        headers: {
+                            "content-type": "application/json-patch+json"
+                        }
+                    }
+                );
+            } else {
+                await this.$http.delete("/api/MajorCollections/CancleCollect", {
+                    data: this.majorId,
+                    headers: {
+                        "content-type": "application/json-patch+json"
+                    }
+                });
+            }
+
+            this.followed = !this.followed;
+        } catch (ex) {
+            //
+        }
     }
 
     @withLoading()
@@ -299,5 +406,49 @@ export default class extends Vue {
             }
         ];
     }
+
+    // private async saveImage() {
+    //     const image = new Image();
+
+    //     image.src = "/static/img/logo.png";
+
+    //     image.onload = function() {
+    //         const { naturalHeight, naturalWidth } = image;
+    //         const scale = window.screen.availWidth / image.naturalWidth;
+
+    //         html2Canvas(document.querySelector("#saveContent") as HTMLElement, {
+    //             ignoreElements(elements) {
+    //                 return (
+    //                     elements.id === "saveButton" || elements.id === "header"
+    //                 );
+    //             },
+    //             onclone(document) {
+    //                 console.log(document);
+    //             },
+    //             y: -(naturalHeight * scale + 20),
+    //             height: window.screen.availHeight + naturalHeight * scale + 20
+    //         }).then((canvas: HTMLCanvasElement) => {
+    //             canvas.id = "wxSaveImageToPhoto";
+
+    //             const ctx = canvas.getContext("2d");
+    //             if (ctx) {
+    //                 ctx.translate(0, -(naturalHeight * scale + 20));
+    //                 ctx.drawImage(
+    //                     image,
+    //                     0,
+    //                     0,
+    //                     naturalWidth * scale,
+    //                     naturalHeight * scale
+    //                 );
+    //             }
+
+    //             const tag = document.createElement("a");
+    //             tag.download = "测评结果.png"
+    //             tag.href = canvas.toDataURL();
+    //             tag.click();
+    //         });
+    //     };
+    // }
+
 }
 </script>

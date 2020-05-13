@@ -6,8 +6,8 @@
 
 <template>
   <v-container style="height:100%">
-    <header-bar title="专业查询"></header-bar>
-    <v-divider></v-divider>
+    <!-- <header-bar title="专业查询"></header-bar>
+    <v-divider></v-divider> -->
     <v-row>
       <v-col class="pl-6 pr-6">
         <v-text-field

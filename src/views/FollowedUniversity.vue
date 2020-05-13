@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container>
     <v-list>
       <university-row v-for="item in followedUniversities" :key="item.schoolID" :item="item"></university-row>
     </v-list>

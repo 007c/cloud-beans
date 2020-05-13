@@ -108,7 +108,7 @@ export const mainMenus: Menu[] = [
     icon: "touch_app",
     name: "职业测评",
     path: "/evaluation",
-    component: () => import("../views/Evaluation.vue")
+    component: () => import("../views/EvaluationHome.vue")
   },
   {
     icon: "flight_takeoff",
@@ -188,10 +188,21 @@ export const routes = [
     component: () => import("../views/Prompt.vue")
   },
   {
+    path: "/evalation/list/:id",
+    name: "职业测评",
+    component: () => import("@/views/EvalutaionLayout.vue")
+  },
+  {
     path: "/",
     component: () => import("@/components/withHeaderBarLayout.vue"),
     children: [
       ...personMenu,
+      ...mainMenus,
+      {
+        path: "/evalation/list",
+        name: "职业测评",
+        component: () => import("@/views/EvalutaionList.vue")
+      },
     ]
   },
   bottomMenus[2]
@@ -199,7 +210,7 @@ export const routes = [
 
 
 const router = new VueRouter({
-  routes: [...routes, ...mainMenus] as RouteConfig[],
+  routes: [...routes] as RouteConfig[],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

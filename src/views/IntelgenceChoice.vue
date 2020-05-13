@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row no-gutters>
+    <!-- <v-row no-gutters>
       <v-col cols="3">
         <v-btn @click="$router.go(-1)" icon color="primary">
           <v-icon>arrow_back</v-icon>
@@ -10,10 +10,9 @@
         <h1 class="primary--text subtitle-1 text-center font-weight-bold">智能择校</h1>
       </v-col>
       <v-col cols="3">
-        <!-- <v-select class="caption" dense hide-details v-model="choiceMode" :items="choiceItems"></v-select> -->
       </v-col>
     </v-row>
-    <v-divider></v-divider>
+    <v-divider></v-divider> -->
 
     <v-row>
       <student-info-bar></student-info-bar>

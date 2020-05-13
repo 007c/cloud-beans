@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container>
     <v-list>
       <major-row v-for="item in majorList" :key="item.majorID" :item="item"></major-row>
     </v-list>

@@ -22,11 +22,13 @@ export default function (router: VueRouter) {
                     });
                 }).catch(function () {
                     // cancel route
+                    // there is no need to handle this error, because it's occured when users
+                    // cancel the login guide
                 })
                 return;
             }
 
-            // logined but not get user base info
+            // logined but not get base info
             if (!store.state.userState.userInfo.id) {
                 store.dispatch(GET_USER_BASE_INFO).then(() => {
                     next();

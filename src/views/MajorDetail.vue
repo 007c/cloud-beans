@@ -38,7 +38,7 @@
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">
               <v-row>
                 <v-col class="pa-0">专业代码： {{majorInfo.majorCode}}</v-col>
-                <v-col class="pa-0">学历层次： {{"--"}}</v-col>
+                <v-col class="pa-0">学历层次： {{majorInfo.typeName}}</v-col>
               </v-row>
               <v-row class="font-weight-bold">
                 <v-col class="pa-0">所属学科： {{majorInfo.majorType}}</v-col>

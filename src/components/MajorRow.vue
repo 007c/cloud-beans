@@ -24,15 +24,17 @@
         <v-list-item-content class="pa-0 pt-1">
           <v-row no-gutters class="caption">
             <v-col class cols="6" sm="4">
-              <span>-</span>
+              <span>{{item.typeName}}</span>
               <span class="mx-1">{{item.eduYear}}</span>
               <span>{{item.degree}}</span>
             </v-col>
-            <v-col class="blue--text" cols="6" sm="5">{{item.popular}}</v-col>
+            <v-col class="blue--text" cols="6" sm="5">
+              {{item.popular}}
+              <advisory-btn @click.native.stop :typeCode="2" class="mb-1 mx-1"></advisory-btn>
+            </v-col>
           </v-row>
         </v-list-item-content>
       </v-list-item-content>
-      <advisory-btn @click.native.stop :typeCode="2" class="mt-4 mx-1"></advisory-btn>
     </v-card>
   </v-list-item>
 </template>
@@ -56,6 +58,7 @@ export interface MajorInfo {
     majorContent: string;
     workDirection: string;
     id: string;
+    typeName: string;
 }
 @Component
 export default class extends Vue {

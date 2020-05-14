@@ -1,7 +1,7 @@
 <style lang="less" scoped>
 .close-btn {
     top: -55%;
-    right: -8%;
+    right: -30%;
     z-index: 2;
 }
 </style>
@@ -27,8 +27,9 @@
           left
           offset-x="30"
           offset-y="10"
+          class="mr-6"
         >
-          <v-btn class="mr-4" color="primary" outlined>{{item.title}}</v-btn>
+          <v-btn color="primary" outlined>{{item.title}}</v-btn>
           <v-btn @click="removeAnwser(i)" class="close-btn" icon color="red" absolute right bottom>
             <v-icon small>cancel</v-icon>
           </v-btn>
@@ -114,7 +115,7 @@ export default class extends Vue {
                 answers: this.anwsers.map((item) => item.answer).join(",")
             });
 
-            this.$router.push("/evaluation/result/1")
+            this.$router.push("/evaluation/result/1");
         } catch (ex) {
             // submit error
         }

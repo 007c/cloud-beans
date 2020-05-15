@@ -12,7 +12,7 @@
       <v-col cols="2"></v-col>
     </v-row>-->
     <!-- <header-bar title="院校查询"></header-bar>
-    <v-divider></v-divider> -->
+    <v-divider></v-divider>-->
     <v-row>
       <v-col class="pl-6 pr-6">
         <v-text-field
@@ -217,6 +217,9 @@ export default class extends Vue {
     }
 
     private created() {
+        if (this.$route.query.query) {
+            this.universityName = this.$route.query.query as string;
+        }
         this.getListData();
         eventBus.$on("bottomScrollUp", this.onBottomTouchUp);
     }

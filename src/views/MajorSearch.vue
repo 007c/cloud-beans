@@ -7,7 +7,7 @@
 <template>
   <v-container style="height:100%">
     <!-- <header-bar title="专业查询"></header-bar>
-    <v-divider></v-divider> -->
+    <v-divider></v-divider>-->
     <v-row>
       <v-col class="pl-6 pr-6">
         <v-text-field
@@ -18,84 +18,65 @@
           append-icon="search"
           placeholder="请输入专业名称"
           v-model="majorName"
+          @click:append="searchMajor"
+          @input="shouldShowSearchResult=false"
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-tabs grow v-model="tabIndex">
-      <v-tab v-for="name in tabs" :key="name">{{name}}</v-tab>
-    </v-tabs>
-    <v-divider></v-divider>
-    <v-tabs-items v-model="tabIndex" class="fill-height">
-      <v-tab-item
-        v-for="(treeItems, index) in [majorTree, juniorMajorTree]"
-        :key="index"
-        class="fill-height"
-      >
-        <v-row class="fill-height">
-          <v-col class="pt-0 pd-0 pr-0">
-            <v-list class="border-right fill-height">
-              <v-list-item-group color="primary" v-model="itemIndex">
-                <v-list-item
-                  @click="switchTree(index)"
-                  v-for="(item, index) in treeItems"
-                  :key="item.id"
-                  style="min-height: auto"
-                >
-                  <v-list-item-content class="pa-2">
-                    <v-list-item-title class="text-center body-2">{{item.text}}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <v-col class="pt-0 pd-0 pl-0">
-            <v-treeview
-              class="body-2"
-              return-object
-              @update:active="onTreeActive"
-              hoverable
-              dense
-              activatable
-              :items="subTree"
-              item-text="text"
-            ></v-treeview>
-          </v-col>
-        </v-row>
-      </v-tab-item>
-      <!-- <v-tab-item class="fill-height">
-        <v-row class="fill-height">
-          <v-col class="pt-0 pd-0 pr-0">
-            <v-list class="border-right fill-height">
-              <v-list-item-group color="primary" v-model="itemIndex">
-                <v-list-item @click="switchSubTree(index)" v-for="(item, index) in juniorMajorItems" :key="item.id" style="min-height: auto">
-                  <v-list-item-content class="pa-2">
-                    <v-list-item-title class="text-center body-2">{{item.text}}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <v-col class="pt-0 pd-0 pl-0">
-            <v-treeview
-              class="body-2"
-              return-object
-              @update:active="onTreeActive"
-              hoverable
-              dense
-              activatable
-              :items="treeItems"
-              item-text="text"
-            ></v-treeview>
-          </v-col>
-        </v-row>
-      </v-tab-item>-->
-    </v-tabs-items>
+    <div v-show="!shouldShowSearchResult">
+      <v-tabs grow v-model="tabIndex">
+        <v-tab v-for="name in tabs" :key="name">{{name}}</v-tab>
+      </v-tabs>
+      <v-divider></v-divider>
+      <v-tabs-items v-model="tabIndex" class="fill-height">
+        <v-tab-item
+          v-for="(treeItems, index) in [majorTree, juniorMajorTree]"
+          :key="index"
+          class="fill-height"
+        >
+          <v-row class="fill-height">
+            <v-col class="pt-0 pd-0 pr-0">
+              <v-list class="border-right fill-height">
+                <v-list-item-group color="primary" v-model="itemIndex">
+                  <v-list-item
+                    @click="switchTree(index)"
+                    v-for="(item, index) in treeItems"
+                    :key="item.id"
+                    style="min-height: auto"
+                  >
+                    <v-list-item-content class="pa-2">
+                      <v-list-item-title class="text-center body-2">{{item.text}}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col class="pt-0 pd-0 pl-0">
+              <v-treeview
+                class="body-2"
+                return-object
+                @update:active="onTreeActive"
+                hoverable
+                dense
+                activatable
+                :items="subTree"
+                item-text="text"
+              ></v-treeview>
+            </v-col>
+          </v-row>
+        </v-tab-item>
+      </v-tabs-items>
+    </div>
+    <v-list v-show="shouldShowSearchResult">
+      <major-row v-for="item in searchList" :key="item.id" :item="item"></major-row>
+    </v-list>
   </v-container>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { withLoading } from "@/decorators/with-loading";
+import MajorRow, { MajorInfo } from "../components/MajorRow.vue";
 
 interface TreeView {
     text: string;
@@ -105,7 +86,10 @@ interface TreeView {
 }
 
 @Component({
-    name: "MajorSearch"
+    name: "MajorSearch",
+    components: {
+        MajorRow
+    }
 })
 export default class extends Vue {
     private majorName: string = "";
@@ -118,9 +102,17 @@ export default class extends Vue {
     private tabIndex = 0;
     private subIndex = 0;
 
+    private shouldShowSearchResult: boolean = false;
+
+    private searchList: MajorInfo[] = [];
+
     private async created() {
         this.majorTree = await this.getMajorTree(1);
         this.juniorMajorTree = await this.getMajorTree(2);
+        if (this.$route.query.query) {
+            this.majorName = this.$route.query.query as string;
+            this.searchMajor();
+        }
     }
 
     get subTree(): TreeView[] {
@@ -175,6 +167,23 @@ export default class extends Vue {
         //   }
         //   return treeItems;
         // }
+    }
+
+    private async searchMajor() {
+        const rsp = await this.$http.get<ResponseModel<MajorInfo[]>>(
+            "/api/MajorInfos/GetMajorPage",
+            {
+                params: {
+                    MajorName: this.majorName,
+                    PageIndex: 0,
+                    PageSize: 100,
+                    Where: ""
+                }
+            }
+        );
+
+        this.shouldShowSearchResult = true;
+        this.searchList = rsp.data.data;
     }
 }
 </script>

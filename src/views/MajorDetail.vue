@@ -243,7 +243,8 @@ export default class extends Vue {
         briefIntro: "暂无",
         majorContent: "暂无",
         workDirection: "暂无",
-        id: "--"
+        id: "--",
+        typeName: "--"
     };
 
     private tabs: string[] = ["专业简介", "开设院校"];

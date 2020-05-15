@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig, Route } from 'vue-router';
 import installRouterGuards from './installRouterGuards';
 import CoreLayout from "@/components/CoreLayout.vue";
 import Home from '../views/Home.vue';
+import withHeaderBarLayout from "@/components/withHeaderBarLayout.vue";
 
 Vue.use(VueRouter);
 
@@ -106,7 +107,7 @@ export const mainMenus: Menu[] = [
   },
   {
     icon: "touch_app",
-    name: "职业测评",
+    name: "专业测评",
     path: "/evaluation",
     component: () => import("../views/EvaluationHome.vue")
   },
@@ -194,7 +195,7 @@ export const routes = [
   },
   {
     path: "/",
-    component: () => import("@/components/withHeaderBarLayout.vue"),
+    component: withHeaderBarLayout,
     children: [
       ...personMenu,
       ...mainMenus,

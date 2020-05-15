@@ -21,12 +21,26 @@
           outlined
           dense
           autofocus
-          v-model="searchWord"
-          @update:search-input="onSerchInputUpdate"
+          :search-input.sync="searchWord"
+          @click:prepend-inner="onSearch"
         ></v-autocomplete>
       </v-col>
     </v-row>
     <v-divider class="mt-2"></v-divider>
+
+    <v-row>
+      <v-col>
+        <v-btn
+          @click="onSearchSwitch(0)"
+          tile
+          class="mr-4"
+          color="primary"
+          :outlined="searchBy===1"
+        >搜院校</v-btn>
+        <v-btn @click="onSearchSwitch(1)" tile color="primary" :outlined="searchBy===0">搜专业</v-btn>
+      </v-col>
+    </v-row>
+
     <v-subheader class="pa-0">热门搜索</v-subheader>
     <v-row>
       <v-col class="pa-4 pt-0">
@@ -37,8 +51,9 @@
           depressed
           outlined
           v-for="item in hotSearch"
-          :key="item"
-        >{{item}}</v-btn>
+          :key="item.id"
+          :to="detailPath + item.id"
+        >{{item.name}}</v-btn>
       </v-col>
     </v-row>
     <v-subheader class="pa-0">历史搜索</v-subheader>
@@ -47,12 +62,13 @@
         <v-btn
           color="secondary"
           small
-          class="mr-2"
+          class="mr-2 mt-2"
           depressed
           outlined
           v-for="item in historySearch"
-          :key="item"
-        >{{item}}</v-btn>
+          :key="item.id"
+          :to="detailPath + item.id"
+        >{{item.name}}</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -61,47 +77,162 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { createDebounce } from "../util";
+import { MajorInfo } from "../components/MajorRow.vue";
+import { ListItem } from "../components/UniversityRowBase.vue";
+import { withLoading } from "../decorators/with-loading";
+import { mapGetters } from "vuex";
+import { RawLocation } from "vue-router";
+
+interface SearchItem {
+    id: number;
+    name: string;
+}
+
 @Component({
-    name: "Search"
+    name: "Search",
+    computed: {
+        ...mapGetters(["isLogin"])
+    }
 })
 export default class extends Vue {
+    private isLogin!: boolean;
     private searchWord: string = "";
-    private autocompleteItems: string[] = [
-        "西南名大",
-        "西南财经",
-        "电子科技大学"
-    ];
 
-    private hotSearch = [
-        "西南名大",
-        "西南财经",
-        "电子科技大学",
-        "四川大学",
-        "成都理工大学",
-        "西南名族大学"
-    ];
+    private historySearch: SearchItem[] = [];
 
-    private searchHander!: () => void;
+    private hotSearch: SearchItem[] = [];
+    // 0 院校 1 专业
+    private searchBy: 0 | 1 = 0;
 
-    private historySearch = ["成都理工大学"];
+    get detailPath(): string {
+        if (this.searchBy === 0) {
+            return "/university/detail/";
+        }
 
-    private searchUniversity() {
-        // console.log("search");
+        return "/major/detail/";
+    }
+    get autocompleteItems() {
+        return this.hotSearch.map((item) => {
+            return {
+                text: item.name,
+                value: item.name
+            };
+        });
+    }
+    private onSearchSwitch(searchBy: 0 | 1) {
+        this.searchBy = searchBy;
+        this.getSearchInfo();
     }
 
-    private onSerchInputUpdate() {
-        if (!this.searchHander) {
-            const searchHander = createDebounce(
-                () => {
-                    this.searchUniversity();
-                },
-                1000,
-                2000
-            );
+    private created() {
+        this.getSearchInfo();
+    }
 
-            this.searchHander = searchHander;
+    private getSearchInfo() {
+        if (this.searchBy === 0) {
+            this.getUniversityHotSearch();
+            this.getUniversityHistorySearch();
+        } else {
+            this.getMajorHotSearch();
+            this.getMajorHistorySearch();
         }
-        this.searchHander();
+    }
+
+    private async onSearch() {
+        const rawLocation: RawLocation = {
+            path: this.searchBy === 0 ? "/university/query" : "/major/query",
+            query: {
+                query: this.searchWord
+            }
+        };
+
+        this.$router.push(rawLocation);
+    }
+
+    private mapMajorsToSearchs(data: MajorInfo[]) {
+        return data.map((item) => {
+            return {
+                id: item.majorID,
+                name: item.majorName
+            };
+        });
+    }
+
+    private mapUvtsToSearchs(data: ListItem[]) {
+        return data.map((item) => {
+            return {
+                id: item.schoolID,
+                name: item.fullName
+            };
+        });
+    }
+
+    @withLoading()
+    private async getMajorHotSearch() {
+        const rsp = await this.$http.get<ResponseModel<MajorInfo[]>>(
+            "/api/MajorInfos/GetHotMajorPage",
+            {
+                params: {
+                    PageIndex: 0,
+                    PageSize: 10,
+                    Where: ""
+                }
+            }
+        );
+
+        const data = rsp.data.data;
+
+        this.hotSearch = this.mapMajorsToSearchs(data);
+    }
+
+    @withLoading()
+    private async getMajorHistorySearch() {
+        if (!this.isLogin) {
+            return;
+        }
+
+        const rsp = await this.$http.get<ResponseModel<MajorInfo[]>>(
+            "/api/MajorInfos/GetMajorHistoryPageList",
+            {
+                params: { PageIndex: 0, PageSize: 10, Where: "" }
+            }
+        );
+
+        this.historySearch = this.mapMajorsToSearchs(rsp.data.data);
+    }
+
+    @withLoading()
+    private async getUniversityHotSearch() {
+        const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
+            "/api/Universitys/GetHotUniversityPage",
+            {
+                params: {
+                    PageIndex: 0,
+                    PageSize: 10,
+                    Where: ""
+                }
+            }
+        );
+
+        const data = rsp.data.data;
+
+        this.hotSearch = this.mapUvtsToSearchs(data);
+    }
+
+    @withLoading()
+    private async getUniversityHistorySearch() {
+        if (!this.isLogin) {
+            return;
+        }
+
+        const rsp = await this.$http.get<ResponseModel<ListItem[]>>(
+            "/api/Universitys/GetUniversityHistoryPageList",
+            {
+                params: { PageIndex: 0, PageSize: 10, Where: "" }
+            }
+        );
+
+        this.historySearch = this.mapUvtsToSearchs(rsp.data.data);
     }
 }
 </script>

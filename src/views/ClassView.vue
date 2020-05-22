@@ -15,8 +15,9 @@
         <v-list>
           <v-list-item
             class="pa-0 mb-2"
-            v-for="(item, subindex) in filterdClasses(index)"
-            :key="subindex"
+            v-for="(item) in filterdClasses(index)"
+            :key="item.id"
+            :to="'/class/' + item.id"
           >
             <v-card
               class="pa-2 d-flex justify-space-between row align-center no-gutters"

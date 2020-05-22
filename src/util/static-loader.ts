@@ -10,3 +10,7 @@ export const loadUniversityLogo = async function (universityName: string) {
         responseType: "blob"
     })
 }
+
+export const loadArticleTemplate = async function (name: string) {
+    return await axiosInstance.get<string>(`./static/template/${name}`);
+}

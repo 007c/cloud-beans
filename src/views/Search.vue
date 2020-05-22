@@ -12,11 +12,24 @@
           <v-icon>arrow_back</v-icon>
         </v-btn>
       </v-col>
+      <v-col cols="3">
+        <v-select
+          v-model="searchBy"
+          class="caption"
+          hide-details
+          flat
+          dense
+          solo
+          :items="autocompleteItems"
+          item-value="value"
+          item-text="text"
+          @change="onSearchSwitch"
+        ></v-select>
+      </v-col>
       <v-col>
         <v-autocomplete
           prepend-inner-icon="search"
           hide-no-data
-          :items="autocompleteItems"
           hide-details
           outlined
           dense
@@ -27,19 +40,6 @@
       </v-col>
     </v-row>
     <v-divider class="mt-2"></v-divider>
-
-    <v-row>
-      <v-col>
-        <v-btn
-          @click="onSearchSwitch(0)"
-          tile
-          class="mr-4"
-          color="primary"
-          :outlined="searchBy===1"
-        >搜院校</v-btn>
-        <v-btn @click="onSearchSwitch(1)" tile color="primary" :outlined="searchBy===0">搜专业</v-btn>
-      </v-col>
-    </v-row>
 
     <v-subheader class="pa-0">热门搜索</v-subheader>
     <v-row>
@@ -112,12 +112,16 @@ export default class extends Vue {
         return "/major/detail/";
     }
     get autocompleteItems() {
-        return this.hotSearch.map((item) => {
-            return {
-                text: item.name,
-                value: item.name
-            };
-        });
+        return [
+            {
+                text: "搜院校",
+                value: 0
+            },
+            {
+                text: "搜专业",
+                value: 1
+            }
+        ];
     }
     private onSearchSwitch(searchBy: 0 | 1) {
         this.searchBy = searchBy;

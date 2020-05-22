@@ -32,7 +32,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { VueConstructor } from "vue";
-import Interest from "@/views/evaluations/Intertest.vue";
+import Interesting from "@/views/evaluations/Intertesting.vue";
 
 enum Title {
     "兴趣测试" = 1,
@@ -83,9 +83,10 @@ export default class extends Vue {
 
     get currentComponent() {
         const componentMap: Dict<VueConstructor> = {
-            1: Interest
+            1: Interesting
         };
-        return componentMap[parseInt(this.$route.params.id, 10)] || Interest;
+        return componentMap[parseInt(this.$route.params.id, 10)] || Interesting;
+
     }
 }
 </script>

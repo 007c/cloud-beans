@@ -28,7 +28,7 @@
         通过这组测试，你会发现你平常从未知觉的自我，唤醒你对于自己职业生涯的重视。这个新的自我发现，将会为你的人生选择带来新的契机和启示。
       </v-col>
       <v-col>
-          <v-btn to="/evalation/list" block color="primary">进入测试</v-btn>
+          <v-btn to="/evaluation/list" block color="primary">进入测试</v-btn>
       </v-col>
     </v-row>
   </v-container>

@@ -16,49 +16,47 @@ function loadWaterMark(path: string): Promise<HTMLImageElement> {
     })
 }
 
-export async function toCanvas(element: HTMLElement) {
-    const [logoWaterMark, textWaterMark] = await Promise.all([
-        loadWaterMark("/static/img/logo.png"),
-        loadWaterMark("/static/img/logo.png")
-    ])
+export async function toCanvas(element: HTMLElement, ignoreElements: Element[]) {
+    // const [logoWaterMark, textWaterMark] = await Promise.all([
+    //     loadWaterMark("/static/img/logo.png"),
+    //     loadWaterMark("/static/img/logo.png")
+    // ])
 
     const screenWidth = window.screen.width;
-    const { naturalWidth: textImgWidth, naturalHeight: textImgHeight } = textWaterMark;
-    const { naturalWidth: logoImgWidth, naturalHeight: logoImgHeight } = logoWaterMark;
-    const textScale = screenWidth / textImgWidth;
-    const logoScale = screenWidth / logoImgHeight;
-    const offsetTop = textScale * textImgHeight + 20;
-    const elementRect = element.getBoundingClientRect();
-    const canvas: HTMLCanvasElement = await html2Canvas(document.querySelector("#saveContent") as HTMLElement, {
+    // const { naturalWidth: textImgWidth, naturalHeight: textImgHeight } = textWaterMark;
+    // const { naturalWidth: logoImgWidth, naturalHeight: logoImgHeight } = logoWaterMark;
+    // const textScale = screenWidth / textImgWidth;
+    // const logoScale = screenWidth / logoImgHeight;
+    // const offsetTop = textScale * textImgHeight + 20;
+    // const elementRect = element.getBoundingClientRect();
+    const canvas: HTMLCanvasElement = await html2Canvas(element, {
         ignoreElements(elements) {
-            return (
-                elements.id === "saveButton" || elements.id === "header"
-            );
+            return ignoreElements.indexOf(elements) !== -1
         },
-        y: -offsetTop,
-        height: elementRect.height + offsetTop + logoScale * logoImgHeight
+        // y: -offsetTop,
+        // height: elementRect.height + offsetTop + logoScale * logoImgHeight
     })
 
-    canvas.id = "wxSaveImageToPhoto";
+    // canvas.id = "wxSaveImageToPhoto";
 
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-        ctx.drawImage(
-            textWaterMark,
-            0,
-            0,
-            textImgWidth * textScale,
-            textImgHeight * textScale
-        );
+    // const ctx = canvas.getContext("2d");
+    // if (ctx) {
+    //     ctx.drawImage(
+    //         textWaterMark,
+    //         0,
+    //         0,
+    //         textImgWidth * textScale,
+    //         textImgHeight * textScale
+    //     );
 
-        ctx.drawImage(
-            logoWaterMark,
-            0,
-            elementRect.height + offsetTop,
-            logoImgWidth * logoScale,
-            logoImgHeight * logoScale
-        );
-    }
+    //     ctx.drawImage(
+    //         logoWaterMark,
+    //         0,
+    //         elementRect.height + offsetTop,
+    //         logoImgWidth * logoScale,
+    //         logoImgHeight * logoScale
+    //     );
+    // }
 
     return canvas;
 }

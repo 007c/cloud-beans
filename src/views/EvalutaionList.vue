@@ -16,7 +16,7 @@
   <v-container>
     <v-list>
       <v-list-item
-        :to="'/evalation/list/' + item.testID"
+        :to="'/evaluation/list/' + item.testID"
         dense
         class="pa-0 mb-3 d-flex flex-column"
         v-for="item in evaluationList"

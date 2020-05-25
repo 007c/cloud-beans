@@ -2,6 +2,18 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+  css: {
+    loaderOptions: {
+      postcss: {
+        plugins: [
+          require("postcss-px-to-viewport")({
+            viewportWidth: 735,
+            exclude: /(\/|\\)(node_modules)(\/|\\)/,
+          })
+        ]
+      }
+    }
+  },
   devServer: {
     proxy: {
       "/wx": {

@@ -189,9 +189,14 @@ export const routes = [
     component: () => import("../views/Prompt.vue")
   },
   {
-    path: "/evalation/list/:id",
+    path: "/evaluation/list/:id",
     name: "职业测评",
     component: () => import("@/views/EvalutaionLayout.vue")
+  },
+  {
+    path: "/evaluation/result/:id",
+    name: "职业测评",
+    component: () => import("@/views/EvaluationResultLayout.vue")
   },
   {
     path: "/",
@@ -200,7 +205,7 @@ export const routes = [
       ...personMenu,
       ...mainMenus,
       {
-        path: "/evalation/list",
+        path: "/evaluation/list",
         name: "职业测评",
         component: () => import("@/views/EvalutaionList.vue")
       },

@@ -6,6 +6,11 @@ declare module 'vuetify/lib' {
   import 'vuetify/types/lib'
 }
 
+declare module "@antv/f2" {
+  let F2: any
+  export default F2;
+}
+
 declare module 'vuetify/es5/locale/zh-Hans' {
   import 'vuetify/es5/locale/zh-Hans'
 }

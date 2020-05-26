@@ -61,7 +61,7 @@
     border: 3px solid #000000;
     border-collapse: collapse;
     margin: 0 auto;
-    font-size: 18px;
+    font-size: 24px;
     line-height: 50px;
     color: #000000;
     line-height: 1.2em;
@@ -208,6 +208,9 @@ export default class extends Vue {
             };
         });
 
+        data.sort((a, b) => a.weight - b.weight);
+        console.log("data: ", data);
+
         const chart = new F2.Chart({
             el: this.$refs.chartContainer,
             pixelRatio: window.devicePixelRatio,
@@ -273,9 +276,7 @@ export default class extends Vue {
             }
         });
         chart
-            .area({
-                opacity: 0
-            })
+            .area()
             .position("label*weight")
             .style({
                 fill: "#4e74ae",

@@ -114,7 +114,7 @@ const userState: Module<UserState, any> = {
                 highSchoolId: data.highSchoolID
             };
             const userInfo: UserInfo = {
-                avatar: data.logoUrl,
+                // avatar: data.logoUrl,
                 phoneNumber: data.mobile,
                 id: data.userID,
                 originalInfo: data

@@ -191,12 +191,18 @@ export const routes = [
   {
     path: "/evaluation/list/:id",
     name: "职业测评",
-    component: () => import("@/views/EvalutaionLayout.vue")
+    component: () => import("@/views/EvalutaionLayout.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: "/evaluation/result/:id",
     name: "职业测评",
-    component: () => import("@/views/EvaluationResultLayout.vue")
+    component: () => import("@/views/EvaluationResultLayout.vue"),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: "/",
@@ -207,7 +213,10 @@ export const routes = [
       {
         path: "/evaluation/list",
         name: "职业测评",
-        component: () => import("@/views/EvalutaionList.vue")
+        component: () => import("@/views/EvalutaionList.vue"),
+        meta: {
+          requireLogin: true
+        }
       },
     ]
   },

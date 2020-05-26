@@ -16,7 +16,7 @@ function loadWaterMark(path: string): Promise<HTMLImageElement> {
     })
 }
 
-export async function toCanvas(element: HTMLElement, ignoreElements: Element[]) {
+export async function toCanvas(element: HTMLElement, ignoreElements: Element[] = []) {
     // const [logoWaterMark, textWaterMark] = await Promise.all([
     //     loadWaterMark("/static/img/logo.png"),
     //     loadWaterMark("/static/img/logo.png")
@@ -28,12 +28,13 @@ export async function toCanvas(element: HTMLElement, ignoreElements: Element[]) 
     // const textScale = screenWidth / textImgWidth;
     // const logoScale = screenWidth / logoImgHeight;
     // const offsetTop = textScale * textImgHeight + 20;
-    // const elementRect = element.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
     const canvas: HTMLCanvasElement = await html2Canvas(element, {
         ignoreElements(elements) {
-            return ignoreElements.indexOf(elements) !== -1
+            return ignoreElements.indexOf(elements) !== -1 || elements.tagName === "hr"
         },
-        // y: -offsetTop,
+        y: element.offsetTop,
+        scale: window.devicePixelRatio,
         // height: elementRect.height + offsetTop + logoScale * logoImgHeight
     })
 

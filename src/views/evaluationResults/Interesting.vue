@@ -1,20 +1,21 @@
 <style lang="less" scoped>
 .container {
     background-image: url("./images/bg1.png");
+    background-attachment: scroll;
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    height: 100vh;
-    box-sizing: border-box;
-    overflow: auto;
     font-family: "Microsoft Yahei";
+    overflow: auto;
 }
 .evaluations-title {
     margin-top: 23px;
     width: 678px;
     height: 122px;
-    background: url("./images/界面(1)(1)_03.gif") no-repeat;
-    background-size: 100% 100%;
+    background-position: 0 -2px;
+    background-size: 100%;
     margin-left: 44px;
+    overflow: auto;
+    position: relative;
 }
 .chart-container {
     height: 512px;
@@ -78,7 +79,7 @@
 .page-footer {
     display: flex;
     margin-top: 40px;
-    font-size: 24px;
+    font-size: 26px;
     line-height: 34px;
     color: #000000;
     font-family: "Microsoft YaHei";
@@ -88,7 +89,6 @@
 .qr-code {
     width: 120px;
     height: 120px;
-    background: url("./images/界面(1)(1)_14.png") no-repeat;
     background-size: 100%;
     margin-right: 30px;
     margin-left: 31px;
@@ -96,11 +96,30 @@
 .desc-text {
     margin-bottom: 0;
 }
+.avatar-img {
+    width: 87px;
+    height: 84px;
+    margin-top: 26px;
+    margin-left: 14px;
+}
+.img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.img-container {
+    position: relative;
+}
 </style>
 
 <template>
-  <v-container class="container pa-0">
-    <div class="evaluations-title"></div>
+  <v-container class="container pa-0 pb-1">
+    <div class="evaluations-title img-container">
+      <img src="/static/img/界面(1)(1)_03.png" class="img" alt />
+      <img class="avatar-img" :src="userInfo.avatar" />
+    </div>
     <canvas ref="chartContainer" class="chart-container"></canvas>
     <h2 class="page-sub-title">主要特征</h2>
     <section class="d-flex flex-wrap">
@@ -124,18 +143,15 @@
       </tr>
     </table>
     <footer class="page-footer">
-      <div class="qr-code"></div>
+      <div class="qr-code img-container">
+        <img class="img" src="/static/img/界面(1)(1)_14.png" alt />
+      </div>
       <div class="desc-text">
         <div>志愿|专家|未来</div>
         <div>扫一扫/免费获取你的专属报告</div>
         <div>更多咨询|关注“前途问路”公众号</div>
       </div>
     </footer>
-    <v-row no-gutters class="px-4">
-        <v-col>
-            <v-btn block color="primary" class="mb-2 mt-2">生成测试报告</v-btn>
-        </v-col>
-    </v-row>
   </v-container>
 </template>
 <script lang="ts">
@@ -144,6 +160,8 @@ const ALL_TYPES = ["研究型", "艺术型", "社会型", "企业型", "传统�
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import F2 from "@antv/f2";
 import { Option } from "../evaluations/Intertesting.vue";
+import { toCanvas } from "../../util/htmlToCanvas";
+import { UserInfo } from "../../store/use-state";
 
 const MAX_ANWSER_COUNT = 3;
 @Component
@@ -284,6 +302,10 @@ export default class extends Vue {
 
         chart.legend(false);
         chart.render();
+    }
+
+    get userInfo(): UserInfo {
+        return this.$store.state.userState.userInfo;
     }
 }
 </script>

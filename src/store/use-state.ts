@@ -42,7 +42,7 @@ export const getIntialState = function (): UserState {
         userInfo: {
             userName: '',
             nickName: '',
-            avatar: '',
+            avatar: "/static/img/images.jpg",
             phoneNumber: '',
             role: '',
             id: '',

@@ -30,7 +30,7 @@
             </v-col>
             <v-col class="blue--text" cols="6" sm="5">
               {{item.popular}}
-              <advisory-btn @click.native.stop :typeCode="2" class="mb-1 mx-1"></advisory-btn>
+              <advisory-btn :postfix="item.majorName" @click.native.stop :typeCode="2" class="mb-1 mx-1"></advisory-btn>
             </v-col>
           </v-row>
         </v-list-item-content>

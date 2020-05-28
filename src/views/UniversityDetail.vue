@@ -26,7 +26,7 @@
             <v-col class="pl-0 pb-0 d-flex flex-column caption justify-space-between">
               <p class="mb-0">
                 院校类型：{{universityDetail.eduTypeName}}
-                <advisory-btn @click.native.stop :typeCode="1" class="ml-2 mt-n1"></advisory-btn>
+                <advisory-btn :postfix="universityDetail.fullName" @click.native.stop :typeCode="1" class="ml-2 mt-n1"></advisory-btn>
               </p>
               <p class="mb-0">院校标签：{{universityDetail.labels}}</p>
               <p class="mb-0 row no-gutters">

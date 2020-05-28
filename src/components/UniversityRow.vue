@@ -5,7 +5,7 @@
         <v-list-item-title class="d-flex justify-space-between align-center row no-gutters">
           <span class="col-8 text-truncate">{{scope.item.fullName}}</span>
           <span class="col-4">
-            <advisory-btn @click.native.stop :typeCode="1"></advisory-btn>
+            <advisory-btn :postfix="item.fullName" @click.native.stop :typeCode="1"></advisory-btn>
           </span>
           <!-- <span class="body-2">{{item.provinceName}}</span> -->
         </v-list-item-title>

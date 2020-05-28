@@ -1,7 +1,6 @@
 <template>
   <v-btn class="pa-0" @click.stop="gotoMessage" color="primary" small text>
-      <v-icon class="mr-1 align-top" size="small">textsms</v-icon>
-      专家咨询
+    <v-icon class="mr-1 align-top" size="small">textsms</v-icon>专家咨询
   </v-btn>
 </template>
 
@@ -13,6 +12,7 @@ import { startAsyncGuide } from "../loginGuideController";
 })
 export default class extends Vue {
     @Prop({ required: true }) private typeCode!: number;
+    @Prop({ default: "" }) private postfix!: string;
     get messageTemplate(): Dict<string> {
         return this.$store.getters.messageTemplate;
     }
@@ -36,7 +36,7 @@ export default class extends Vue {
             path: "/message",
             query: {
                 typeCode: this.typeCode.toString(),
-                template: messageTemplate
+                template: messageTemplate + " " + this.postfix
             }
         });
     }

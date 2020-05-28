@@ -200,16 +200,13 @@ export default class extends Vue {
         const data = ALL_TYPES.map((type, index) => {
             const dataItem = dataTypeMap[type] || {
                 answerType: type,
-                levels: 4
+                levels: 4,
             };
             return {
                 label: dataItem.answerType,
-                weight: (4 - dataItem.levels) * 0.333
+                weight: dataItem.levels !== 4 ? (4 - dataItem.levels) * 0.333 : Math.random() * 0.2 + 0.1
             };
         });
-
-        data.sort((a, b) => a.weight - b.weight);
-        console.log("data: ", data);
 
         const chart = new F2.Chart({
             el: this.$refs.chartContainer,

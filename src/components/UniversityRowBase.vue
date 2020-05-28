@@ -1,11 +1,16 @@
 <template>
   <v-list-item class="pa-0 mb-2" @click="goDetail(item.schoolID)">
     <v-card width="100%" class="d-flex pl-2 pr-2">
-      <div class="d-flex align-center mr-3">
-        <v-list-item-avatar color="secondary" size="60">
+      <div class="d-flex justify-center flex-column">
+        <v-list-item-avatar class="my-2" color="secondary" size="60">
           <v-img v-if="hasLogo" :alt="item.fullName.substring(0,1)" :src="logoUrl"></v-img>
           <span v-else class="white--text">{{item.fullName.substring(0,1)}}</span>
         </v-list-item-avatar>
+        <span
+          v-if="showname"
+          style="max-width: 12em"
+          class="caption text-truncate text-center"
+        >{{item.fullName}}</span>
       </div>
       <slot v-bind:item="item"></slot>
     </v-card>
@@ -58,6 +63,8 @@ export default class extends Vue {
     private hasLogo: boolean = false;
 
     @Prop() private item!: ListItem;
+
+    @Prop({ default: false }) private showname!: boolean;
 
     private created() {
         this.getLogoImg();

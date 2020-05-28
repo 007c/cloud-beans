@@ -45,7 +45,12 @@ export default function (axios: AxiosStatic) {
 
         if (error.response.status === 401) {
             store.dispatch(LOGIN_OUT);
-            router.push('/login');
+            router.push({
+                path: '/login',
+                query: {
+                    redirect: router.app.$route.fullPath
+                }
+            });
             store.commit(UPDATE_APP_MESSAGE, {
                 msg: "您还未登录或登录已过期，请重新登录！",
                 color: "info",

@@ -57,7 +57,7 @@
       </v-col>
       <v-col class="pl-3">
         <v-carousel height="30px" hide-delimiters cycle vertical :show-arrows="false">
-          <v-carousel-item v-for="item in prompts" :key="item.link">
+          <v-carousel-item v-for="item in prompts" :key="item.pubMsg">
             <router-link :to="item.link">
               <span class="grey--text subtitle-2">{{item.title}}</span>
             </router-link>
@@ -116,11 +116,14 @@ let scrollHandler: () => void;
 export default class extends Vue {
     private mainMenus = mainMenus;
     private slides: Slider[] = [];
-    private prompts: Prompt[] = prompts;
+    private prompts: Prompt[] = [];
     private classes: ClassItem[] = classes;
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
+    private created() {
+        this.getPrompts();
+    }
     private mounted() {
         this.scrollY = window.scrollY;
         // this.updateShare();
@@ -149,6 +152,33 @@ export default class extends Vue {
 
     private beforeDestroy() {
         window.removeEventListener("scroll", scrollHandler);
+    }
+
+    private async getPrompts() {
+        const rsp = await this.$http.get<
+            ResponseModel<
+                Array<{
+                    busiTime: string;
+                    createTime: string;
+                    id: string;
+                    pubMsg: string;
+                    pubState: number;
+                    pubType: number;
+                    showLevels: number;
+                }>
+            >
+        >("/api/Pubs/GetPubsList");
+
+        const data = rsp.data.data;
+
+        this.prompts = data.map(
+            (item): Prompt => {
+                return {
+                    title: item.pubMsg,
+                    link: "/prompt"
+                };
+            }
+        );
     }
 
     private updateShare() {

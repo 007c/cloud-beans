@@ -53,7 +53,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-tabs grow>
+    <v-tabs grow v-model="tabIndex">
       <v-tab v-for="(name, index) in tabs" :key="index" :href="'#' + index">{{name}}</v-tab>
       <v-tab-item value="0">
         <v-card flat>
@@ -120,6 +120,7 @@
               item-text="text"
               v-model="universityType"
               item-value="value"
+              @change="filterMajorEnsInfo"
             ></v-select>
           </v-col>
           <v-col cols="3">
@@ -132,6 +133,7 @@
               item-text="text"
               v-model="universityLevel"
               item-value="value"
+              @change="filterMajorEnsInfo"
             ></v-select>
           </v-col>
           <v-col cols="3">
@@ -144,11 +146,12 @@
               item-text="text"
               v-model="year"
               item-value="value"
+              @change="filterMajorEnsInfo"
             ></v-select>
           </v-col>
         </v-row>
         <v-list two-line class="mt-2">
-          <v-list-item v-for="item in listData" :key="item.id" class="mb-2 pa-0">
+          <!-- <v-list-item v-for="item in listData" :key="item.id" class="mb-2 pa-0">
             <v-card width="100%" class="pd-2 pt-2 pl-2 row no-gutters d-flex">
               <div class="col-4 pt-0 pb-0 justify-center d-flex flex-column align-center">
                 <v-list-item-avatar color="secondary" class="mb-2" size="60">
@@ -191,7 +194,45 @@
                 </v-simple-table>
               </v-list-item-content>
             </v-card>
-          </v-list-item>
+          </v-list-item>-->
+          <university-row-base
+            v-for="item in majorEnsRows"
+            :key="item.university.id"
+            :item="item.university"
+            :showname="true"
+          >
+            <v-list-item-content class="pa-0 col-8">
+              <v-list-item-title class="ml-4">
+                <strong class="body-2 grey--text text--darken-1">学科评估结果</strong>
+                <span class="blue--text ml-1">{{item.university.grades}}</span>
+              </v-list-item-title>
+              <v-simple-table dense class="pa-0 text-center">
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-center pa-0">录取批次</th>
+                      <th class="text-center pa-0">最高分</th>
+                      <th class="text-center pa-0">最低分</th>
+                      <th class="text-center pa-0">平均分</th>
+                    </tr>
+                  </thead>
+                  <tbody v-if="item.majorLine">
+                    <tr>
+                      <td class="px-0">{{item.majorLine.batch}}</td>
+                      <td>{{item.majorLine.maxScore}}</td>
+                      <td>{{item.majorLine.minScore}}</td>
+                      <td>{{item.majorLine.avgScore}}</td>
+                    </tr>
+                  </tbody>
+                  <tbody v-else>
+                    <tr>
+                      <td colspan="4" class="caption">暂无数据</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-list-item-content>
+          </university-row-base>
         </v-list>
       </v-tab-item>
     </v-tabs>
@@ -205,21 +246,25 @@ import { yearItems } from "./selectOptions";
 import { mapGetters } from "vuex";
 import { MajorInfo } from "../components/MajorRow.vue";
 import html2Canvas from "html2canvas";
-interface ListItem {
-    university: string;
-    logo: string;
+
+import UniversityRowBase, {
+    ListItem as UniversityRow
+} from "@/components/UniversityRowBase.vue";
+import eventBus from "../event-bus";
+
+interface MajorEnsRow {
     id: string;
-    batches: Array<{
-        highest: number;
-        lowest: number;
-        average: number;
-    }>;
+    majorLine: MajorInfo | null;
+    university: UniversityRow;
 }
 
 @Component({
     name: "MajorDetail",
     computed: {
-        ...mapGetters(["universityTypes", "universityLevels"])
+        ...mapGetters(["universityTypes", "universityLevels", "areaList"])
+    },
+    components: {
+        UniversityRowBase
     }
 })
 export default class extends Vue {
@@ -249,38 +294,65 @@ export default class extends Vue {
 
     private tabs: string[] = ["专业简介", "开设院校"];
 
-    private listData: ListItem[] = [];
+    private tabIndex: string = "0";
 
     private showAreaPicker: boolean = false;
 
-    private defaultValue = [1, 3];
-
-    private areaList: AreaTree[] = [
-        {
-            label: "四川",
-            value: 1,
-            children: [
-                {
-                    label: "成都",
-                    value: 2
-                },
-                {
-                    label: "绵阳",
-                    value: 3
-                }
-            ]
-        }
-    ];
+    private defaultValue: number[] = [];
+    private areaCode: string = "";
 
     private yearItems = yearItems;
 
-    private universityType = 0;
+    private universityType = "0|不限";
 
-    private universityLevel = 0;
+    private universityLevel = "0|不限";
 
     private year = new Date().getFullYear() - 1;
 
     private areaText: string = "";
+
+    private pageIndex: number = 1;
+
+    private majorEnsRows: MajorEnsRow[] = [];
+
+    private filterMajorEnsInfo() {
+        this.pageIndex = 1;
+        this.getMajorEnstablishInfo();
+    }
+
+    private onBottomTouchUp() {
+        if (this.tabIndex !== "1") {
+            return;
+        }
+        this.pageIndex++;
+        this.getMajorEnstablishInfo(1);
+    }
+
+    // mode 0: 刷新 1：添加
+    @withLoading()
+    private async getMajorEnstablishInfo(mode: 0 | 1 = 0) {
+        const rsp = await this.$http.get<ResponseModel<MajorEnsRow[]>>(
+            "/api/Universitys/GetMajorUniverSityPageList",
+            {
+                params: {
+                    MajorID: this.majorId,
+                    Year: this.year,
+                    AreaCode: this.areaCode,
+                    EduClass: this.universityType,
+                    EduType: this.universityLevel,
+                    PageIndex: this.pageIndex,
+                    PageSize: 10,
+                    Where: ""
+                }
+            }
+        );
+
+        if (mode === 0) {
+            this.majorEnsRows = rsp.data.data;
+        } else {
+            this.majorEnsRows.push(...rsp.data.data);
+        }
+    }
 
     private onAreaChange(res: AreaTree[], isEnsure: boolean) {
         if (!isEnsure) {
@@ -289,14 +361,17 @@ export default class extends Vue {
 
         this.areaText = res.map((item) => item.label).join("");
         this.defaultValue = res.map((item) => item.value);
+        this.areaCode = res[res.length - 1].code!;
+        this.filterMajorEnsInfo();
     }
 
     private created() {
+        eventBus.$on("bottomScrollUp", this.onBottomTouchUp);
         const route = this.$route;
         this.majorId = parseInt(route.params.id, 10);
         this.getMajorFollowedInfo();
         this.getMajorDetail();
-        this.getUniversityListOfMajor();
+        this.getMajorEnstablishInfo();
     }
 
     private async getMajorFollowedInfo() {
@@ -366,48 +441,6 @@ export default class extends Vue {
         }
     }
 
-    @withLoading()
-    private async getUniversityListOfMajor() {
-        await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-            }, 1000);
-        });
-
-        this.listData = [
-            {
-                id: "9defac-ecffea-dedeaf",
-                university: "西南石油大学",
-                logo:
-                    "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585904564715&di=bfc1df6022e4a5c0bbf7240d76a430d3&imgtype=0&src=http%3A%2F%2Fimg.gaosan.com%2Fupload%2F2017-5%2F52ddc53c4b0cc.jpg",
-                batches: [
-                    {
-                        highest: 520,
-                        lowest: 485,
-                        average: 501
-                    }
-                ]
-            },
-            {
-                id: "9defac-ecffea-dedbaf",
-                university: "西南大xxxxxxx学",
-                logo: "",
-                batches: [
-                    {
-                        highest: 420,
-                        lowest: 415,
-                        average: 411
-                    },
-                    {
-                        highest: 420,
-                        lowest: 415,
-                        average: 411
-                    }
-                ]
-            }
-        ];
-    }
-
     // private async saveImage() {
     //     const image = new Image();
 
@@ -450,6 +483,5 @@ export default class extends Vue {
     //         });
     //     };
     // }
-
 }
 </script>

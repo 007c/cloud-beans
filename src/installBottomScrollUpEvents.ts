@@ -10,6 +10,12 @@ window.addEventListener("touchend", () => {
     isUserTouch = false
 })
 
+window.addEventListener("touchmove", (event: TouchEvent) => {
+    if (event.touches.length !== 0) {
+        isUserTouch = true;
+    }
+})
+
 window.addEventListener('scroll', function (event: Event) {
     const scrollHeight = document.documentElement.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;

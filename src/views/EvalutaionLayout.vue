@@ -74,7 +74,7 @@ export default class extends Vue {
     }
 
     get isConfirmDisabled() {
-        return this.dialogRemainTime > 0;
+        return false
     }
 
     get title(): string {

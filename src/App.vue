@@ -10,7 +10,7 @@ p {
 }
 
 .custom-v-dialog.loader-content {
-    background: transparent;
+    background: rgba(0, 0, 0, 0.15);
     position: fixed;
     width: 100%;
     height: 100%;

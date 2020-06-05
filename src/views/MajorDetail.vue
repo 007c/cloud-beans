@@ -90,7 +90,7 @@
       </v-tab-item>
       <v-tab-item value="1">
         <v-row>
-          <v-col cols="3">
+          <v-col cols="6">
             <v-text-field
               class="caption"
               v-model="areaText"
@@ -110,7 +110,7 @@
               :show="showAreaPicker"
             ></Picker>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="6">
             <v-select
               class="caption"
               hide-details
@@ -123,7 +123,7 @@
               @change="filterMajorEnsInfo"
             ></v-select>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="6">
             <v-select
               class="caption"
               hide-details
@@ -136,7 +136,7 @@
               @change="filterMajorEnsInfo"
             ></v-select>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="6">
             <v-select
               class="caption"
               hide-details

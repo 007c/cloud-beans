@@ -18,6 +18,7 @@ p {
     top: 0;
     left: 0;
     align-items: center;
+    z-index: 233;
 }
 
 .v-text-field--box .v-input__slot,

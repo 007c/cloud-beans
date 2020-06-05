@@ -292,7 +292,7 @@ export default class extends Vue {
         };
 
         try {
-            this.$http.put("/api/UserScoreRank/Update", gradeModel);
+            await this.$http.put("/api/UserScoreRank/Update", gradeModel);
             this.$store.commit(UPDATE_STUDENT_INFO, studentInfo);
             this.$store.commit(UPDATE_USER_INFO, userInfo);
             this.$router.push("/choice");

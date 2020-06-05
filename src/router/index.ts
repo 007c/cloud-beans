@@ -63,6 +63,7 @@ export const personMenu: Menu[] = [
     icon: "bookmark_border",
     name: "我收藏的文章",
     path: "/followed/article",
+    component: () => import("../views/FollowedArticles.vue"),
     meta: {
       requireLogin: true
     }

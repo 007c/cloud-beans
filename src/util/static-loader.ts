@@ -11,6 +11,6 @@ export const loadUniversityLogo = async function (universityName: string) {
     })
 }
 
-export const loadArticleTemplate = async function (name: string) {
-    return await axiosInstance.get<string>(`./static/template/${name}`);
+export const loadArticleTemplate = async function (url: string) {
+    return await axiosInstance.get<string>(url);
 }

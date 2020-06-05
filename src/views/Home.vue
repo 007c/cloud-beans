@@ -73,20 +73,8 @@
         <router-link class="float-right" to="/classes">>></router-link>
       </v-subheader>
 
-      <template v-for="(item, index) in classes">
-        <v-list-item :key="index" @click="goClasses(index)">
-          <v-img class="mr-2" height="100%" max-width="60px" :src="item.imgUrl"></v-img>
-          <v-list-item-content>
-            <v-list-item-title class="subtitle-1">{{item.title}}</v-list-item-title>
-            <v-list-item-subtitle>
-              <span class="mr-1">04-01</span>
-              <span class="mr-1">14:00:01</span>
-              <span class="ml-4 mr-4">文章</span>
-              <span>1027浏览</span>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-divider :key="item.path"></v-divider>
+      <template v-for="(item) in classes">
+        <article-row :item="item" :key="item.id"></article-row>
       </template>
     </v-list>
   </v-container>
@@ -100,29 +88,33 @@ interface Slider {
 }
 
 import { Prompt, prompts } from "./prompts";
-import { ClassItem, classes } from "./classes";
+import { ClassItem, ArticleTypes } from "./classes";
 import { createDebounce } from "@/util";
 import { mainMenus } from "@/router";
 import StudentInfoBar from "@/components/StudentInfoBar.vue";
+import ArticleRow from "@/components/ArticleRow.vue";
+import moment from "moment";
 
 let scrollHandler: () => void;
 
 @Component({
     name: "Home",
     components: {
-        StudentInfoBar
+        StudentInfoBar,
+        ArticleRow
     }
 })
 export default class extends Vue {
     private mainMenus = mainMenus;
     private slides: Slider[] = [];
     private prompts: Prompt[] = [];
-    private classes: ClassItem[] = classes;
+    private classes: ClassItem[] = [];
     private shoudHideNav: boolean = false;
     private scrollY: number = 0;
     private scrollDirection: "up" | "down" = "up";
     private created() {
         this.getPrompts();
+        this.getArticles();
     }
     private mounted() {
         this.scrollY = window.scrollY;
@@ -150,8 +142,31 @@ export default class extends Vue {
         this.$router.push(`/class/${id}`);
     }
 
+    private toDate(pubTime: string) {
+        return moment(pubTime).format("MM-DD");
+    }
+
+    private toTime(pubTime: string) {
+        return moment(pubTime).format("HH:mm");
+    }
+
     private beforeDestroy() {
         window.removeEventListener("scroll", scrollHandler);
+    }
+
+    private async getArticles() {
+        const rsp = await this.$http.get<ResponseModel<ClassItem[]>>(
+            "/api/Articles/GetPageList",
+            {
+                params: {
+                    ArticleTypeID: ArticleTypes.不限,
+                    PageIndex: 1,
+                    PageSize: 10,
+                    Where: ""
+                }
+            }
+        );
+        this.classes = rsp.data.data;
     }
 
     private async getPrompts() {

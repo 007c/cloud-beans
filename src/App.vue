@@ -11,7 +11,7 @@ p {
 
 .custom-v-dialog.loader-content {
     background: transparent;
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     display: flex;

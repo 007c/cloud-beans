@@ -9,7 +9,8 @@
       <v-col class="pa-0 text-center">{{classItem.collectCount}} 收藏</v-col>
       <v-col class="pa-0 text-center">{{toDateTime(classItem.pubTime)}}</v-col>
     </v-row>
-    <div v-html="templateHtml"></div>
+    <div v-if="classItem.contentTypeID===1" v-html="templateHtml"></div>
+    <v-img v-else :src="classItem.contentUrl"></v-img>
   </v-container>
 </template>
 
@@ -21,94 +22,103 @@ import { withLoading } from "../decorators/with-loading";
 import moment from "moment";
 
 @Component({
-    name: "ClassDetail"
+  name: "ClassDetail"
 })
 export default class extends Vue {
-    private followed: boolean = false;
-    private articleId!: number;
+  private followed: boolean = false;
+  private articleId!: number;
 
-    private classItem: ClassItem | null = null;
-    private templateHtml: string = "";
+  private classItem: ClassItem | null = null;
+  private templateHtml: string = "";
 
-    private created() {
-        const articleId = parseInt(this.$route.params.id, 10);
-        this.articleId = articleId;
-        this.getFollowedStatus();
-        this.getArticleDetail();
-    }
+  private created() {
+    const articleId = parseInt(this.$route.params.id, 10);
+    this.articleId = articleId;
+    this.getFollowedStatus();
+    this.getArticleDetail();
+  }
 
-    private toDateTime(pubTime: string) {
-        return moment(pubTime).format("MM-DD HH:mm");
-    }
+  private toDateTime(pubTime: string) {
+    return moment(pubTime).format("MM-DD HH:mm");
+  }
 
-    @withLoading()
-    private async getArticleDetail() {
-        const rsp = await this.$http.get<ResponseModel<ClassItem>>(
-            "/api/Articles/GetModel",
-            {
-                params: {
-                    articleID: this.articleId
-                }
-            }
-        );
-
-        this.classItem = rsp.data.data;
-        this.loadArticle(this.classItem.contentUrl);
-    }
-
-    private async loadArticle(template: string) {
-        const rsp = await loadArticleTemplate(template);
-        this.templateHtml = rsp.data;
-    }
-
-    private async followArticle() {
-        await this.$http.post(
-            "/api/ArticleCollections/SetCollect",
-            this.articleId,
-            {
-                headers: {
-                    "content-type": "application/json-patch+json"
-                }
-            }
-        );
-    }
-
-    private async cancelFollowArticle() {
-        await this.$http.delete("/api/ArticleCollections/CancleCollect", {
-            data: this.articleId,
-            headers: {
-                "content-type": "application/json-patch+json"
-            }
-        });
-    }
-
-    @withLoading()
-    private async onArticleFollow() {
-        try {
-            if (this.followed) {
-                await this.cancelFollowArticle();
-            } else {
-                await this.followArticle();
-            }
-
-            this.followed = !this.followed;
-        } catch (ex) {
-            //
+  @withLoading()
+  private async getArticleDetail() {
+    const rsp = await this.$http.get<ResponseModel<ClassItem>>(
+      "/api/Articles/GetModel",
+      {
+        params: {
+          articleID: this.articleId
         }
-    }
+      }
+    );
 
-    @withLoading()
-    private async getFollowedStatus() {
-        const rsp = await this.$http.get<ResponseModel<string>>(
-            "/api/ArticleCollections/JudgeCollected",
-            {
-                params: {
-                    articleid: this.articleId
-                }
-            }
-        );
+    this.classItem = rsp.data.data;
+    this.classItem.contentTypeID === 1 &&
+      this.loadArticle(this.classItem.contentUrl);
+  }
 
-        this.followed = JSON.parse(rsp.data.data);
+  private async loadArticle(template: string) {
+    const rsp = await loadArticleTemplate(template);
+    this.templateHtml = rsp.data;
+  }
+
+  private async loadImg(url: string) {
+    const rsp = await this.$http.get(url, {
+        responseType: "blob"
+    })
+
+    return URL.createObjectURL(rsp.data);
+  }
+
+  private async followArticle() {
+    await this.$http.post(
+      "/api/ArticleCollections/SetCollect",
+      this.articleId,
+      {
+        headers: {
+          "content-type": "application/json-patch+json"
+        }
+      }
+    );
+  }
+
+  private async cancelFollowArticle() {
+    await this.$http.delete("/api/ArticleCollections/CancleCollect", {
+      data: this.articleId,
+      headers: {
+        "content-type": "application/json-patch+json"
+      }
+    });
+  }
+
+  @withLoading()
+  private async onArticleFollow() {
+    try {
+      if (this.followed) {
+        await this.cancelFollowArticle();
+      } else {
+        await this.followArticle();
+      }
+
+      this.followed = !this.followed;
+    } catch (ex) {
+      //
     }
+  }
+
+  @withLoading()
+  private async getFollowedStatus() {
+    const rsp = await this.$http.get<ResponseModel<string>>(
+      "/api/ArticleCollections/JudgeCollected",
+      {
+        params: {
+          articleid: this.articleId
+        }
+      }
+    );
+
+    this.followed = JSON.parse(rsp.data.data);
+  }
 }
 </script>

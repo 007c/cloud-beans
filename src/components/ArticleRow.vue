@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="pa-0 mb-2" :to="'/class/' + item.id">
+  <v-list-item class="pa-0 mb-2" :to="'/class/' + item.articleID">
     <v-card class="pa-2 d-flex justify-space-between row align-center no-gutters" width="100%">
       <v-list-item-content class="pa-0">
         <v-row no-gutters>

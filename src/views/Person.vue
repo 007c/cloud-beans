@@ -10,7 +10,7 @@
       </v-col>
       <v-col>
         <v-row>
-          <v-col class="py-0">180****0039</v-col>
+          <!-- <v-col class="py-0">180****0039</v-col> -->
         </v-row>
         <v-row class="body-2">
           <v-col

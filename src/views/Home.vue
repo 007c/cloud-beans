@@ -1,12 +1,12 @@
 <style lang="less" scoped>
 .carousel-img {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 </style>
 <style lang="less">
 .v-bottom-navigation.no-shadow {
-    box-shadow: none;
+  box-shadow: none;
 }
 </style>
 <template>
@@ -30,11 +30,9 @@
     </v-row>
     <v-row no-gutters>
       <v-carousel cycle height="150" hide-delimiter-background show-arrows-on-hover>
-        <v-carousel-item v-for="(slide, i) in prompts" :key="i">
+        <v-carousel-item v-for="(slide, i) in banners" :key="i" :to="'/imgPreview?url=' + slide.advUrl">
           <v-sheet height="100%">
-            <router-link :to="slide.link">
               <img :src="slide.imgUrl" class="carousel-img" />
-            </router-link>
           </v-sheet>
         </v-carousel-item>
       </v-carousel>
@@ -84,7 +82,12 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 
 interface Slider {
-    imgUrl: string;
+  imgUrl: string;
+}
+
+interface Banner {
+  imgUrl: string;
+  advUrl: string;
 }
 
 import { Prompt, prompts } from "./prompts";
@@ -98,121 +101,130 @@ import moment from "moment";
 let scrollHandler: () => void;
 
 @Component({
-    name: "Home",
-    components: {
-        StudentInfoBar,
-        ArticleRow
-    }
+  name: "Home",
+  components: {
+    StudentInfoBar,
+    ArticleRow
+  }
 })
 export default class extends Vue {
-    private mainMenus = mainMenus;
-    private slides: Slider[] = [];
-    private prompts: Prompt[] = [];
-    private classes: ClassItem[] = [];
-    private shoudHideNav: boolean = false;
-    private scrollY: number = 0;
-    private scrollDirection: "up" | "down" = "up";
-    private created() {
-        this.getPrompts();
-        this.getArticles();
+  private mainMenus = mainMenus;
+  private slides: Slider[] = [];
+  private prompts: Prompt[] = [];
+  private classes: ClassItem[] = [];
+  private banners: Banner[] = [
+    {
+      imgUrl: "/static/banner/1.png",
+      advUrl: "/static/adv/1.png"
+    },
+    {
+      imgUrl: "/static/banner/2.png",
+      advUrl: "/static/adv/1.png"
     }
-    private mounted() {
-        this.scrollY = window.scrollY;
-        // this.updateShare();
-        scrollHandler = () => {
-            if (window.scrollY - this.scrollY <= 0) {
-                this.shoudHideNav = false;
-            } else {
-                this.shoudHideNav = true;
-            }
-            this.scrollY = window.scrollY;
-        };
+  ];
+  private shoudHideNav: boolean = false;
+  private scrollY: number = 0;
+  private scrollDirection: "up" | "down" = "up";
+  private created() {
+    this.getPrompts();
+    this.getArticles();
+  }
+  private mounted() {
+    this.scrollY = window.scrollY;
+    // this.updateShare();
+    scrollHandler = () => {
+      if (window.scrollY - this.scrollY <= 0) {
+        this.shoudHideNav = false;
+      } else {
+        this.shoudHideNav = true;
+      }
+      this.scrollY = window.scrollY;
+    };
 
-        window.addEventListener("scroll", scrollHandler);
-        if (process.env.NODE_ENV !== "production") {
-            // this.listUsers();
+    window.addEventListener("scroll", scrollHandler);
+    if (process.env.NODE_ENV !== "production") {
+      // this.listUsers();
+    }
+  }
+
+  private async listUsers() {
+    const rsp = await this.$http.get("/api/Users/GetUsers");
+  }
+
+  private goClasses(id: number) {
+    this.$router.push(`/class/${id}`);
+  }
+
+  private toDate(pubTime: string) {
+    return moment(pubTime).format("MM-DD");
+  }
+
+  private toTime(pubTime: string) {
+    return moment(pubTime).format("HH:mm");
+  }
+
+  private beforeDestroy() {
+    window.removeEventListener("scroll", scrollHandler);
+  }
+
+  private async getArticles() {
+    const rsp = await this.$http.get<ResponseModel<ClassItem[]>>(
+      "/api/Articles/GetPageList",
+      {
+        params: {
+          ArticleTypeID: ArticleTypes.不限,
+          PageIndex: 1,
+          PageSize: 10,
+          Where: ""
         }
-    }
+      }
+    );
+    this.classes = rsp.data.data;
+  }
 
-    private async listUsers() {
-        const rsp = await this.$http.get("/api/Users/GetUsers");
-    }
+  private async getPrompts() {
+    const rsp = await this.$http.get<
+      ResponseModel<
+        Array<{
+          busiTime: string;
+          createTime: string;
+          id: string;
+          pubMsg: string;
+          pubState: number;
+          pubType: number;
+          showLevels: number;
+        }>
+      >
+    >("/api/Pubs/GetPubsList");
 
-    private goClasses(id: number) {
-        this.$router.push(`/class/${id}`);
-    }
+    const data = rsp.data.data;
 
-    private toDate(pubTime: string) {
-        return moment(pubTime).format("MM-DD");
-    }
+    this.prompts = data.map(
+      (item): Prompt => {
+        return {
+          title: item.pubMsg,
+          link: "/prompt"
+        };
+      }
+    );
+  }
 
-    private toTime(pubTime: string) {
-        return moment(pubTime).format("HH:mm");
-    }
-
-    private beforeDestroy() {
-        window.removeEventListener("scroll", scrollHandler);
-    }
-
-    private async getArticles() {
-        const rsp = await this.$http.get<ResponseModel<ClassItem[]>>(
-            "/api/Articles/GetPageList",
-            {
-                params: {
-                    ArticleTypeID: ArticleTypes.不限,
-                    PageIndex: 1,
-                    PageSize: 10,
-                    Where: ""
-                }
-            }
-        );
-        this.classes = rsp.data.data;
-    }
-
-    private async getPrompts() {
-        const rsp = await this.$http.get<
-            ResponseModel<
-                Array<{
-                    busiTime: string;
-                    createTime: string;
-                    id: string;
-                    pubMsg: string;
-                    pubState: number;
-                    pubType: number;
-                    showLevels: number;
-                }>
-            >
-        >("/api/Pubs/GetPubsList");
-
-        const data = rsp.data.data;
-
-        this.prompts = data.map(
-            (item): Prompt => {
-                return {
-                    title: item.pubMsg,
-                    link: "/prompt"
-                };
-            }
-        );
-    }
-
-    private updateShare() {
-        wx.ready(function() {
-            const title = "哈哈哈啊哈哈";
-            const desc = "分享描述";
-            const imgUrl =
-                "https://img95.699pic.com/photo/40006/9851.jpg_wh860.jpg";
-            const url = location.href;
-            wx.updateAppMessageShareData({
-                title, // 分享标题
-                desc, // 分享描述
-                link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl, // 分享图标
-                success() {
-                    // 设置成功
-                }
-            });
-        });
-    }
+  private updateShare() {
+    wx.ready(function() {
+      const title = "哈哈哈啊哈哈";
+      const desc = "分享描述";
+      const imgUrl = "https://img95.699pic.com/photo/40006/9851.jpg_wh860.jpg";
+      const url = location.href;
+      wx.updateAppMessageShareData({
+        title, // 分享标题
+        desc, // 分享描述
+        link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl, // 分享图标
+        success() {
+          // 设置成功
+        }
+      });
+    });
+  }
 }
 </script>

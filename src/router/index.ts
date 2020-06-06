@@ -68,14 +68,14 @@ export const personMenu: Menu[] = [
       requireLogin: true
     }
   },
-  {
-    icon: "insert_drive_file",
-    name: "我的测评报告",
-    path: "/evaluation/result",
-    meta: {
-      requireLogin: true
-    }
-  },
+  // {
+  //   icon: "insert_drive_file",
+  //   name: "我的测评报告",
+  //   path: "/evaluation/result",
+  //   meta: {
+  //     requireLogin: true
+  //   }
+  // },
   {
     icon: "call",
     name: "联系客服",
@@ -167,6 +167,10 @@ export const routes = [
     // meta: {
     //   requireLogin: true
     // }
+  },
+  {
+    path: "/imgPreview",
+    component: () => import("../views/ImgPreview.vue")
   },
   {
     path: "/search",

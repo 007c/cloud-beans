@@ -10,7 +10,7 @@
       </v-col>
     </v-row>
     <v-divider></v-divider>
-    <v-row justify="center" align="center" class="mt-8" no-gutters>
+    <!-- <v-row justify="center" align="center" class="mt-8" no-gutters>
       <v-col cols="2">
         <span class="caption pt-2">四川</span>
       </v-col>
@@ -38,8 +38,8 @@
           item-value="value"
         ></v-select>
       </v-col>
-    </v-row>
-    <v-simple-table class="mt-4 text-center">
+    </v-row> -->
+    <!-- <v-simple-table class="mt-4 text-center">
       <template v-slot:default>
         <thead>
           <tr>
@@ -58,7 +58,7 @@
           </tr>
         </tbody>
       </template>
-    </v-simple-table>
+    </v-simple-table> -->
   </v-container>
 </template>
 

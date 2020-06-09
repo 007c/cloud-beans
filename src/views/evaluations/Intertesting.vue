@@ -63,7 +63,7 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { withLoading } from "@/decorators/with-loading";
 export interface Option {
     answer: string;
-    answerDescribe: null;
+    answerDescribe: string;
     answerLabels: null;
     answerType: null;
     content: string;
@@ -71,20 +71,24 @@ export interface Option {
     orderNum: number;
     testID: number;
     title: string;
-    levels: number
+    levels: number;
 }
 
 const MAX_ANWSER_COUNT = 3;
 
 @Component
 export default class extends Vue {
-    @Prop() private data!: Option[];
+    private data: Option[] = [];
 
     private anwsers: Option[] = [];
     // @Watch('data')
     // private onDataChange() {
 
     // }
+
+    private created() {
+        this.getEvaluations();
+    }
 
     private selectAnwser(option: Option) {
         if (this.anwsers.findIndex((item) => item === option) !== -1) {
@@ -108,6 +112,19 @@ export default class extends Vue {
         return this.anwsers.length < MAX_ANWSER_COUNT;
     }
 
+    private async getEvaluations() {
+        const rsp = await this.$http.get<ResponseModel<any>>(
+            "/api/Tests/GetTest1Options",
+            {
+                params: {
+                    testid: this.$route.params.id
+                }
+            }
+        );
+
+        this.data = rsp.data.data;
+    }
+
     @withLoading()
     private async submitEvaluation() {
         try {
@@ -116,7 +133,7 @@ export default class extends Vue {
                 answers: this.anwsers.map((item) => item.answer).join(",")
             });
 
-            this.$router.push("/evaluation/result/1");
+            this.$emit("submited");
         } catch (ex) {
             // submit error
         }

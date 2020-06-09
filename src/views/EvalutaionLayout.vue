@@ -25,7 +25,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <component :data="evaluations" :is="currentComponent"></component>
+    <component @submited="onTestSubmited" :data="evaluations" :is="currentComponent"></component>
   </div>
 </template>
 
@@ -33,6 +33,7 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { VueConstructor } from "vue";
 import Interesting from "@/views/evaluations/Intertesting.vue";
+import Personality from "@/views/evaluations/Personality.vue";
 
 enum Title {
     "兴趣测试" = 1,
@@ -50,10 +51,6 @@ export default class extends Vue {
 
     private evaluations: any = null;
 
-    private created() {
-        this.getEvaluations();
-    }
-
     private mounted() {
         timerId = setInterval(() => {
             this.dialogRemainTime--;
@@ -63,18 +60,8 @@ export default class extends Vue {
         }, 1000);
     }
 
-    private async getEvaluations() {
-        const rsp = await this.$http.get<ResponseModel<any>>("/api/Tests/GetTest1Options", {
-            params: {
-                testid: this.$route.params.id
-            }
-        });
-
-        this.evaluations = rsp.data.data;
-    }
-
     get isConfirmDisabled() {
-        return false
+        return false;
     }
 
     get title(): string {
@@ -83,10 +70,14 @@ export default class extends Vue {
 
     get currentComponent() {
         const componentMap: Dict<VueConstructor> = {
-            1: Interesting
+            1: Interesting,
+            2: Personality
         };
         return componentMap[parseInt(this.$route.params.id, 10)] || Interesting;
+    }
 
+    private onTestSubmited() {
+        this.$router.push("/evaluation/result/" + this.$route.params.id);
     }
 }
 </script>

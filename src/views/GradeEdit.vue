@@ -270,7 +270,7 @@ export default class extends Vue {
 
         const gradeModel: GradeInfoModel = {
             ...originalInfo!,
-            rank: parseInt(this.rank, 10),
+            rank: parseInt(this.rank, 10) || 0,
             score: parseInt(this.grade, 10),
             divisionTypeID: this.subject,
             divisionType: Subject[this.subject],

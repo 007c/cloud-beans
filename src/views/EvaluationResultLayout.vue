@@ -2,9 +2,16 @@
 .btn-row {
     background: transparent;
     position: absolute;
-    bottom: 0;
+    bottom: 40px;
     left: 0;
     width: 100%;
+}
+.modal-btn {
+    width: 698px;
+    height: 111px;
+    background: url("/static/img/2.png") no-repeat;
+    background-size: 100% 100%;
+    margin: 0 auto;
 }
 </style>
 
@@ -12,10 +19,10 @@
   <div >
     <!-- <header-bar :title="title"></header-bar>
     <v-divider></v-divider> -->
-    <component ref="container" :data="evaluations" :is="currentComponent"></component>
-    <v-row no-gutters class="px-4 btn-row">
-      <v-col>
-        <v-btn @click="generateImages" block color="primary" class="mb-2 mt-2">生成测试报告</v-btn>
+    <component ref="container" :is="currentComponent"></component>
+    <v-row no-gutters class="btn-row">
+      <v-col class="px-0">
+        <div @click="generateImages" class="modal-btn"></div>
       </v-col>
     </v-row>
     <v-dialog v-model="shouldShowDialog">
@@ -28,6 +35,7 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { VueConstructor } from "vue";
 import Interesting from "@/views/evaluationResults/Interesting.vue";
+import Personality from "@/views/evaluationResults/Personality.vue";
 import { toCanvas } from "../util/htmlToCanvas";
 
 enum Title {
@@ -41,27 +49,8 @@ enum Title {
 export default class extends Vue {
     private shouldShowLoginGuide = true;
 
-    private evaluations: any = null;
-
     private imgUrl: string = "";
     private shouldShowDialog: boolean = false;
-
-    private created() {
-        this.getEvaluations();
-    }
-
-    private async getEvaluations() {
-        const rsp = await this.$http.get<ResponseModel<any>>(
-            "/api/Tests/GetUserTest1Result",
-            {
-                params: {
-                    testid: this.$route.params.id
-                }
-            }
-        );
-
-        this.evaluations = rsp.data.data;
-    }
 
     get title(): string {
         return Title[parseInt(this.$route.params.id, 10)];
@@ -69,7 +58,8 @@ export default class extends Vue {
 
     get currentComponent() {
         const componentMap: Dict<VueConstructor> = {
-            1: Interesting
+            1: Interesting,
+            2: Personality
         };
         return componentMap[parseInt(this.$route.params.id, 10)] || Interesting;
     }

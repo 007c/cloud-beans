@@ -3,26 +3,25 @@
 
 <style lang="less" scoped>
 .desc-panel {
-    width: 670px;
-    height: 241px;
+    width: 589px;
+    height: 216px;
     margin: 0 auto;
-    margin-top: 45px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     &.bottom {
-        margin-top: 55px;
+        margin-top: 30px;
     }
     .header {
         height: 40%;
-        font-size: 33px;
+        font-size: 30px;
         line-height: 42px;
         color: #000000;
         font-family: "F ZZ DH JW";
     }
     .content {
         height: 51%;
-        font-size: 30px;
+        font-size: 26px;
         line-height: 56px;
         color: #000000;
     }
@@ -38,14 +37,14 @@
     <!-- <canvas ref="chartContainer" class="chart-container"></canvas> -->
     <radar-chart :data="chartData" class="chart-container"></radar-chart>
     <div v-if="data.length !== 0">
-      <section v-for="i in 2" class="img-container desc-panel" :key="i">
+      <section v-for="i in 2" class="img-container desc-panel" :class="i==2 ? 'bottom' : ''" :key="i">
         <img class="img" src="/static/img/1.png" alt />
         <h1
           class="header d-flex justify-center align-center"
-        >{{data[i].answerDescribe.split("|")[1]}}</h1>
+        >{{data[i-1].answerDescribe.split("|")[1]}}</h1>
         <div
           class="content d-flex justify-center align-center"
-        >{{data[i].answerDescribe.split("|")[2]}}</div>
+        >{{data[i-1].answerDescribe.split("|")[2]}}</div>
       </section>
     </div>
   </v-container>

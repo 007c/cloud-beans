@@ -2,13 +2,13 @@
 .btn-row {
     background: transparent;
     position: absolute;
-    bottom: 40px;
+    bottom: 36px;
     left: 0;
     width: 100%;
 }
 .modal-btn {
-    width: 698px;
-    height: 111px;
+    width: 624px;
+    height: 96px;
     background: url("/static/img/2.png") no-repeat;
     background-size: 100% 100%;
     margin: 0 auto;

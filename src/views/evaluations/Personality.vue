@@ -14,24 +14,23 @@
     </v-row>
     <v-row v-if="currentQAPair">
       <v-col class="py-0">
-        <v-radio-group hide-details dense v-model="currentQAPair.answer">
-          <v-radio
-            class="body-2"
+        <van-radio-group v-model="currentQAPair.answer">
+          <van-radio
             :key="currentIndex + '-' + item.answer"
             v-for="item in currentQAPair.options"
-            :value="item.answer"
+            :name="item.answer"
+            icon-size="16px"
+            class="mt-2"
           >
-            <template v-slot:label>
-              <span class="body-2">{{item.title}}:{{item.content}}</span>
-            </template>
-          </v-radio>
-        </v-radio-group>
+            <span class="body-2">{{item.title}}:{{item.content}}</span>
+          </van-radio>
+        </van-radio-group>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="currentQAPair">
       <v-col cols="12">
         <v-btn
-          :disabled="currentQAPair.answer === '' || answeredQuestion >= totalQuestion"
+          :disabled="currentQAPair.answer == null || currentIndex >= totalQuestion - 1"
           @click="currentIndex++"
           color="primary"
           class="mt-4"
@@ -82,7 +81,7 @@ interface QAItem {
     question: string;
     id: number;
     options: Option[];
-    answer: string;
+    answer: string | null;
 }
 
 @Component
@@ -116,7 +115,7 @@ export default class extends Vue {
     }
 
     get answeredQuestion(): number {
-        return this.qaPairs.filter((item) => item.answer !== "").length;
+        return this.qaPairs.filter((item) => item.answer !== null).length;
     }
 
     get answeredPercent(): number {
@@ -132,7 +131,7 @@ export default class extends Vue {
                 question: item.content,
                 id: item.itemID,
                 options: [],
-                answer: ""
+                answer: null
             };
             idMap[item.itemID] = pair;
             qaPairs.push(pair);
@@ -152,10 +151,10 @@ export default class extends Vue {
         const countMap: Dict<number> = {};
 
         for (const item of this.qaPairs) {
-            if (!countMap[item.answer]) {
-                countMap[item.answer] = 0;
+            if (!countMap[item.answer!]) {
+                countMap[item.answer!] = 0;
             }
-            countMap[item.answer]++;
+            countMap[item.answer!]++;
         }
 
         await this.$http.put(
@@ -173,7 +172,7 @@ export default class extends Vue {
             }
         );
 
-        this.$emit("submited")
+        this.$emit("submited");
     }
 }
 </script>

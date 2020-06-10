@@ -9,7 +9,11 @@ import "@/components";
 import installAxiosInterceptor from './installAxiosInterceptor';
 import "./installBottomScrollUpEvents";
 const VuePickerMobile = require('@/package');
+import { RadioGroup, Radio } from 'vant';
+import 'vant/lib/index.css';
 
+Vue.use(Radio);
+Vue.use(RadioGroup);
 
 Vue.config.productionTip = false;
 

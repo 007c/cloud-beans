@@ -44,10 +44,10 @@
         <img class="img" src="/static/img/1.png" alt />
         <h1
           class="header d-flex justify-center align-center"
-        >{{data[i-1].answerDescribe.split("|")[1]}}</h1>
+        >{{data[i-1].answerDescribe.split("|")[i == 2 ? 3: 1]}}</h1>
         <div
           class="content d-flex justify-center align-center"
-        >{{data[i-1].answerDescribe.split("|")[2]}}</div>
+        >{{data[i-1].answerDescribe.split("|")[i == 2 ? 4 : 2]}}</div>
       </section>
     </div>
     <footer class="page-footer">
@@ -109,11 +109,12 @@ export default class extends Vue {
     }
 
     private genChartData() {
+        let maxLevels = this.data[0].levels;
         const data: RadarChartData[] = this.data.map(
             (item, index): RadarChartData => {
                 return {
                     label: item.answerDescribe?.split("|")[0],
-                    weight: item.levels / 40
+                    weight: item.levels / maxLevels
                 };
             }
         );

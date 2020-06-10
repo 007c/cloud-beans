@@ -26,6 +26,9 @@
         color: #000000;
     }
 }
+.qr-code {
+    margin-left: 56px;
+}
 </style>
 
 <template>
@@ -47,6 +50,16 @@
         >{{data[i-1].answerDescribe.split("|")[2]}}</div>
       </section>
     </div>
+    <footer class="page-footer">
+      <div class="qr-code img-container">
+        <img class="img" src="/static/img/界面(1)(1)_14.png" alt />
+      </div>
+      <div class="desc-text">
+        <div>志愿|专家|未来</div>
+        <div>扫一扫/免费获取你的专属报告</div>
+        <div>更多咨询|关注“前途问路”公众号</div>
+      </div>
+    </footer>
   </v-container>
 </template>
 <script lang="ts">

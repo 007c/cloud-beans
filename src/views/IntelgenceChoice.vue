@@ -125,7 +125,7 @@
                   >{{text}}</v-btn>
                 </v-col>
                 <v-col class cols="12" sm="5">
-                  2019年分数线：
+                  {{scope.item.year}}年加权分数线：
                   <span class="blue--text text--darken-2">{{Math.round(scope.item.lineValue + scope.item.subValue)}}</span>
                   <span class="ml-2">{{scope.item.batch}}</span>
                 </v-col>

@@ -4,7 +4,7 @@
     <v-divider></v-divider>
     <v-subheader class="pl-0">{{classItem.title}}</v-subheader>
     <v-row class="caption" no-gutters>
-      <v-col class="pa-0">来源：高考在线</v-col>
+      <v-col class="pa-0">来源：前途问路</v-col>
       <v-col class="pa-0 text-center">{{classItem.readCount}} 阅读</v-col>
       <v-col class="pa-0 text-center">{{classItem.collectCount}} 收藏</v-col>
       <v-col class="pa-0 text-center">{{toDateTime(classItem.pubTime)}}</v-col>

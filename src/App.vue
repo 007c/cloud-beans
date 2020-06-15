@@ -270,7 +270,7 @@ export default Vue.extend({
             this.$store.commit(SET_AREE_TREE, treeData);
         },
 
-        transformTree(treeData: TreeData[]): AreaTree[] {
+        transformTree(treeData: TreeData[], parentText: string = ""): AreaTree[] {
             if (!treeData) {
                 return [];
             }
@@ -279,11 +279,11 @@ export default Vue.extend({
                 const treeItem: AreaTree = {
                     label: item.text,
                     value: item.id,
-                    code: `${item.id}|${item.text}`
+                    code: `${item.id}|${parentText}${item.text}`
                 };
 
                 if (item.children) {
-                    treeItem.children = this.transformTree(item.children);
+                    treeItem.children = this.transformTree(item.children, item.text);
                 }
 
                 tree.push(treeItem);

@@ -109,7 +109,7 @@ export default class extends Vue {
     }
 
     private genChartData() {
-        let maxLevels = this.data[0].levels;
+        const maxLevels = this.data[0].levels;
         const data: RadarChartData[] = this.data.map(
             (item, index): RadarChartData => {
                 return {

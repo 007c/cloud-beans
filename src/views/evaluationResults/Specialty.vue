@@ -103,7 +103,7 @@ export default class extends Vue {
     get anwserDesc(): string {
         return this.data
             .slice(0, 3)
-            .map((item) => item.answer.split("-")[1])
+            .map((item) => item.answer.split("-")[1] || item.answer.split("-")[0])
             .join("+");
     }
 

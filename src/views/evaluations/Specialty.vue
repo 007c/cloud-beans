@@ -156,7 +156,7 @@ export default class extends Vue {
                 if (!countMap[title]) {
                     countMap[title] = 0;
                 }
-                countMap[title]++;
+                countMap[title] += parseInt(item.answer!, 10);
             }
         }
 

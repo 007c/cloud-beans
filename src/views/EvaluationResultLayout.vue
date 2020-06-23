@@ -1,7 +1,7 @@
 <style lang="less" scoped>
 .btn-row {
     background: transparent;
-    position: absolute;
+    position: fixed;
     bottom: 36px;
     left: 0;
     width: 100%;
@@ -36,6 +36,7 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import { VueConstructor } from "vue";
 import Interesting from "@/views/evaluationResults/Interesting.vue";
 import Personality from "@/views/evaluationResults/Personality.vue";
+import Specialty from "@/views/evaluationResults/Specialty.vue";
 import { toCanvas } from "../util/htmlToCanvas";
 
 enum Title {
@@ -59,7 +60,8 @@ export default class extends Vue {
     get currentComponent() {
         const componentMap: Dict<VueConstructor> = {
             1: Interesting,
-            2: Personality
+            2: Personality,
+            4: Specialty
         };
         return componentMap[parseInt(this.$route.params.id, 10)] || Interesting;
     }

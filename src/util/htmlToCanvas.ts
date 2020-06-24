@@ -29,11 +29,12 @@ export async function toCanvas(element: HTMLElement, ignoreElements: Element[] =
     // const logoScale = screenWidth / logoImgHeight;
     // const offsetTop = textScale * textImgHeight + 20;
     const elementRect = element.getBoundingClientRect();
+
     const canvas: HTMLCanvasElement = await html2Canvas(element, {
         ignoreElements(elements) {
             return ignoreElements.indexOf(elements) !== -1 || elements.tagName === "hr"
         },
-        y: element.offsetTop,
+        y: -elementRect.top,
         scale: window.devicePixelRatio,
         height: elementRect.height
         // height: elementRect.height + offsetTop + logoScale * logoImgHeight

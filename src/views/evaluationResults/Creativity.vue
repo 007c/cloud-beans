@@ -74,7 +74,7 @@
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 24px 26.5px 0 26.5px;
+    border-width: 26px 26.5px 0 26.5px;
     border-color: #000000 transparent transparent transparent;
     margin: 0 auto;
     margin-top: 29px;

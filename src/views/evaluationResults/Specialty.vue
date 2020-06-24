@@ -32,7 +32,7 @@
     margin-left: 56px;
 }
 .describe-text {
-    font-size: 44px;
+    font-size: 40px;
     line-height: 42px;
     color: #ff9307;
     font-weight: bold;

@@ -19,7 +19,7 @@
 }
 .result-container {
     min-height: 100vh;
-    background: #eee;
+    background: #f2f1f1;
 }
 </style>
 

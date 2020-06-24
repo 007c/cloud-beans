@@ -35,6 +35,7 @@ import { VueConstructor } from "vue";
 import Interesting from "@/views/evaluations/Intertesting.vue";
 import Personality from "@/views/evaluations/Personality.vue";
 import Specialty from "@/views/evaluations/Specialty.vue";
+import Creativity from "@/views/evaluations/Creativity.vue"
 
 enum Title {
     "兴趣测试" = 1,
@@ -73,7 +74,8 @@ export default class extends Vue {
         const componentMap: Dict<VueConstructor> = {
             1: Interesting,
             2: Personality,
-            4: Specialty
+            4: Specialty,
+            3: Creativity
         };
         return componentMap[parseInt(this.$route.params.id, 10)] || Interesting;
     }

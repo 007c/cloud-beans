@@ -1,10 +1,11 @@
 <style lang="less" scoped>
 .btn-row {
-    background: transparent;
-    position: fixed;
-    bottom: 36px;
-    left: 0;
-    width: 100%;
+    // background: transparent;
+    // position: fixed;
+    // bottom: 36px;
+    // left: 0;
+    // width: 100%;
+    margin-top: 36px;
 }
 .modal-btn {
     width: 624px;
@@ -13,10 +14,17 @@
     background-size: 100% 100%;
     margin: 0 auto;
 }
+.preview-img {
+    display: block;
+}
+.result-container {
+    min-height: 100vh;
+    background: #eee;
+}
 </style>
 
 <template>
-  <div >
+  <div class="result-container">
     <!-- <header-bar :title="title"></header-bar>
     <v-divider></v-divider> -->
     <component ref="container" :is="currentComponent"></component>
@@ -26,7 +34,7 @@
       </v-col>
     </v-row>
     <v-dialog v-model="shouldShowDialog">
-        <img :src="imgUrl" />
+        <img class="preview-img" :src="imgUrl" />
     </v-dialog>
   </div>
 </template>

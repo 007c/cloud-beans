@@ -34,7 +34,7 @@ export async function toCanvas(element: HTMLElement, ignoreElements: Element[] =
         ignoreElements(elements) {
             return ignoreElements.indexOf(elements) !== -1 || elements.tagName === "hr"
         },
-        y: -elementRect.top,
+        y: element.offsetTop,
         scale: window.devicePixelRatio,
         height: elementRect.height
         // height: elementRect.height + offsetTop + logoScale * logoImgHeight
